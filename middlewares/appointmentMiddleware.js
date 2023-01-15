@@ -116,7 +116,16 @@ const specificAppointment = async (req, res) => {
     const completedQP = req.query.completed ?? "true";
     const pendingQP = req.query.pending ?? "true";
     const starting_after_objectQP = req.query.starting_after_object;
-    const limitQP = Number(req.query.limit) ?? 30;
+    let limitQP = Number(req.query.limit) ?? 30;
+
+    if (limitQP) {
+      limitQP = Number(limitQP);
+      if (limitQP > 100 || limitQP < 1) {
+        limitQP = 30;
+      }
+    }else{
+      limitQP = 30;
+    }
 
     let bookingStatusQP = [];
     if(bookedQP === "true")bookingStatusQP.push("booked");
@@ -146,6 +155,30 @@ const specificAppointment = async (req, res) => {
       objectCount = await appointment.find(query,).countDocuments();      
       if (starting_after_objectQP) query["$and"].push({"appointmentId": {$gt: starting_after_objectQP}});
       documents = await appointment.find(query,).sort({appointmentId: 1, _id: 1}).limit(limitQP).lean();
+      documents = await appointment.aggregate([
+        {
+          $lookup: {
+            from: `medicalcenters`,
+            localField: `medicalCenterId`,
+            foreignField: `medicalCenterId`,
+            as: `medicalCenterObject`,
+          },
+        },
+        {
+          $lookup: {
+            from: `doctors`,
+            localField: `doctorId`,
+            foreignField: `doctorId`,
+            as: `doctorObject`,
+          },
+        },
+        { $match: { 
+          $and: query["$and"]
+          }
+        },
+        { $sort: {appointmentId: 1, _id: 1}},
+        { $limit: limitQP}
+      ]);
       lastDocument = await appointment.findOne(query,).sort({appointmentId: -1, _id: -1}).lean();      
     }
     // console.log(lastDocument.appointmentId)
@@ -161,6 +194,12 @@ const specificAppointment = async (req, res) => {
       msg = "list is empty change your query";
       hasMore = false;
     }
+
+    documents.forEach((document) => {
+      if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
+      document.doctorObject = document.doctorObject[0]
+      document.medicalCenterObject = document.medicalCenterObject[0]
+    });
 
     const responseBody = {
       codeStatus: "200",

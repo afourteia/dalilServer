@@ -34,6 +34,7 @@ const singleMedicalFiles = async (req, res) => {
                 medicalFile.medicalFileId =  document.medicalFiles.medicalFileId;
                 medicalFile.name =  document.firstName + " " + document.lastName;
                 medicalFile.birthDate =  document.birthdate.toISOString().split('T')[0];
+                medicalFile.weight = 120;
                 medicalFile.gender =  document.gender;
                 medicalFile.bloodType =  document.medicalFiles.bloodType;
                 medicalFile.height =  document.medicalFiles.height;
