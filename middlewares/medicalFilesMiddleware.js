@@ -32,12 +32,14 @@ const singleMedicalFiles = async (req, res) => {
             if( document.medicalFiles){
                 let medicalFile = {};
                 medicalFile.medicalFileId =  document.medicalFiles.medicalFileId;
+                medicalFile.patientId = document.familyMemberId;
                 medicalFile.name =  document.firstName + " " + document.lastName;
                 medicalFile.birthDate =  document.birthdate.toISOString().split('T')[0];
                 medicalFile.weight = 120;
                 medicalFile.gender =  document.gender;
                 medicalFile.bloodType =  document.medicalFiles.bloodType;
                 medicalFile.height =  document.medicalFiles.height;
+                medicalFile.relationshipToBeneficiary = document.relationshipToBeneficiary;
                 medicalFile.allergies =  document.medicalFiles.allergies;
                 medicalFile.chronicDiseases =  document.medicalFiles.chronicDiseases;
                 medicalFile.surgeryHistory =  document.medicalFiles.surgeryHistory;
@@ -47,9 +49,7 @@ const singleMedicalFiles = async (req, res) => {
             }
         });
 
-    }
-    
-    
+    }   
     const responseBody = {
       codeStatus: "200",
       message: "good",
@@ -67,6 +67,75 @@ const singleMedicalFiles = async (req, res) => {
   }
 };
 
+const singlePatientMedicalFiles = async (req, res) => {
+  try {
+
+
+    
+    // const document = await beneficiarys.findOne(req.params,).lean();
+    // const document = await beneficiarys.findOne({"familyMembers.familyMemberId": {$eq: req.params.patientId}},
+    //     { beneficiaryId: 1, account: 1, familyMembers: "$familyMembers", _id: 0 } 
+    //     ).lean()
+
+    const documents = await beneficiarys.aggregate([
+      {
+        $match: {"familyMembers.familyMemberId": {$eq: req.params.patientId}}
+      },
+      { $unwind: "$familyMembers" },
+      {
+        $match: {"familyMembers.familyMemberId": {$eq: req.params.patientId}}
+      },
+    ]);
+
+    // console.log(req.params);
+    // console.log(document)
+    
+    if (documents.length === 0) {
+      return res.status(404).json({ msg: `patient not found` });
+    }
+
+    // if (res.locals.user.userId !== document.account.userId) {
+    //   return res.status(401).json({ msg: `Not Authorized` });
+    // }
+    let medicalFile = {};
+
+    if (documents.length !== 0) {
+      document = documents[0].familyMembers
+      // console.log(document)
+        if( document.medicalFiles){            
+            medicalFile.medicalFileId =  document.medicalFiles.medicalFileId;
+            medicalFile.patientId = document.familyMemberId;
+            medicalFile.name =  document.firstName + " " + document.lastName;
+            medicalFile.birthDate =  document.birthdate.toISOString().split('T')[0];
+            medicalFile.weight = 120;
+            medicalFile.gender =  document.gender;
+            medicalFile.bloodType =  document.medicalFiles.bloodType;
+            medicalFile.height =  document.medicalFiles.height;
+            medicalFile.relationshipToBeneficiary = document.relationshipToBeneficiary;
+            medicalFile.allergies =  document.medicalFiles.allergies;
+            medicalFile.chronicDiseases =  document.medicalFiles.chronicDiseases;
+            medicalFile.surgeryHistory =  document.medicalFiles.surgeryHistory;
+            medicalFile.clinicalVisits =  document.medicalFiles.clinicalVisits;
+            medicalFile.medicalTests =  document.medicalFiles.medicalTests;
+        }
+  } 
+
+    
+
+    const responseBody = {
+      codeStatus: "200",
+      message: "good",
+      data: medicalFile
+    };
+
+    res.status(200).json({... responseBody});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
-  singleMedicalFiles
+  singleMedicalFiles,
+  singlePatientMedicalFiles
 };

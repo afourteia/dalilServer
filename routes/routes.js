@@ -9,7 +9,8 @@ const { createUsers, getUsers } = require(`../middlewares/userMiddleware`);
 
 // importing medicalFiles middleware
 const {
-  singleMedicalFiles
+  singleMedicalFiles,
+  singlePatientMedicalFiles
 } = require(`../middlewares/medicalFilesMiddleware`);
 
 
@@ -29,6 +30,7 @@ const {
   updateAppointment,
   specificAppointment,
   doctorAppointmentSummaries,
+  doctorAppointments,
   allAppointments,
 } = require(`../middlewares/appointmentMiddleware`);
 
@@ -139,8 +141,18 @@ router
 
 // routes for doctor
 router
+  .route(`/v1/doctors/:doctorId/appointments`)
+  .get(authentication, doctorAppointments);
+
+  // routes for doctor
+router
   .route(`/v1/doctors/:doctorId/schedules`)
   .get(authentication, allDoctorSchedule);
+
+// routes for doctor
+router
+  .route(`/v1/patients/:patientId/medicalFiles`)
+  .get(authentication, singlePatientMedicalFiles);
 
 // routes for medicalCenters
 router
