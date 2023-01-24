@@ -182,7 +182,7 @@ const specificAppointment = async (req, res) => {
       lastDocument = await appointment.findOne(query,).sort({appointmentId: -1, _id: -1}).lean();      
     }
     // console.log(lastDocument.appointmentId)
-    console.log("length is " + documents.length)
+    // console.log("length is " + documents.length)
     // console.log(documents[0])
     documents.forEach((document) => {
       if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
@@ -194,11 +194,16 @@ const specificAppointment = async (req, res) => {
       msg = "list is empty change your query";
       hasMore = false;
     }
-
+    
     documents.forEach((document) => {
       if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
       document.doctorObject = document.doctorObject[0]
       document.medicalCenterObject = document.medicalCenterObject[0]
+      document.patient.birthDate = document.patient.birthDate.toISOString().split('T')[0];
+      document.patient.age = Math.floor(Math.random() * 91);
+      document.patient.patientId = "LCS-1905-13";
+      // console.log(document.appointmentDate.toISOString().split('T')[0])
+      document.appointmentDate = document.appointmentDate.toISOString().split('T')[0];
     });
 
     const responseBody = {
