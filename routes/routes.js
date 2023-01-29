@@ -11,6 +11,7 @@ const {
   benefitPolicies,
   getClaims,
   createClaim,
+  getExepseReports
 } = require(`../middlewares/benefitPoliciesMiddleware`);
 
 // importing medicalFiles middleware
@@ -100,6 +101,12 @@ router
   .get(authentication, cookieVerification, singleBeneficiary)
   .patch(authentication, cookieVerification, updateBeneficiary);
 
+  
+// routes for single beneficiary's expense reports
+router
+  .route(`/v1/beneficiaries/:beneficiaryId/expenseReports`)
+  .get(authentication, cookieVerification, getExepseReports)
+  
 // routes for beneficiary's benefit policy
 router
   .route(`/v1/beneficiaries/:beneficiaryId/benefitPolicies`)
