@@ -6,23 +6,18 @@ const router = express.Router();
 // importing users middleware
 const { createUsers, getUsers } = require(`../middlewares/userMiddleware`);
 
-
-
 // importing benefitPolicies middleware
 const {
-  benefitPolicies
+  benefitPolicies,
+  getClaims,
+  createClaim,
 } = require(`../middlewares/benefitPoliciesMiddleware`);
-
-
 
 // importing medicalFiles middleware
 const {
   singleMedicalFiles,
-  singlePatientMedicalFiles
+  singlePatientMedicalFiles,
 } = require(`../middlewares/medicalFilesMiddleware`);
-
-
-
 
 // importing beneficiary middleware
 const {
@@ -99,17 +94,22 @@ router
   .route(`/v1/beneficiaries/:beneficiaryId/medicalFiles`)
   .get(authentication, cookieVerification, singleMedicalFiles);
 
-// routes for beneficiary's benefit policy
-router
-  .route(`/v1/beneficiaries/:beneficiaryId/benefitPolicies`)
-  .get(authentication, cookieVerification, benefitPolicies);
-
 // routes for single beneficiary and updating it
 router
   .route(`/v1/beneficiaries/:beneficiaryId`)
   .get(authentication, cookieVerification, singleBeneficiary)
   .patch(authentication, cookieVerification, updateBeneficiary);
 
+// routes for beneficiary's benefit policy
+router
+  .route(`/v1/beneficiaries/:beneficiaryId/benefitPolicies`)
+  .get(authentication, cookieVerification, benefitPolicies);
+
+// routes for beneficiary's expense claim
+router
+  .route(`/v1/beneficiaries/:beneficiaryId/claims`)
+  .get(authentication, cookieVerification, getClaims)
+  .post(authentication, cookieVerification, createClaim);
 // routes for appointments
 router
   .route(`/v1/appointments/users/:userId`)
@@ -152,12 +152,12 @@ router
   .route(`/v1/doctors/:doctorId/appointmentSummaries`)
   .get(authentication, doctorAppointmentSummaries);
 
-// routes for doctor
+// routes for doctor appointments
 router
   .route(`/v1/doctors/:doctorId/appointments`)
   .get(authentication, doctorAppointments);
 
-  // routes for doctor
+// routes for doctor schedules
 router
   .route(`/v1/doctors/:doctorId/schedules`)
   .get(authentication, allDoctorSchedule);
