@@ -7,6 +7,14 @@ const router = express.Router();
 const { createUsers, getUsers } = require(`../middlewares/userMiddleware`);
 
 
+
+// importing benefitPolicies middleware
+const {
+  benefitPolicies
+} = require(`../middlewares/benefitPoliciesMiddleware`);
+
+
+
 // importing medicalFiles middleware
 const {
   singleMedicalFiles,
@@ -90,6 +98,11 @@ router
 router
   .route(`/v1/beneficiaries/:beneficiaryId/medicalFiles`)
   .get(authentication, cookieVerification, singleMedicalFiles);
+
+// routes for beneficiary's benefit policy
+router
+  .route(`/v1/beneficiaries/:beneficiaryId/benefitPolicies`)
+  .get(authentication, cookieVerification, benefitPolicies);
 
 // routes for single beneficiary and updating it
 router
