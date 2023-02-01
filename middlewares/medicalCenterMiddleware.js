@@ -89,84 +89,113 @@ const deletemedicalCenter = async (req, res) => {
 // api/ logic for getting all medicalCenter
 const allmedicalCenter = async (req, res) => {
   try {
-    const limitQuery = req.query.limit;
-    let medicalCenterIdQuery = req.query.starting_after_object;
-    const cityId = req.query.city;
-
-    const limit = Number(limitQuery);
-    if (!medicalCenterIdQuery) {
-      medicalCenterIdQuery = `MCI-0`;
-    }
-    if (!medicalCenterIdQuery.startsWith(`MCI-`)) {
-      return res.status(404).json({
-        msg: `medicalCenter not found, check your starting_after_object input`,
-      });
+    let limitQP = req.query.limit;
+    limitQP = Number(limitQP);
+    if (limitQP > 100 || limitQP < 1) {
+      limitQP = 30;
     }
 
-    let medicalCenterId = Number(medicalCenterIdQuery.split(`-`)[1]);
-    let city = cityId;
+    const starting_after_objectQP = req.query.starting_after_object;
+    const cityQP = req.query.city;
 
-    if (limit > 100 || limit < 1) {
-      limit = 30;
+    let hasMore = true;
+    let query = {};
+    query['$and']=[];
+
+    if(cityQP){
+      console.log(cityQP);
+      query["$and"].push({"city": {$eq: cityQP}});
+    }
+    
+    sortByQP_ = {"medicalCenterId": 1};
+    if (starting_after_objectQP){
+      query["$and"].push({"medicalCenterId": {$gt: starting_after_objectQP}});
     }
 
-    // logic checking for city query parameters
-    if (!city) {
-      const totalmedicalCenter = await medicalCenter.find({
-        sd: { $gt: medicalCenterId },
-      });
-      let object = await medicalCenter
-        .find({
-          sd: {
-            $gt: medicalCenterId,
-          },
-        })
-        .limit(!limit ? 30 : limit);
-      if (object.length === 0) {
-        return res.status(404).json({
-          msg: `medicalCenter not found`,
-        });
+    if (query["$and"].length === 0) { 
+      documents = await medicalCenter.find({},
+        ).sort( sortByQP_ ).limit(limitQP).lean();
+        
+
+      objectCount = await medicalCenter.find({},
+        ).countDocuments();
+        
+    }else {
+
+      documents = await medicalCenter.aggregate([
+        { $match: { 
+          $and: query["$and"]
+         }
+        },
+        {
+          $sort: sortByQP_
+        },
+        {
+          $limit: limitQP
+        }
+      ]);
+      
+      for (const key in sortByQP_) {
+        sortByQP_[key] = sortByQP_[key] *-1;
+        // console.log(`obj.${key} = ${sortByQP_[key]}`);
       }
-      object.forEach((object) => {
-        delete object._doc.sd;
-      });
 
-      res.status(200).json({
-        object,
-        objectCount: totalmedicalCenter.length,
-        hasMore: object.length >= totalmedicalCenter.length ? false : true,
-      });
-    }
+      lastDocument = await medicalCenter.aggregate([
+        { $match: { 
+          $and: query["$and"]
+         }
+        },
+        {
+          $sort: sortByQP_
+        },
+        {
+          $limit: limitQP
+        }
+      ]);
 
-    // logic checking for city query parameters
-    if (city) {
-      const totalmedicalCenter = await medicalCenter.find({
-        sd: { $gt: medicalCenterId },
-        city: city,
-      });
-      let object = await medicalCenter
-        .find({
-          sd: {
-            $gt: medicalCenterId,
-          },
-          city: city,
-        })
-        .limit(!limit ? 30 : limit);
-      if (object.length === 0) {
-        return res.status(404).json({
-          msg: `medicalCenter not found`,
-        });
+      if (starting_after_objectQP){
+        query["$and"].pop();
       }
-      object.forEach((object) => {
-        delete object._doc.sd;
-      });
 
-      res.status(200).json({
-        object,
-        objectCount: totalmedicalCenter.length,
-        hasMore: object.length >= totalmedicalCenter.length ? false : true,
-      });
+      objectCount = await medicalCenter.aggregate([
+        { $match: { 
+          $and: query["$and"]
+         }
+        },
+        {
+          $sort: sortByQP_
+        },
+        {
+          $count: "objectCount"
+        }
+      ]);
+
+
+
     }
+
+    let count = 0
+    // console.log(objectCount[0].objectCount)
+    if(objectCount[0] !== undefined){
+      count = objectCount[0].objectCount
+    }
+
+    let msg = "good"
+    if (documents.length === 0){
+      msg = "list is empty change your query";
+      hasMore = false;
+    }
+    const responseBody = {
+      codeStatus: "200",
+      message: msg,
+      data: {
+        objectCount: count,
+        hasMore,
+        objectArray: documents
+      }
+    };
+
+    res.status(200).json({...responseBody});
   } catch (error) {
     //   checking for server errors
     console.log(error);

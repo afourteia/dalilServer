@@ -75,6 +75,10 @@ const {
   allmedicalSpecialty,
 } = require(`../middlewares/medicalSpecialtyMiddleware`);
 
+const {
+  allMedicalServices
+} = require(`../middlewares/medicalServicesMiddelware`);
+
 const { createCity, allCity } = require(`../middlewares/cityMiddleware`);
 
 const Login = require(`../middlewares/loginMiddleware`);
@@ -198,6 +202,11 @@ router
   .post(authentication, createmedicalSpecialty)
   .get(authentication, allmedicalSpecialty);
 
+// routes for medicalServices
+router
+  .route(`/v1/medicalServices`)
+  .get(authentication, allMedicalServices);
+  
 // routes for cities
 router
   .route(`/v1/cities`)
