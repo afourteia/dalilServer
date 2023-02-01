@@ -3,15 +3,23 @@ const express = require(`express`);
 const app = express();
 const dotenv = require(`dotenv`).config();
 const cookieParser = require(`cookie-parser`);
+const multer  = require('multer');
+const upload = multer();
 const mongoose = require("mongoose");
 
 const port = process.env.PORT || 3000;
 
-// wrapping reqeust body with cookies parser
+// wrapping request body with cookies parser
 app.use(cookieParser());
-// wrapping reqeust body with json
+// wrapping request body with json
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
+
+// for parsing multipart/form-data
+app.use(upload.any()); 
+app.use(express.static('public'));
+
+
 const Server = async () => {
   try {
     // connecting to the database

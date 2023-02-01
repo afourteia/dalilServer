@@ -1,3 +1,4 @@
+
 servicesList = [
   "yearly physicals",
   "cosmetic surgery",
@@ -470,13 +471,31 @@ const getClaims = async (req, res) => {
 
 const createClaim = async (req, res) => {
   try {
+    console.log("Submit Claim -----------------------------------------------")
+    // console.log(req.headers)
+    console.log("req.body")
+    console.log(req.body)
+
+    console.log("req.body")
+    console.log(req.body.test)
+
+    console.log("req.files")
+    console.log(req.files)
+    // console.log("req")
+    // console.log(req)
+
+    fieldnames = []
+
+    console.log("Submit Claim response ---------------------------------------------------")
+    req.files.forEach(file => {
+      fieldnames.push(file.fieldname)
+    })
     const responseBody = {
       codeStatus: "200",
       message: "good",
       data: {
-        objectCount: claimsExample.length,
-        hasMore: false,
-        objectArray: claimsExample,
+        requestBody: req.body,
+        fileFieldNames: fieldnames
       },
     };
 
@@ -487,7 +506,7 @@ const createClaim = async (req, res) => {
   }
 };
 
-const getExepseReports = async (req, res) => {
+const getExpenseReports = async (req, res) => {
   try {
     const responseBody = {
       codeStatus: "200",
@@ -510,5 +529,5 @@ module.exports = {
   benefitPolicies,
   getClaims,
   createClaim,
-  getExepseReports
+  getExpenseReports
 };

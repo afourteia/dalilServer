@@ -3,6 +3,11 @@
 const express = require(`express`);
 // importing router from express
 const router = express.Router();
+
+// const multer  = require('multer')
+// const upload = multer({ dest: 'uploads/' })
+
+
 // importing users middleware
 const { createUsers, getUsers } = require(`../middlewares/userMiddleware`);
 
@@ -11,7 +16,7 @@ const {
   benefitPolicies,
   getClaims,
   createClaim,
-  getExepseReports
+  getExpenseReports
 } = require(`../middlewares/benefitPoliciesMiddleware`);
 
 // importing medicalFiles middleware
@@ -105,7 +110,7 @@ router
 // routes for single beneficiary's expense reports
 router
   .route(`/v1/beneficiaries/:beneficiaryId/expenseReports`)
-  .get(authentication, cookieVerification, getExepseReports)
+  .get(authentication, cookieVerification, getExpenseReports)
   
 // routes for beneficiary's benefit policy
 router
