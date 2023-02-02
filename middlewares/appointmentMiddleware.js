@@ -5,7 +5,7 @@ const medicalCenter = require(`../schemas/medicalCenterSchema`);
 const doctor = require(`../schemas/doctorSchema`);
 const schedule = require(`../schemas/scheduleSchema`);
 // importing dependencies
-const mongo = require('mongodb');
+const mongo = require("mongodb");
 const mongoose = require(`mongoose`);
 // api for creating appointment
 const createAppointment = async (req, res) => {
@@ -18,10 +18,15 @@ const createAppointment = async (req, res) => {
       return res.status(401).json({ msg: `Not Authorized` });
     }
 
-    const medicalCenterObject = await medicalCenter.findOne({medicalCenterId: req.body.medicalCenterId}).lean();
-    const doctorObject = await doctor.findOne({doctorId: req.body.doctorId}).lean();
-    const scheduleObject = await schedule.findOne({scheduleId: req.body.scheduleId}).lean();
-
+    const medicalCenterObject = await medicalCenter
+      .findOne({ medicalCenterId: req.body.medicalCenterId })
+      .lean();
+    const doctorObject = await doctor
+      .findOne({ doctorId: req.body.doctorId })
+      .lean();
+    const scheduleObject = await schedule
+      .findOne({ scheduleId: req.body.scheduleId })
+      .lean();
 
     const document = await appointment.create({
       ...req.body,
@@ -31,18 +36,17 @@ const createAppointment = async (req, res) => {
       dateCreated: Date(),
       medicalCenterObject: medicalCenterObject,
       doctorObject: doctorObject,
-      scheduleObject: scheduleObject
+      scheduleObject: scheduleObject,
     });
 
     let msg = "good";
     const responseBody = {
       codeStatus: "200",
       message: msg,
-      data: document
+      data: document,
     };
 
-    return res.status(200).json({...responseBody});
-    
+    return res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error.message });
@@ -109,7 +113,6 @@ const updateAppointment = async (req, res) => {
 
 const specificAppointment = async (req, res) => {
   try {
-
     const bookedQP = req.query.booked ?? "true";
     const cancelledQP = req.query.cancelled ?? "true";
     const rejectedQP = req.query.rejected ?? "true";
@@ -123,38 +126,49 @@ const specificAppointment = async (req, res) => {
       if (limitQP > 100 || limitQP < 1) {
         limitQP = 30;
       }
-    }else{
+    } else {
       limitQP = 30;
     }
 
     let bookingStatusQP = [];
-    if(bookedQP === "true")bookingStatusQP.push("booked");
-    if(cancelledQP === "true")bookingStatusQP.push("cancelled");
-    if(rejectedQP === "true")bookingStatusQP.push("rejected");
-    if(completedQP === "true")bookingStatusQP.push("completed");
-    if(pendingQP === "true")bookingStatusQP.push("pending");
+    if (bookedQP === "true") bookingStatusQP.push("booked");
+    if (cancelledQP === "true") bookingStatusQP.push("cancelled");
+    if (rejectedQP === "true") bookingStatusQP.push("rejected");
+    if (completedQP === "true") bookingStatusQP.push("completed");
+    if (pendingQP === "true") bookingStatusQP.push("pending");
 
     // console.log(bookingStatusQP);
 
     let query = {};
-    query['$and']=[];
-    query["$and"].push({"userId": {$eq: req.params.userId}});
-    query["$and"].push({"appointmentStatus": {$in: bookingStatusQP}});
-
+    query["$and"] = [];
+    query["$and"].push({ userId: { $eq: req.params.userId } });
+    query["$and"].push({ appointmentStatus: { $in: bookingStatusQP } });
 
     let objectCount = 0;
     let hasMore = true;
 
-    if (query["$and"].length === 0) {      
-      objectCount = await appointment.find({},).countDocuments();
-      if (starting_after_objectQP) query["$and"].push({appointmentId: {$gt: starting_after_objectQP}});
-      documents = await appointment.find({},).sort({appointmentId: 1, _id: 1}).limit(limitQP).lean();
-      lastDocument = await appointment.findOne(query,).sort({appointmentId: -1, _id: -1}).lean();
-        
-    }else {      
-      objectCount = await appointment.find(query,).countDocuments();      
-      if (starting_after_objectQP) query["$and"].push({"appointmentId": {$gt: starting_after_objectQP}});
-      documents = await appointment.find(query,).sort({appointmentId: 1, _id: 1}).limit(limitQP).lean();
+    if (query["$and"].length === 0) {
+      objectCount = await appointment.find({}).countDocuments();
+      if (starting_after_objectQP)
+        query["$and"].push({ appointmentId: { $gt: starting_after_objectQP } });
+      documents = await appointment
+        .find({})
+        .sort({ appointmentId: 1, _id: 1 })
+        .limit(limitQP)
+        .lean();
+      lastDocument = await appointment
+        .findOne(query)
+        .sort({ appointmentId: -1, _id: -1 })
+        .lean();
+    } else {
+      objectCount = await appointment.find(query).countDocuments();
+      if (starting_after_objectQP)
+        query["$and"].push({ appointmentId: { $gt: starting_after_objectQP } });
+      documents = await appointment
+        .find(query)
+        .sort({ appointmentId: 1, _id: 1 })
+        .limit(limitQP)
+        .lean();
       documents = await appointment.aggregate([
         {
           $lookup: {
@@ -172,38 +186,47 @@ const specificAppointment = async (req, res) => {
             as: `doctorObject`,
           },
         },
-        { $match: { 
-          $and: query["$and"]
-          }
+        {
+          $match: {
+            $and: query["$and"],
+          },
         },
-        { $sort: {appointmentId: 1, _id: 1}},
-        { $limit: limitQP}
+        { $sort: { appointmentId: 1, _id: 1 } },
+        { $limit: limitQP },
       ]);
-      lastDocument = await appointment.findOne(query,).sort({appointmentId: -1, _id: -1}).lean();      
+      lastDocument = await appointment
+        .findOne(query)
+        .sort({ appointmentId: -1, _id: -1 })
+        .lean();
     }
     // console.log(lastDocument.appointmentId)
     // console.log("length is " + documents.length)
     // console.log(documents[0])
     documents.forEach((document) => {
-      if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
+      if (document.appointmentId.equals(lastDocument.appointmentId))
+        hasMore = false;
     });
 
-
-    let msg = "good"
-    if (documents.length === 0){
+    let msg = "good";
+    if (documents.length === 0) {
       msg = "list is empty change your query";
       hasMore = false;
     }
-    
+
     documents.forEach((document) => {
-      if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
-      document.doctorObject = document.doctorObject[0]
-      document.medicalCenterObject = document.medicalCenterObject[0]
-      document.patient.birthDate = document.patient.birthDate.toISOString().split('T')[0];
+      if (document.appointmentId.equals(lastDocument.appointmentId))
+        hasMore = false;
+      document.doctorObject = document.doctorObject[0];
+      document.medicalCenterObject = document.medicalCenterObject[0];
+      document.patient.birthDate = document.patient.birthDate
+        .toISOString()
+        .split("T")[0];
       document.patient.age = Math.floor(Math.random() * 91);
       document.patient.patientId = "LCS-1905-13";
       // console.log(document.appointmentDate.toISOString().split('T')[0])
-      document.appointmentDate = document.appointmentDate.toISOString().split('T')[0];
+      document.appointmentDate = document.appointmentDate
+        .toISOString()
+        .split("T")[0];
     });
 
     const responseBody = {
@@ -212,11 +235,11 @@ const specificAppointment = async (req, res) => {
       data: {
         objectCount: objectCount,
         hasMore,
-        objectArray: documents
-      }
+        objectArray: documents,
+      },
     };
 
-    res.status(200).json({...responseBody});
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error.message });
@@ -235,21 +258,20 @@ const doctorAppointmentSummaries = async (req, res) => {
 
     let addDates = 10;
 
-    const todaysDate = new Date('January 12, 2023');
-    const futureDate = new Date('January 12, 2023');
+    const todaysDate = new Date("January 12, 2023");
+    const futureDate = new Date("January 12, 2023");
     futureDate.setDate(futureDate.getDate() + addDates);
 
     let bookingStatusQP = [];
-    if(bookedQP === "true")bookingStatusQP.push("booked");
+    if (bookedQP === "true") bookingStatusQP.push("booked");
     // if(cancelledQP === "true")bookingStatusQP.push("cancelled");
     // if(rejectedQP === "true")bookingStatusQP.push("rejected");
     // if(completedQP === "true")bookingStatusQP.push("completed");
     // if(pendingQP === "true")bookingStatusQP.push("pending");
 
-
     let query = {};
-    query['$and']=[];
-    query["$and"].push({"doctorId": {$eq: req.params.doctorId}});
+    query["$and"] = [];
+    query["$and"].push({ doctorId: { $eq: req.params.doctorId } });
     // query["$and"].push({"appointmentDate": {$gte: todaysDate.toISOString().split('T')[0]}});
     // query["$and"].push({"appointmentDate": {$lte: futureDate.toISOString().split('T')[0]}});
 
@@ -272,23 +294,24 @@ const doctorAppointmentSummaries = async (req, res) => {
           as: `doctorObject`,
         },
       },
-      { $match: { 
-        $and: query["$and"]
-        }
+      {
+        $match: {
+          $and: query["$and"],
+        },
       },
-      { $group:
-        {
+      {
+        $group: {
           _id: "$medicalCenterId",
-          medicalCenterId: {$first: "$medicalCenterId"},
-          medicalCenterName: {$first: "$medicalCenterObject.name"},
-          appointmentDates: { $addToSet: "$appointmentDate"},
+          medicalCenterId: { $first: "$medicalCenterId" },
+          medicalCenterName: { $first: "$medicalCenterObject.name" },
+          appointmentDates: { $addToSet: "$appointmentDate" },
           expectedVisits: {
             $push: {
               date: "$appointmentDate",
-              slot: "$timeslot",           
-            },          
-          }
-        }
+              slot: "$timeslot",
+            },
+          },
+        },
       },
       { $unwind: "$medicalCenterName" },
       // { $unwind: "$expectedVisits" },
@@ -311,18 +334,17 @@ const doctorAppointmentSummaries = async (req, res) => {
 
     let dateArray = new Array();
     let currentDate = todaysDate;
-    while (currentDate <= futureDate){      
+    while (currentDate <= futureDate) {
       dateArray.push(new Date(currentDate));
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
     // console.log(dateArray)
-    console.log(documents.length)
-    
+    console.log(documents.length);
+
     let objectCount = 0;
-    let hasMore = true;      
+    let hasMore = true;
     // objectCount = await appointment.find(query,).countDocuments();
-    
 
     // Creating the Body response
     let theSummary = new Array();
@@ -331,37 +353,48 @@ const doctorAppointmentSummaries = async (req, res) => {
       let medicalCenterName = documents[i].medicalCenterName;
       let theSummaryDateResults = new Array();
       for (let j = 0; j < dateArray.length; j++) {
-        let date = dateArray[j].toISOString().split('T')[0]
-        morningSlot = documents[i].expectedVisits.filter(element => element.date.toISOString().split('T')[0] === date  && element.slot === "morning").length;
-        afternoonSlot = documents[i].expectedVisits.filter(element => element.date.toISOString().split('T')[0] === date  && element.slot === "afternoon").length;
-        eveningSlot = documents[i].expectedVisits.filter(element => element.date.toISOString().split('T')[0] === date  && element.slot === "evening").length;
+        let date = dateArray[j].toISOString().split("T")[0];
+        morningSlot = documents[i].expectedVisits.filter(
+          (element) =>
+            element.date.toISOString().split("T")[0] === date &&
+            element.slot === "morning"
+        ).length;
+        afternoonSlot = documents[i].expectedVisits.filter(
+          (element) =>
+            element.date.toISOString().split("T")[0] === date &&
+            element.slot === "afternoon"
+        ).length;
+        eveningSlot = documents[i].expectedVisits.filter(
+          (element) =>
+            element.date.toISOString().split("T")[0] === date &&
+            element.slot === "evening"
+        ).length;
         let datesResults = {
           date: date,
           morningSlot: morningSlot,
           afternoonSlot: afternoonSlot,
-          eveningSlot: eveningSlot
+          eveningSlot: eveningSlot,
         };
         theSummaryDateResults.push(datesResults);
       }
       theSummary.push({
         medicalCenterId,
         medicalCenterName,
-        expectedVisits: theSummaryDateResults
+        expectedVisits: theSummaryDateResults,
       });
     }
 
     // if (starting_after_objectQP) query["$and"].push({"appointmentId": {$gt: starting_after_objectQP}});
     // documents = await appointment.find(query,).sort({appointmentId: 1}).limit(limitQP).lean();
-    // lastDocument = await appointment.findOne(query,).sort({appointmentId: -1}).lean();      
-    
+    // lastDocument = await appointment.findOne(query,).sort({appointmentId: -1}).lean();
+
     // // console.log(lastDocument.appointmentId)
     // documents.forEach((document) => {
     //   if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
     // });
 
-
-    let msg = "good"
-    if (documents.length === 0){
+    let msg = "good";
+    if (documents.length === 0) {
       msg = "list is empty change your query";
       hasMore = false;
     }
@@ -372,18 +405,16 @@ const doctorAppointmentSummaries = async (req, res) => {
       data: {
         objectCount: documents.length,
         hasMore,
-        objectArray: theSummary
-      }
+        objectArray: theSummary,
+      },
     };
 
-    res.status(200).json({...responseBody});
-
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error.message });
   }
 };
-
 
 const doctorAppointments = async (req, res) => {
   try {
@@ -399,50 +430,48 @@ const doctorAppointments = async (req, res) => {
       if (limitQP > 100 || limitQP < 1) {
         limitQP = 30;
       }
-    }else{
+    } else {
       limitQP = 30;
     }
 
-
     let bookingStatusQP = [];
-    if(bookedQP === "true")bookingStatusQP.push("booked");
+    if (bookedQP === "true") bookingStatusQP.push("booked");
     // if(cancelledQP === "true")bookingStatusQP.push("cancelled");
     // if(rejectedQP === "true")bookingStatusQP.push("rejected");
     // if(completedQP === "true")bookingStatusQP.push("completed");
     // if(pendingQP === "true")bookingStatusQP.push("pending");
 
-
     let query = {};
-    query['$and']=[];
-    query["$and"].push({"doctorId": {$eq: req.params.doctorId}});
-    query["$and"].push({"appointmentDate": {$eq: new Date(req.query.date)}});
-    query["$and"].push({"timeslot": {$eq: req.query.timeSlot}});
-    query["$and"].push({"medicalCenterId": {$eq: req.query.medicalCenterId}});
-    if (starting_after_objectQP){
-      query["$and"].push({"appointmentId": {$gt: starting_after_objectQP}});
+    query["$and"] = [];
+    query["$and"].push({ doctorId: { $eq: req.params.doctorId } });
+    query["$and"].push({ appointmentDate: { $eq: new Date(req.query.date) } });
+    query["$and"].push({ timeslot: { $eq: req.query.timeSlot } });
+    query["$and"].push({ medicalCenterId: { $eq: req.query.medicalCenterId } });
+    if (starting_after_objectQP) {
+      query["$and"].push({ appointmentId: { $gt: starting_after_objectQP } });
     }
 
     documents = await appointment.aggregate([
-      { $match: { 
-        $and: query["$and"]
-        }
+      {
+        $match: {
+          $and: query["$and"],
+        },
       },
-      { $sort: {appointmentId: 1}},
-      { $limit: limitQP}
+      { $sort: { appointmentId: 1 } },
+      { $limit: limitQP },
     ]);
 
     // console.log(dateArray)
-    console.log(documents.length)
-    
+    console.log(documents.length);
+
     let objectCount = 0;
-    let hasMore = true;      
+    let hasMore = true;
     // objectCount = await appointment.find(query,).countDocuments();
-  
 
     // if (starting_after_objectQP) query["$and"].push({"appointmentId": {$gt: starting_after_objectQP}});
     // documents = await appointment.find(query,).sort({appointmentId: 1}).limit(limitQP).lean();
-    // lastDocument = await appointment.findOne(query,).sort({appointmentId: -1}).lean();      
-    
+    // lastDocument = await appointment.findOne(query,).sort({appointmentId: -1}).lean();
+
     // // console.log(lastDocument.appointmentId)
     // documents.forEach((document) => {
     //   if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
@@ -454,8 +483,8 @@ const doctorAppointments = async (req, res) => {
       document.patient.fileEntires = Math.floor(Math.random() * 31);
     });
 
-    let msg = "good"
-    if (documents.length === 0){
+    let msg = "good";
+    if (documents.length === 0) {
       msg = "list is empty change your query";
       hasMore = false;
     }
@@ -466,12 +495,11 @@ const doctorAppointments = async (req, res) => {
       data: {
         objectCount: documents.length,
         hasMore,
-        objectArray: documents
-      }
+        objectArray: documents,
+      },
     };
 
-    res.status(200).json({...responseBody});
-
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error.message });
@@ -488,209 +516,80 @@ const allAppointments = async (req, res) => {
     const pendingQP = req.query.pending ?? true;
     const medicalCenterIdQP = req.query.medicalCenterId;
     const starting_after_objectQP = req.query.starting_after_object;
-    const limitQP = Number(req.query.limit) ?? 30;
+    let limitQP = Number(req.query.limit) ?? 30;
     const fromDateQP = req.query.fromDate;
     const toDateQP = req.query.toDate;
 
-    let bookingStatusQP = [];
-    if(bookedQP){
-      bookingStatusQP.push("booked");
+    if (limitQP) {
+      limitQP = Number(limitQP);
+      if (limitQP > 100 || limitQP < 1) {
+        limitQP = 30;
+      }
+    } else {
+      limitQP = 30;
     }
-    if(cancelledQP){
-      bookingStatusQP.push("cancelled");
-    }
-    if(rejectedQP){
-      bookingStatusQP.push("rejected");
-    }
-    if(completedQP){
-      bookingStatusQP.push("completed");
-    }
-    if(pendingQP){
-      bookingStatusQP.push("pending");
-    }
-    
-  //   if (toDate) {
-  //     const dateMilliseconds = new Date(toDate).valueOf();
-  //     if (!dateMilliseconds) {
-  //       return res.status(200).json({ msg: `Invalid date inputed` });
-  //     }
-  //     const document = await appointment.find({
-  //       dateCreatedMilliSeconds: { $lte: dateMilliseconds },
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         dateCreatedMilliSeconds: { $lte: dateMilliseconds },
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (fromDate) {
-  //     const dateMilliseconds = new Date(fromDate).valueOf();
-  //     if (!dateMilliseconds) {
-  //       return res.status(200).json({ msg: `Invalid date inputed` });
-  //     }
 
-  //     const document = await appointment.find({
-  //       dateCreatedMilliSeconds: { $gte: dateMilliseconds },
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         dateCreatedMilliSeconds: { $gte: dateMilliseconds },
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (medicalCenterId) {
-  //     const document = await appointment.find({
-  //       "medicalcenter.medicalCenterId": medicalCenterId,
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         "medicalcenter.medicalCenterId": medicalCenterId,
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (starting_after_object) {
-  //     const aid = Number(starting_after_object.split(`-`)[1]);
-  //     const document = await appointment.find({
-  //       aid: { $gt: aid },
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         aid: { $gt: aid },
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (cancelled) {
-  //     const document = await appointment.find({
-  //       appointmentStatus: cancelled,
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         appointmentStatus: cancelled,
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (rejected) {
-  //     const document = await appointment.find({
-  //       appointmentStatus: rejected,
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         appointmentStatus: rejected,
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (completed) {
-  //     const document = await appointment.find({
-  //       appointmentStatus: completed,
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         appointmentStatus: completed,
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (pending) {
-  //     const document = await appointment.find({
-  //       appointmentStatus: pending,
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         appointmentStatus: pending,
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   if (booked) {
-  //     const document = await appointment.find({
-  //       appointmentStatus: booked,
-  //     });
-  //     const documents = await appointment
-  //       .find({
-  //         appointmentStatus: booked,
-  //       })
-  //       .limit(limit ? limit : 30);
-  //     if (documents.length === 0) {
-  //       return res.status(404).json({ msg: `appointments not found` });
-  //     }
-  //     return res.status(200).json({
-  //       documents,
-  //       objectCount: document.length,
-  //       hasMore: document.length > documents.length ? true : false,
-  //     });
-  //   }
-  //   const documents = await appointment.find({});
-  //   const allDoc = await appointment.find({}).limit(limit ? limit : 30);
-  //   if (!allDoc) {
-  //     res.status(404).json({ msg: `appointments not found` });
-  //   }
-  //   res.status(200).json({
-  //     allDoc,
-  //     objectCount: documents.length,
-  //     hasMore: documents.length > allDoc.length ? true : false,
-  //   });
+    let bookingStatusQP = [];
+    if (bookedQP === "true") bookingStatusQP.push("booked");
+    if (cancelledQP === "true") bookingStatusQP.push("cancelled");
+    if (rejectedQP === "true") bookingStatusQP.push("rejected");
+    if (completedQP === "true") bookingStatusQP.push("completed");
+    if (pendingQP === "true") bookingStatusQP.push("pending");
+
+    let query = {};
+    query["$and"] = [];
+    query["$and"].push({ appointmentStatus: { $in: bookingStatusQP } });
+
+    let objectCount = 0;
+    let hasMore = true;
+
+    documents = await appointment.aggregate([
+      {
+        $lookup: {
+          from: `medicalcenters`,
+          localField: `medicalCenterId`,
+          foreignField: `medicalCenterId`,
+          as: `medicalCenterObject`,
+        },
+      },
+      {
+        $lookup: {
+          from: `doctors`,
+          localField: `doctorId`,
+          foreignField: `doctorId`,
+          as: `doctorObject`,
+        },
+      },
+      // {
+      //   $match: {
+      //     $and: query["$and"],
+      //   },
+      // },
+      { $sort: { appointmentId: 1, _id: 1 } },
+      { $limit: limitQP },
+    ]);
+
+    documents.forEach((document) => {
+      document.medicalCenterObject = document.medicalCenterObject[0];
+      document.doctorObject = document.doctorObject[0];
+    });
+
+    let count = documents.length;
+
+    let msg = "good";
+    if (documents.length === 0) {
+      msg = "list is empty change your query";
+    }
+    const responseBody = {
+      codeStatus: "200",
+      message: msg,
+      data: {
+        objectCount: count,
+        objectArray: documents,
+      },
+    };
+
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error.message });
