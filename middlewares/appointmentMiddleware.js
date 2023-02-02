@@ -572,6 +572,17 @@ const allAppointments = async (req, res) => {
     documents.forEach((document) => {
       document.medicalCenterObject = document.medicalCenterObject[0];
       document.doctorObject = document.doctorObject[0];
+      document.patient.birthDate = document.patient.birthDate
+        .toISOString()
+        .split("T")[0];
+      document.patient.age = Math.floor(Math.random() * 91);
+      document.patient.patientId = "LCS-1905-13";
+      document.appointmentDate = document.appointmentDate
+        .toISOString()
+        .split("T")[0];
+      document.price = Number.parseFloat(Math.random() * 150).toFixed(2);
+      document.notes =
+        "Place holder for notes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna";
     });
 
     let count = documents.length;
