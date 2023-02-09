@@ -106,7 +106,7 @@ const createSchedule = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -124,12 +124,12 @@ const updateSchedule = async (req, res) => {
       )
       .lean();
     if (!document) {
-      return res.status(404).json({ msg: `schedule not found` });
+      return res.status(404).json({ message: `schedule not found` });
     }
     res.status(200).json(document);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -222,13 +222,13 @@ const allDoctorSchedule = async (req, res) => {
     });
     let count = documents.length
 
-    let msg = "good"
+    let message = "good"
     if (documents.length === 0){
-      msg = "list is empty change your query";
+      message = "list is empty change your query";
     }
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: {
         objectCount: count,
         objectArray: documents
@@ -238,7 +238,7 @@ const allDoctorSchedule = async (req, res) => {
     res.status(200).json({...responseBody});
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -246,12 +246,12 @@ const specificSchedule = async (req, res) => {
   try {
     const document = await schedule.findOne(req.params).lean();
     if (!document) {
-      return res.status(404).json({ msg: `schedule not found` });
+      return res.status(404).json({ message: `schedule not found` });
     }
     res.status(200).json(document);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -479,14 +479,14 @@ const allSchedule = async (req, res) => {
       count = objectCount[0].objectCount
     }
 
-    let msg = "good"
+    let message = "good"
     if (documents.length === 0){
-      msg = "list is empty change your query";
+      message = "list is empty change your query";
       hasMore = false;
     }
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: {
         objectCount: count,
         hasMore,
@@ -497,7 +497,7 @@ const allSchedule = async (req, res) => {
     res.status(200).json({...responseBody});
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -506,12 +506,12 @@ const deleteSchedule = async (req, res) => {
   try {
     const document = await schedule.findOneAndDelete(req.params).lean();
     if (!document) {
-      return res.status(404).json({ msg: `schedule not found` });
+      return res.status(404).json({ message: `schedule not found` });
     }
-    res.status(200).json({ msg: `successfully deleted` });
+    res.status(200).json({ message: `successfully deleted` });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

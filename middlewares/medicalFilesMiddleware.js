@@ -18,11 +18,11 @@ const singleMedicalFiles = async (req, res) => {
     // console.log(req.params);
     
     if (!document) {
-      return res.status(404).json({ msg: `beneficiary not found` });
+      return res.status(404).json({ message: `beneficiary not found` });
     }
 
     if (res.locals.user.userId !== document.account.userId) {
-      return res.status(401).json({ msg: `Not Authorized` });
+      return res.status(401).json({ message: `Not Authorized` });
     }
     let medicalFiles = []
 
@@ -63,7 +63,7 @@ const singleMedicalFiles = async (req, res) => {
     res.status(200).json({... responseBody});
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -91,11 +91,11 @@ const singlePatientMedicalFiles = async (req, res) => {
     // console.log(document)
     
     if (documents.length === 0) {
-      return res.status(404).json({ msg: `patient not found` });
+      return res.status(404).json({ message: `patient not found` });
     }
 
     // if (res.locals.user.userId !== document.account.userId) {
-    //   return res.status(401).json({ msg: `Not Authorized` });
+    //   return res.status(401).json({ message: `Not Authorized` });
     // }
     let medicalFile = {};
 

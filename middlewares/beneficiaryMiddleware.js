@@ -53,7 +53,7 @@ const createBeneficiary = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -70,7 +70,7 @@ const getBeneficiaries = async (req, res) => {
     }
     // if (!beneficiaryIdQuery.startsWith(`SSD-`)) {
     //   return res.status(404).json({
-    //     msg: `beneficiary not found, check your starting_after_object input`,
+    //     message: `beneficiary not found, check your starting_after_object input`,
     //   });
     // }
 
@@ -94,7 +94,7 @@ const getBeneficiaries = async (req, res) => {
         .limit(!limit ? 30 : limit);
       if (object.length === 0) {
         return res.status(404).json({
-          msg: `beneficiary not found`,
+          message: `beneficiary not found`,
         });
       }
       object.forEach((object) => {
@@ -124,7 +124,7 @@ const getBeneficiaries = async (req, res) => {
         .limit(!limit ? 30 : limit);
       if (object.length === 0) {
         return res.status(404).json({
-          msg: `beneficiary not found`,
+          message: `beneficiary not found`,
         });
       }
       object.forEach((object) => {
@@ -139,7 +139,7 @@ const getBeneficiaries = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -149,11 +149,11 @@ const singleBeneficiary = async (req, res) => {
     const document = await beneficiarys.findOne(req.params).lean();
     
     if (!document) {
-      return res.status(404).json({ msg: `beneficiary not found` });
+      return res.status(404).json({ message: `beneficiary not found` });
     }
 
     // if (res.locals.user.userId !== document.account.userId) {
-    //   return res.status(401).json({ msg: `Not Authorized for this user` });
+    //   return res.status(401).json({ message: `Not Authorized for this user` });
     // }
 
     document.birthdate = document.birthdate.toLocaleDateString("en-GB");
@@ -167,7 +167,7 @@ const singleBeneficiary = async (req, res) => {
     res.status(200).json({... responseBody});
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -176,10 +176,10 @@ const updateBeneficiary = async (req, res) => {
   try {
     const doc = await beneficiarys.findOne(req.params).lean();
     if (!doc) {
-      return res.status(404).json({ msg: `beneficiary to update not found` });
+      return res.status(404).json({ message: `beneficiary to update not found` });
     }
     // if (res.locals.user.userId !== doc.account.userId) {
-    //   return res.status(401).json({ msg: `Not Authorized` });
+    //   return res.status(401).json({ message: `Not Authorized` });
     // }
     const document = await beneficiarys
       .findOneAndUpdate(
@@ -197,7 +197,7 @@ const updateBeneficiary = async (req, res) => {
     res.status(200).json(document);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

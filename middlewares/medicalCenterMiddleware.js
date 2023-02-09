@@ -4,29 +4,49 @@ const medicalCenter = require(`../schemas/medicalCenterSchema`);
 const createmedicalCenter = async (req, res) => {
   try {
     const allDocument = await medicalCenter.find({});
-    if (allDocument.length === 0) {
-      const document = await medicalCenter.create({
-        ...req.body,
-        medicalCenterId: `MC-1`,
-        sd: 1,
-      });
-      delete document._doc.sd;
-      res.status(200).json(document._doc);
-    } else {
-      const lastDocument = allDocument[allDocument.length - 1];
-      const idNumber = Number(lastDocument.medicalCenterId.split(`-`)[1]);
-      const document = await medicalCenter.create({
-        ...req.body,
-        medicalCenterId: `MC-${idNumber + 1}`,
-        sd: idNumber + 1,
-      });
-      delete document._doc.sd;
-      res.status(200).json(document._doc);
-    }
+    // if (allDocument.length === 0) {
+    //   const document = await medicalCenter.create({
+    //     ...req.body,
+    //     medicalCenterId: `MC-1`,
+    //     sd: 1,
+    //   });
+    //   delete document._doc.sd;
+    //   res.status(200).json(document._doc);
+    // } else {
+    //   const lastDocument = allDocument[allDocument.length - 1];
+    //   const idNumber = Number(lastDocument.medicalCenterId.split(`-`)[1]);
+    //   const document = await medicalCenter.create({
+    //     ...req.body,
+    //     medicalCenterId: `MC-${idNumber + 1}`,
+    //     sd: idNumber + 1,
+    //   });
+    //   delete document._doc.sd;
+    //   res.status(200).json(document._doc);
+    // }
+
+    console.log("Create Medical Center -----------------------------------------------")
+    // console.log(req.headers)
+    console.log("req.body")
+    console.log(req.body)
+
+    console.log("req.body")
+    console.log(req.body)
+
+
+    console.log("Create Medical Center response ---------------------------------------------------")
+    const responseBody = {
+      codeStatus: "200",
+      message: "good",
+      data: {
+        requestBody: req.body
+      },
+    };
+    return res.status(200).json({ ...responseBody });
+
   } catch (error) {
     //   checking for server errors
     console.log(error);
-    res.status(200).json({ msg: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -35,7 +55,7 @@ const singlemedicalCenter = async (req, res) => {
   try {
     const document = await medicalCenter.find(req.params).lean();
     if (document.length === 0) {
-      return res.status(404).json({ msg: `document not found` });
+      return res.status(404).json({ message: `document not found` });
     }
     document.forEach((each) => {
       delete each.sd;
@@ -44,7 +64,7 @@ const singlemedicalCenter = async (req, res) => {
   } catch (error) {
     //   checking for server errors
     console.log(error);
-    res.status(200).json({ msg: error.message });
+    res.status(200).json({ message: error.message });
   }
 };
 
@@ -57,7 +77,7 @@ const updatemedicalCenter = async (req, res) => {
       })
       .lean();
     if (!document) {
-      return res.status(404).json({ msg: `document not found` });
+      return res.status(404).json({ message: `document not found` });
     }
     const documentArray = [document];
     documentArray.forEach((each) => {
@@ -67,7 +87,7 @@ const updatemedicalCenter = async (req, res) => {
   } catch (error) {
     //   checking for server errors
     console.log(error);
-    res.status(200).json({ msg: error.message });
+    res.status(200).json({ message: error.message });
   }
 };
 
@@ -76,13 +96,13 @@ const deletemedicalCenter = async (req, res) => {
   try {
     const document = await medicalCenter.findOneAndDelete(req.params);
     if (!document) {
-      return res.status(404).json({ msg: `document not found` });
+      return res.status(404).json({ message: `document not found` });
     }
-    res.status(200).json({ msg: `successfully Deleted` });
+    res.status(200).json({ message: `successfully Deleted` });
   } catch (error) {
     //   checking for server errors
     console.log(error);
-    res.status(200).json({ msg: error.message });
+    res.status(200).json({ message: error.message });
   }
 };
 
@@ -180,14 +200,14 @@ const allmedicalCenter = async (req, res) => {
       count = objectCount[0].objectCount
     }
 
-    let msg = "good"
+    let message = "good"
     if (documents.length === 0){
-      msg = "list is empty change your query";
+      message = "list is empty change your query";
       hasMore = false;
     }
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: {
         objectCount: count,
         hasMore,
@@ -199,7 +219,7 @@ const allmedicalCenter = async (req, res) => {
   } catch (error) {
     //   checking for server errors
     console.log(error);
-    res.status(200).json({ msg: error.message });
+    res.status(200).json({ message: error.message });
   }
 };
 

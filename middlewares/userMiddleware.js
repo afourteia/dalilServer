@@ -67,7 +67,7 @@ const createUsers = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -88,7 +88,7 @@ const getUsers = async (req, res) => {
     let limit = Number(limitQuery);
     if (!userIdQuery.startsWith(`SSD-`)) {
       return res.status(404).json({
-        msg: `User not found, check your starting_after_object input`,
+        message: `User not found, check your starting_after_object input`,
       });
     }
 
@@ -109,7 +109,7 @@ const getUsers = async (req, res) => {
 
     if (object.length === 0) {
       return res.status(404).json({
-        msg: `User not found`,
+        message: `User not found`,
       });
     }
 
@@ -125,7 +125,7 @@ const getUsers = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

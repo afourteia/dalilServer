@@ -15,7 +15,7 @@ const createAppointment = async (req, res) => {
     // const doc = await appointment.find({});
     // // const appointmentDoc = await appointment.find(req.params);
     if (req.params.userId !== userId) {
-      return res.status(401).json({ msg: `Not Authorized` });
+      return res.status(401).json({ message: `Not Authorized` });
     }
 
     const medicalCenterObject = await medicalCenter
@@ -39,17 +39,17 @@ const createAppointment = async (req, res) => {
       scheduleObject: scheduleObject,
     });
 
-    let msg = "good";
+    let message = "good";
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: document,
     };
 
     return res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -72,7 +72,7 @@ const updateAppointment = async (req, res) => {
       )
       .lean();
     if (!document) {
-      return res.status(404).json({ msg: `document not found` });
+      return res.status(404).json({ message: `document not found` });
     }
 
     const response = await appointment
@@ -107,7 +107,7 @@ const updateAppointment = async (req, res) => {
     res.status(200).json(response[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -207,9 +207,9 @@ const specificAppointment = async (req, res) => {
         hasMore = false;
     });
 
-    let msg = "good";
+    let message = "good";
     if (documents.length === 0) {
-      msg = "list is empty change your query";
+      message = "list is empty change your query";
       hasMore = false;
     }
 
@@ -231,7 +231,7 @@ const specificAppointment = async (req, res) => {
 
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: {
         objectCount: objectCount,
         hasMore,
@@ -242,7 +242,7 @@ const specificAppointment = async (req, res) => {
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -393,15 +393,15 @@ const doctorAppointmentSummaries = async (req, res) => {
     //   if (document.appointmentId.equals(lastDocument.appointmentId)) hasMore = false;
     // });
 
-    let msg = "good";
+    let message = "good";
     if (documents.length === 0) {
-      msg = "list is empty change your query";
+      message = "list is empty change your query";
       hasMore = false;
     }
 
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: {
         objectCount: documents.length,
         hasMore,
@@ -412,7 +412,7 @@ const doctorAppointmentSummaries = async (req, res) => {
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -483,15 +483,15 @@ const doctorAppointments = async (req, res) => {
       document.patient.fileEntires = Math.floor(Math.random() * 31);
     });
 
-    let msg = "good";
+    let message = "good";
     if (documents.length === 0) {
-      msg = "list is empty change your query";
+      message = "list is empty change your query";
       hasMore = false;
     }
 
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: {
         objectCount: documents.length,
         hasMore,
@@ -502,7 +502,7 @@ const doctorAppointments = async (req, res) => {
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -560,11 +560,11 @@ const allAppointments = async (req, res) => {
           as: `doctorObject`,
         },
       },
-      // {
-      //   $match: {
-      //     $and: query["$and"],
-      //   },
-      // },
+      {
+        $match: {
+          $and: query["$and"],
+        },
+      },
       { $sort: { appointmentId: 1, _id: 1 } },
       { $limit: limitQP },
     ]);
@@ -587,13 +587,13 @@ const allAppointments = async (req, res) => {
 
     let count = documents.length;
 
-    let msg = "good";
+    let message = "good";
     if (documents.length === 0) {
-      msg = "list is empty change your query";
+      message = "list is empty change your query";
     }
     const responseBody = {
       codeStatus: "200",
-      message: msg,
+      message: message,
       data: {
         objectCount: count,
         objectArray: documents,
@@ -603,7 +603,7 @@ const allAppointments = async (req, res) => {
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

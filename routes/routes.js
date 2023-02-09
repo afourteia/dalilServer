@@ -81,7 +81,7 @@ const {
 
 const { createCity, allCity } = require(`../middlewares/cityMiddleware`);
 
-const Login = require(`../middlewares/loginMiddleware`);
+const {login, logout} = require(`../middlewares/loginMiddleware`);
 
 // importing authentication/authorization middleware
 const { authentication, cookieVerification } = require(`../auth`);
@@ -214,7 +214,11 @@ router
   .get(authentication, allCity);
 
 // routes for login
-router.route(`/v1/login`).post(Login);
+router.route(`/v1/login`).post(login);
+
+// routes for logout
+router.route(`/v1/logout`).post(logout);
+
 
 // exporting router
 module.exports = router;

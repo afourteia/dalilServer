@@ -7,7 +7,7 @@
 //     res.status(200).json(document);
 //   } catch (error) {
 //     console.log(error);
-//     res.status(500).json({ msg: error.message });
+//     res.status(500).json({ message: error.message });
 //   }
 // };
 
@@ -40,7 +40,7 @@ const allMedicalServices = async (req, res) => {
     res.status(200).json({...responseBody});
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

@@ -446,7 +446,7 @@ const benefitPolicies = async (req, res) => {
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -465,7 +465,7 @@ const getClaims = async (req, res) => {
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -476,33 +476,33 @@ const createClaim = async (req, res) => {
     console.log("req.body")
     console.log(req.body)
 
-    console.log("req.body")
-    console.log(req.body.test)
-
     console.log("req.files")
     console.log(req.files)
     // console.log("req")
     // console.log(req)
 
-    fieldnames = []
+    let fieldnames = []
+    let originalnames = []
 
     console.log("Submit Claim response ---------------------------------------------------")
     req.files.forEach(file => {
       fieldnames.push(file.fieldname)
+      originalnames.push(file.originalname)
     })
     const responseBody = {
       codeStatus: "200",
       message: "good",
       data: {
         requestBody: req.body,
-        fileFieldNames: fieldnames
+        fileFieldName: fieldnames,
+        originalname: originalnames
       },
     };
 
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -521,7 +521,7 @@ const getExpenseReports = async (req, res) => {
     res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

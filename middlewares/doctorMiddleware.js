@@ -25,7 +25,7 @@ const createDoctor = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -34,7 +34,7 @@ const singleDoctor = async (req, res) => {
   try {
     const document = await doctor.find(req.params).lean();
     if (document.length === 0) {
-      return res.status(404).json({ msg: `document not found` });
+      return res.status(404).json({ message: `document not found` });
     }
     document.forEach((each) => {
       delete each.sd;
@@ -42,7 +42,7 @@ const singleDoctor = async (req, res) => {
     res.status(200).json(document);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -55,7 +55,7 @@ const updateDoctor = async (req, res) => {
       })
       .lean();
     if (!document) {
-      return res.status(404).json({ msg: `document not found` });
+      return res.status(404).json({ message: `document not found` });
     }
     const documentArray = [document];
     documentArray.forEach((each) => {
@@ -64,7 +64,7 @@ const updateDoctor = async (req, res) => {
     res.status(200).json(document);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -73,12 +73,12 @@ const deleteDoctor = async (req, res) => {
   try {
     const document = await doctor.findOneAndDelete(req.params);
     if (!document) {
-      return res.status(404).json({ msg: `document not found` });
+      return res.status(404).json({ message: `document not found` });
     }
-    res.status(200).json({ msg: `successfully Deleted` });
+    res.status(200).json({ message: `successfully Deleted` });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -95,7 +95,7 @@ const allDoctor = async (req, res) => {
     }
     if (!doctorIdQuery.startsWith(`DOC-`)) {
       return res.status(404).json({
-        msg: `doctor not found, check your starting_after_object input`,
+        message: `doctor not found, check your starting_after_object input`,
       });
     }
 
@@ -120,7 +120,7 @@ const allDoctor = async (req, res) => {
         .limit(!limit ? 30 : limit);
       if (object.length === 0) {
         return res.status(404).json({
-          msg: `doctor not found`,
+          message: `doctor not found`,
         });
       }
       object.forEach((object) => {
@@ -150,7 +150,7 @@ const allDoctor = async (req, res) => {
         .limit(!limit ? 30 : limit);
       if (object.length === 0) {
         return res.status(404).json({
-          msg: `doctor not found`,
+          message: `doctor not found`,
         });
       }
       object.forEach((object) => {
@@ -165,7 +165,7 @@ const allDoctor = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

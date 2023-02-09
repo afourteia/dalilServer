@@ -4,7 +4,7 @@ const user = require(`../schemas/userSchema`);
 const bcrypt = require("bcrypt");
 const jwt = require(`jsonwebtoken`);
 
-const Login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const myPlaintextPassword = req.body.password;
 
@@ -12,14 +12,14 @@ const Login = async (req, res) => {
       username: req.body.username,
     });
     if (!doc) {
-      return res.status(404).json({ msg: `username is invalid` });
+      return res.status(404).json({ message: `username is invalid` });
     }
     const hashedPassword = doc.password;
     const userId = doc.userId;
     // comparing hashed password
     const hash = await bcrypt.compare(myPlaintextPassword, hashedPassword);
     if (!hash) {
-      return res.status(404).json({ msg: `password is invalid` });
+      return res.status(404).json({ message: `password is invalid` });
     }
     const { username } = req.body;
     const document = await user.findOne({
@@ -80,8 +80,37 @@ const Login = async (req, res) => {
     res.status(200).json({...responseBody });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = Login;
+
+
+const logout = async (req, res) => {
+  try {
+    console.log("Create Medical Center -----------------------------------------------")
+    // console.log(req.headers)
+    console.log("req.body")
+    console.log(req.body)
+
+    console.log("req.body")
+    console.log(req.body)
+
+
+    console.log("Create Medical Center response ---------------------------------------------------")
+    const responseBody = {
+      codeStatus: "200",
+      message: "logout successful"
+    };
+
+  } catch (error) {
+    //   checking for server errors
+    console.log(error);
+    res.status(200).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  login,
+  logout
+};
