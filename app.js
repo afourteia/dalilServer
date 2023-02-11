@@ -6,8 +6,12 @@ const cookieParser = require(`cookie-parser`);
 const multer  = require('multer');
 const upload = multer();
 const mongoose = require("mongoose");
+// var cors = require('cors')
 
 const port = process.env.PORT || 3000;
+
+//Enable All cors requests
+// app.use(cors())
 
 // wrapping request body with cookies parser
 app.use(cookieParser());
