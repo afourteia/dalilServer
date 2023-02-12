@@ -1,5 +1,6 @@
 // importing doctor collection for querying database
 const doctor = require(`../schemas/doctorSchema`);
+const mongoose = require(`mongoose`);
 // api/ logic for doctor creation
 const createDoctor = async (req, res) => {
   try {
