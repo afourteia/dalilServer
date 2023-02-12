@@ -103,10 +103,12 @@ const logout = async (req, res) => {
       message: "logout successful"
     };
 
+    res.status(200).json({...responseBody });
+
   } catch (error) {
     //   checking for server errors
     console.log(error);
-    res.status(200).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

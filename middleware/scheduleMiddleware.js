@@ -1,6 +1,7 @@
 //importing appointments collection
 const { find } = require("../schemas/scheduleSchema");
 const schedule = require(`../schemas/scheduleSchema`);
+const mongoose = require(`mongoose`);
 // importing dependencies
 
 // api for creating schedule
@@ -26,7 +27,7 @@ const createSchedule = async (req, res) => {
           },
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalcenter`,
@@ -74,7 +75,7 @@ const createSchedule = async (req, res) => {
           },
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalcenter`,
@@ -148,7 +149,7 @@ const allDoctorSchedule = async (req, res) => {
     // objectCount = await schedule.aggregate([
     //   {
     //     $lookup: {
-    //       from: `medicalcenters`,
+    //       from: `medicalCenters`,
     //       localField: `medicalCenterId`,
     //       foreignField: `medicalCenterId`,
     //       as: `medicalCenterObject`,
@@ -183,7 +184,7 @@ const allDoctorSchedule = async (req, res) => {
     documents = await schedule.aggregate([
       {
         $lookup: {
-          from: `medicalcenters`,
+          from: `medicalCenters`,
           localField: `medicalCenterId`,
           foreignField: `medicalCenterId`,
           as: `medicalCenterObject`,
@@ -282,18 +283,19 @@ const allSchedule = async (req, res) => {
     let query = {};
     query['$and']=[];
 
+    // These query parameters are optional, so we need to handle the situation where they are not provided
     if(doctorIdQP){
-      // console.log(cityQP);
+      // console.log(doctorIdQP);
       query["$and"].push({"doctorId": {$eq: doctorIdQP}});
     }
 
     if(medicalCenterIdQP){
-      // console.log(cityQP);
+      // console.log(medicalCenterIdQP);
       query["$and"].push({"medicalCenterId": {$eq: medicalCenterIdQP}});
     }
 
     if(cityQP){
-      console.log(cityQP);
+      // console.log(cityQP);
       query["$and"].push({"medicalCenterObject.city": {$eq: cityQP}});
     }
 
@@ -317,38 +319,67 @@ const allSchedule = async (req, res) => {
       query["$and"].push({endDate: {$gte: fromDateQP}});      
     }
 
+    // Sort by scheduleId by default. If specified, then either sort by doctorId or medicalCenterId
     let sortByQP_ = {}
     if(sortByQP === "doctor"){
       // console.log(sortByQP);
       sortByQP_ = {"doctorId": 1, "scheduleId": 1};
 
       if (starting_after_objectQP){
-        query["$and"].push({"doctorId": {$gt: starting_after_objectQP}});
+        query["$and"].push({"doctorId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP) }});
       }
     }else if(sortByQP === "medicalCenter"){
       // console.log(sortByQP);
       sortByQP_ = {"medicalCenterId": 1, "scheduleId": 1};
       if (starting_after_objectQP){
-        query["$and"].push({"medicalCenterId": {$gt: starting_after_objectQP}});
+        query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
       }
     }else{
       sortByQP_ = {"scheduleId": 1};
       if (starting_after_objectQP){
-        query["$and"].push({"scheduleId": {$gt: starting_after_objectQP}});
+        query["$and"].push({"scheduleId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
       }
     }
     
     let objectCount = 0;
+    let count = 0
 
+    // Error will be thrown if you pass an empty query to the $match filter
     if (query["$and"].length === 0) { 
-      documents = await schedule.find({},
-        // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
-        ).sort( sortByQP_ ).limit(limitQP).lean();
+      // documents = await schedule.find({},
+      //   // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
+      //   ).sort( sortByQP_ ).limit(limitQP).lean();
+      documents = await schedule.aggregate([
+        {
+          $lookup: {
+            from: `medicalCenters`,
+            localField: `medicalCenterId`,
+            foreignField: `medicalCenterId`,
+            as: `medicalCenterObject`,
+          },
+        },
+        {
+          $lookup: {
+            from: `doctors`,
+            localField: `doctorId`,
+            foreignField: `doctorId`,
+            as: `doctorObject`,
+          },
+        },
+        {
+          $sort: sortByQP_
+        },
+        {
+          $limit: limitQP
+        }
+      ]);        
         
 
       objectCount = await schedule.find({},
         // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
         ).countDocuments();
+
+      count = objectCount;
         
     }else {
       // documents = await schedule.find(query,
@@ -362,7 +393,7 @@ const allSchedule = async (req, res) => {
         documents = await schedule.aggregate([
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalCenterObject`,
@@ -397,7 +428,7 @@ const allSchedule = async (req, res) => {
         lastDocument = await schedule.aggregate([
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalCenterObject`,
@@ -429,8 +460,10 @@ const allSchedule = async (req, res) => {
           }
         ]);
 
+        // console.log("lastDocument[0]")
+        // console.log(lastDocument[0])
         documents.forEach((document) => {
-          if (document.scheduleId === lastDocument[0].scheduleId) hasMore = false;
+          if (document.scheduleId.equals(lastDocument[0].scheduleId)) hasMore = false;
           document.doctorObject = document.doctorObject[0]
           document.medicalCenterObject = document.medicalCenterObject[0]
         });
@@ -441,7 +474,7 @@ const allSchedule = async (req, res) => {
         objectCount = await schedule.aggregate([
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalCenterObject`,
@@ -473,7 +506,7 @@ const allSchedule = async (req, res) => {
           }
         ]);
     }
-    let count = 0
+    
     // console.log(objectCount[0].objectCount)
     if(objectCount[0] !== undefined){
       count = objectCount[0].objectCount

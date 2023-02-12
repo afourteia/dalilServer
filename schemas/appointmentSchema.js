@@ -7,14 +7,14 @@ const appointmentSchema = mongoose.Schema({
   //   type: String,
   // },
   appointmentId: mongoose.ObjectId,
-  appointmentDate: String,
+  appointmentDate: Date,
   timeslot: String,
   appointmentStatus: {
     type: String,
   },
   patient: {
     userId: {
-      type: String,
+      type: mongoose.ObjectId,
       required: [true, `please provide valid userId`],
     },
     patientType: {
@@ -22,7 +22,7 @@ const appointmentSchema = mongoose.Schema({
       required: [true, `please provide valid patientType`],
     },
     patientId: {
-      type: String,
+      type: mongoose.ObjectId,
       required: [true, `please provide valid patientId`],
     },
     patientName: {
@@ -35,15 +35,15 @@ const appointmentSchema = mongoose.Schema({
     },
   },
   scheduleId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid schedule id`],
   },
   medicalCenterId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid medicalCenter id`],
   },
   doctorId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid doctor id`],
   },  
   notes: String,
@@ -51,16 +51,20 @@ const appointmentSchema = mongoose.Schema({
   doctorObject: Object,
   scheduleObject: Object,
   userId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid userId`],
   },
-  dateCreated: { type: Date },
-  lastUpdateDate: {
-    type: Date,
+  created: {
+    createdBy: { type: mongoose.ObjectId},
+    dateCreated: { type: Date},
+  },
+  updated: {
+    updatedBy: { type: mongoose.ObjectId},
+    dateUpdated: { type: Date},
   }
-});
+}, { collection: 'appointments' });
 
-const appointment = mongoose.model(`appointment`, appointmentSchema);
+const appointment = mongoose.model(`appointments`, appointmentSchema);
 
 // exporting appointment collection
 module.exports = appointment;

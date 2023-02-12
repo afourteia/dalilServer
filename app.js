@@ -27,6 +27,7 @@ app.use(express.static('public'));
 const Server = async () => {
   try {
     // connecting to the database
+    console.log(`connecting to DB...`);
     const connection = await mongoose.connect(process.env.uri);
     // mongoose.set("strictQuery", true);
     console.log(`connected to DB`);

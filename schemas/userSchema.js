@@ -2,7 +2,11 @@
 const mongoose = require(`mongoose`);
 
 // user schema or structure
-const userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({  
+  userId: {
+    type: mongoose.ObjectId,
+    unique: true,
+  },
   username: {
     type: String,
     required: [true, `please provide valid username`],
@@ -14,14 +18,13 @@ const userSchema = mongoose.Schema({
   },
   phoneAuthenticated: Boolean,
   whatsAppNumber: String,
-
   beneficiary: {
     hasBeneficiary: {
       type: Boolean,
       required: true,
     },
     beneficiaryId: {
-      type: String,
+      type: mongoose.ObjectId,
       unique: true,
     },
   },
@@ -29,17 +32,17 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, `please provide valid password`],
   },
-  userId: {
-    type: String,
-    unique: true,
+  created: {
+    createdBy: { type: mongoose.ObjectId},
+    dateCreated: { type: Date},
   },
-  sd: {
-    type: Number,
-    unique: true,
-  },
-});
+  updated: {
+    updatedBy: { type: mongoose.ObjectId},
+    dateUpdated: { type: Date},
+  }
+}, { collection: 'users' });
 
-const user = mongoose.model(`user`, userSchema);
+const user = mongoose.model(`users`, userSchema);
 
 /// exporting user model to usermiddleware for querying user collection
 module.exports = user;
