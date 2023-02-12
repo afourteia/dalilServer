@@ -3,6 +3,7 @@ const mongoose = require(`mongoose`);
 
 // medicalCenter schema setup
 const medicalCenterSchema = mongoose.Schema({
+  medicalCenterId: { type: mongoose.ObjectId, unique: true },
   name: {
     type: String,
     required: [true, `please enter valid  name`],
@@ -26,16 +27,24 @@ const medicalCenterSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    unique: true,
+    // unique: true,
   },
   facebookLink: String,
   googleMapLink: String,
   website: {
     type: String,
-    required: [true, `please enter valid website`],
+    // required: [true, `please enter valid website`],
   },
-  medicalCenterId: { type: String, unique: true },
-  sd: { type: Number, unique: true },
+
+  creation: {
+    createdBy: {type: String},
+    dateCreated: {type: Date},
+  },
+
+  fieldNames: {type: Array},
+  originalNames: {type: Array},
+  isActive: {type: Boolean}
+  
 });
 
 const medicalCenter = mongoose.model(`medicalCenter`, medicalCenterSchema);

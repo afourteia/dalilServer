@@ -1,9 +1,65 @@
 // importing medicalCenter collection for querying database
 const medicalCenter = require(`../schemas/medicalCenterSchema`);
+const mongoose = require(`mongoose`);
 // api/ logic for medicalCenter creation
 const createmedicalCenter = async (req, res) => {
   try {
-    const allDocument = await medicalCenter.find({});
+    
+    
+    // console.log("req.is('application/json')")
+    // console.log(req.is('application/json'))
+    // console.log("req.is('multipart/form-data')")
+    // console.log(req.is('multipart/form-data'))
+
+    console.log("req.body")
+    console.log(req.body)
+    
+    if(!req.is('application/json') & !req.is('multipart/form-data')){
+      return res.status(400).json({ message: "content-type needs to be either application/json or multipart/form-data" });
+    }
+
+    const fieldNamesList = []
+    const originalNamesList = []
+
+    const objectName = req.files;
+    const isObjectEmpty = (objectName) => {
+      return (
+        objectName &&
+        Object.keys(objectName).length === 0 &&
+        objectName.constructor === Object
+      );
+    };
+
+    // console.log("files in req");
+    // console.log("files" in req);
+    if("files" in req){
+      req.files.forEach(file => {
+        fieldNamesList.push(file.fieldname)
+        originalNamesList.push(file.originalname)
+      })  
+    }
+    console.log("___________________________________________")
+    console.log("fieldNamesList")
+    console.log(fieldNamesList)
+    console.log("originalNamesList")
+    console.log(originalNamesList)
+    console.log("___________________________________________")
+    
+    const document = await medicalCenter.create({      
+      ...req.body,
+      medicalCenterId: new mongoose.Types.ObjectId(),
+      creation:{
+        createdBy: res.locals.user.userId,
+        dateCreated: Date(),
+      },
+      isActive: true,
+      fieldNames: fieldNamesList,
+      originalNames: originalNamesList
+    });
+    
+    
+
+
     // if (allDocument.length === 0) {
     //   const document = await medicalCenter.create({
     //     ...req.body,
@@ -26,22 +82,20 @@ const createmedicalCenter = async (req, res) => {
 
     console.log("Create Medical Center -----------------------------------------------")
     // console.log(req.headers)
-    console.log("req.body")
-    console.log(req.body)
+    // console.log("req.body")
+    // console.log(req.body)
 
-    console.log("req.body")
-    console.log(req.body)
+    // console.log("req.body")
+    // console.log(req.body)
 
 
     console.log("Create Medical Center response ---------------------------------------------------")
     const responseBody = {
       codeStatus: "200",
       message: "good",
-      data: {
-        requestBody: req.body
-      },
+      data: document
     };
-    return res.status(200).json({ ...responseBody });
+    return res.status(201).json({ ...responseBody });
 
   } catch (error) {
     //   checking for server errors
