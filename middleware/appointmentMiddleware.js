@@ -10,13 +10,14 @@ const mongoose = require(`mongoose`);
 // api for creating appointment
 const createAppointment = async (req, res) => {
   try {
+    console.log("creating an appointment")
     const userId = res.locals.user.userId;
     // const idNumber = Number(userId.split(`-`)[1]);
     // const doc = await appointment.find({});
     // // const appointmentDoc = await appointment.find(req.params);
-    if (req.params.userId !== userId) {
-      return res.status(401).json({ message: `Not Authorized` });
-    }
+    // if (req.params.userId !== userId) {
+    //   return res.status(401).json({ message: `Not Authorized` });
+    // }
 
     if(req.body.doctorId){
       console.log(req.body.doctorId)
