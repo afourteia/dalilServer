@@ -159,11 +159,15 @@ const allmedicalCenter = async (req, res) => {
       }});      
     }
     
+    
     sortByQP_ = {"medicalCenterId": 1};
     if (starting_after_objectQP){
-      query["$and"].push({"medicalCenterId": {$gt: starting_after_objectQP}});
+      query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
+      query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
     }
-
+    console.log("query['$and']")
+    console.log(query["$and"])
+    
     if (query["$and"].length === 0) { 
       documents = await medicalCenter.find({},
         ).sort( sortByQP_ ).limit(limitQP).lean();
