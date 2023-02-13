@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 // api for getting a single Beneficiary
 const singleMedicalFiles = async (req, res) => {
   try {
-    
+    console.log("getting medical files")
     // const document = await beneficiarys.findOne(req.params,).lean();
     const document = await beneficiarys.findOne(req.params,
         { beneficiaryId: 1, account: 1, familyMembers: "$familyMembers", _id: 0 } 
@@ -21,9 +21,9 @@ const singleMedicalFiles = async (req, res) => {
       return res.status(404).json({ message: `beneficiary not found` });
     }
 
-    if (res.locals.user.userId !== document.account.userId) {
-      return res.status(401).json({ message: `Not Authorized` });
-    }
+    // if (res.locals.user.userId !== document.account.userId) {
+    //   return res.status(401).json({ message: `Not Authorized` });
+    // }
     let medicalFiles = []
 
 
