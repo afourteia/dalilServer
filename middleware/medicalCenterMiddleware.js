@@ -139,6 +139,7 @@ const allmedicalCenter = async (req, res) => {
     }
 
     const starting_after_objectQP = req.query.starting_after_object;
+    const starting_before_objectQP = req.query.starting_before_object;
     const cityQP = req.query.city;
     const searchQueryQP = req.query.searchQuery;
     let hasMore = true;
@@ -163,11 +164,14 @@ const allmedicalCenter = async (req, res) => {
     sortByQP_ = {"medicalCenterId": 1};
     if (starting_after_objectQP){
       query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
-      query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
+      // query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
+    }
+    if (starting_before_objectQP){
+      query["$and"].push({"medicalCenterId": {$lt: mongoose.Types.ObjectId(starting_before_objectQP)}});
     }
     console.log("query['$and']")
     console.log(query["$and"])
-    
+    let count = 0
     if (query["$and"].length === 0) { 
       documents = await medicalCenter.find({},
         ).sort( sortByQP_ ).limit(limitQP).lean();
@@ -175,6 +179,7 @@ const allmedicalCenter = async (req, res) => {
 
       objectCount = await medicalCenter.find({},
         ).countDocuments();
+      count = objectCount;
         
     }else {
 
@@ -208,29 +213,43 @@ const allmedicalCenter = async (req, res) => {
           $limit: limitQP
         }
       ]);
-
+      
+      if (starting_before_objectQP){
+        query["$and"].pop();
+      }
       if (starting_after_objectQP){
         query["$and"].pop();
       }
-
-      objectCount = await medicalCenter.aggregate([
-        { $match: { 
-          $and: query["$and"]
-         }
-        },
-        {
-          $sort: sortByQP_
-        },
-        {
-          $count: "objectCount"
-        }
-      ]);
+      if (query["$and"].length === 0) { 
+        objectCount = await medicalCenter.aggregate([
+          {
+            $sort: sortByQP_
+          },
+          {
+            $count: "objectCount"
+          }
+        ]);
+      }else{
+        objectCount = await medicalCenter.aggregate([
+          { $match: { 
+            $and: query["$and"]
+           }
+          },
+          {
+            $sort: sortByQP_
+          },
+          {
+            $count: "objectCount"
+          }
+        ]);
+      }
+      
 
 
 
     }
 
-    let count = 0
+    
     // console.log(objectCount[0].objectCount)
     if(objectCount[0] !== undefined){
       count = objectCount[0].objectCount
