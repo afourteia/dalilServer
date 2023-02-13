@@ -53,11 +53,11 @@ const scheduleSchema = mongoose.Schema({
     required: [true, `please provide valid price`],
   },
   startDate: {
-    type: Date,
+    type: String,
     required: [true, `please provide valid startDate`],
   },
   endDate: {
-    type: Date,
+    type: String,
     required: [true, `please provide valid endDate`],
   },
   isActive: {

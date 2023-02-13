@@ -18,6 +18,30 @@ const createAppointment = async (req, res) => {
       return res.status(401).json({ message: `Not Authorized` });
     }
 
+    if(req.body.doctorId){
+      console.log(req.body.doctorId)
+      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      console.log(req.body.doctorId)
+    }
+    if(req.body.medicalCenterId){
+      console.log(req.body.medicalCenterId)
+      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
+      console.log(req.body.medicalCenterId)
+    }
+
+    if(req.body.scheduleId){
+      console.log(req.body.scheduleId)
+      req.body.scheduleId = mongoose.Types.ObjectId(req.body.scheduleId);
+      console.log(req.body.scheduleId)
+    }
+
+    // Temp fix till we get a proper ID for patients
+    if(req.body.patient.patientId){
+      console.log(req.body.scheduleId)
+      req.body.scheduleId = mongoose.Types.ObjectId(req.body.scheduleId);
+      console.log(req.body.scheduleId)
+    }
+
     const medicalCenterObject = await medicalCenter
       .findOne({ medicalCenterId: req.body.medicalCenterId })
       .lean();
@@ -27,6 +51,8 @@ const createAppointment = async (req, res) => {
     const scheduleObject = await schedule
       .findOne({ scheduleId: req.body.scheduleId })
       .lean();
+
+    
 
     const document = await appointment.create({
       ...req.body,
@@ -85,7 +111,7 @@ const updateAppointment = async (req, res) => {
         },
         {
           $lookup: {
-            from: `medicalcenters`,
+            from: `medicalCenters`,
             localField: `medicalCenterId`,
             foreignField: `medicalCenterId`,
             as: `medicalcenter`,
@@ -150,7 +176,7 @@ const specificAppointment = async (req, res) => {
     if (query["$and"].length === 0) {
       objectCount = await appointment.find({}).countDocuments();
       if (starting_after_objectQP)
-        query["$and"].push({ appointmentId: { $gt: starting_after_objectQP } });
+        query["$and"].push({ appointmentId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) } });
       documents = await appointment
         .find({})
         .sort({ appointmentId: 1, _id: 1 })
@@ -172,7 +198,7 @@ const specificAppointment = async (req, res) => {
       documents = await appointment.aggregate([
         {
           $lookup: {
-            from: `medicalcenters`,
+            from: `medicalCenters`,
             localField: `medicalCenterId`,
             foreignField: `medicalCenterId`,
             as: `medicalCenterObject`,
@@ -280,7 +306,7 @@ const doctorAppointmentSummaries = async (req, res) => {
     documents = await appointment.aggregate([
       {
         $lookup: {
-          from: `medicalcenters`,
+          from: `medicalCenters`,
           localField: `medicalCenterId`,
           foreignField: `medicalCenterId`,
           as: `medicalCenterObject`,
@@ -546,7 +572,7 @@ const allAppointments = async (req, res) => {
     documents = await appointment.aggregate([
       {
         $lookup: {
-          from: `medicalcenters`,
+          from: `medicalCenters`,
           localField: `medicalCenterId`,
           foreignField: `medicalCenterId`,
           as: `medicalCenterObject`,

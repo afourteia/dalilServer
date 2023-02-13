@@ -23,6 +23,12 @@ const createDoctor = async (req, res) => {
       });
     }
 
+    if(req.body.birthDate){
+      console.log(req.body.birthDate)
+      req.body.birthDate = new Date(req.body.birthDate)
+      console.log(req.body.birthDate)
+    }
+
     const document = await doctor.create({
       ...req.body,
       doctorId: new mongoose.Types.ObjectId(),

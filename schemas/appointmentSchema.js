@@ -14,7 +14,7 @@ const appointmentSchema = mongoose.Schema({
   },
   patient: {
     userId: {
-      type: mongoose.ObjectId,
+      type: String,
       required: [true, `please provide valid userId`],
     },
     patientType: {
@@ -22,7 +22,7 @@ const appointmentSchema = mongoose.Schema({
       required: [true, `please provide valid patientType`],
     },
     patientId: {
-      type: mongoose.ObjectId,
+      type: String,
       required: [true, `please provide valid patientId`],
     },
     patientName: {
@@ -51,7 +51,7 @@ const appointmentSchema = mongoose.Schema({
   doctorObject: Object,
   scheduleObject: Object,
   userId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid userId`],
   },
   created: {

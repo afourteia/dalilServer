@@ -8,103 +8,34 @@ const mongoose = require(`mongoose`);
 const createSchedule = async (req, res) => {
   try {
     const userId = res.locals.user.userId;
-    const idNumber = Number(userId.split(`-`)[1]);
-    const doc = await schedule.find({});
-    if (doc.length === 0) {
-      const document = await schedule.create({
-        ...req.body,
-        scheduleId: `SCH-${1}`,
-        sid: 1,
-        isActive: true,
-        dateCreated: Date(),
-        dateCreatedMilliSeconds: new Date().valueOf(),
-      });
 
-      const test = await schedule
-        .aggregate([
-          {
-            $match: { _id: document._id },
-          },
-          {
-            $lookup: {
-              from: `medicalCenters`,
-              localField: `medicalCenterId`,
-              foreignField: `medicalCenterId`,
-              as: `medicalcenter`,
-            },
-          },
-          {
-            $lookup: {
-              from: `doctors`,
-              localField: `doctorId`,
-              foreignField: `doctorId`,
-              as: `doctor`,
-            },
-          },
-        ])
-        .exec();
-      test.forEach((each) => {
-        delete each._id;
-      });
-      console.log(document, test[0].doctor);
-      const newDoc = await schedule.findOneAndReplace(
-        { _id: document._id },
-        test[0],
-        {
-          new: true,
-        }
-      );
-
-      res.status(200).json(newDoc);
-    } else {
-      let lastDoc = doc[doc.length - 1];
-      const changedId = Number(lastDoc.scheduleId.split(`-`)[1]);
-      const document = await schedule.create({
-        ...req.body,
-        scheduleId: `SCH-${changedId + 1}`,
-        sid: changedId + 1,
-        isActive: true,
-        dateCreated: Date(),
-        dateCreatedMilliSeconds: new Date().valueOf(),
-      });
-
-      const test = await schedule
-        .aggregate([
-          {
-            $match: { _id: document._id },
-          },
-          {
-            $lookup: {
-              from: `medicalCenters`,
-              localField: `medicalCenterId`,
-              foreignField: `medicalCenterId`,
-              as: `medicalcenter`,
-            },
-          },
-          {
-            $lookup: {
-              from: `doctors`,
-              localField: `doctorId`,
-              foreignField: `doctorId`,
-              as: `doctor`,
-            },
-          },
-        ])
-        .exec();
-      test.forEach((each) => {
-        delete each._id;
-      });
-      console.log(document, test[0].doctor);
-      const newDoc = await schedule.findOneAndReplace(
-        { _id: document._id },
-        test[0],
-        {
-          new: true,
-        }
-      );
-
-      res.status(200).json(newDoc);
+    if(req.body.doctorId){
+      console.log(req.body.doctorId)
+      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      console.log(req.body.doctorId)
     }
+    if(req.body.medicalCenterId){
+      console.log(req.body.medicalCenterId)
+      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
+      console.log(req.body.medicalCenterId)
+    }
+
+    const document = await schedule.create({
+      ...req.body,
+      scheduleId: new mongoose.Types.ObjectId(),
+      appointmentId: new mongoose.Types.ObjectId(),
+      creation: {
+        createdBy: res.locals.user.userId,
+        dateCreated: Date(),
+      },
+      isActive: true,
+    });
+    const responseBody = {
+      codeStatus: "201",
+      message: "document created",
+      data: document,
+    };
+    return res.status(201).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
