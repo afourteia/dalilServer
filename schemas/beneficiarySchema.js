@@ -4,7 +4,7 @@ const mongoose = require(`mongoose`);
 // medicalFile schema or structure
 const medicalFileSchema = mongoose.Schema({
   medicalFileId: {
-    type: mongoose.ObjectId,
+    type: String,
     unique: true,
   },
   // familyMemberId: {
@@ -43,7 +43,7 @@ const medicalFileSchema = mongoose.Schema({
 // familyMember schema or structure
 const familyMemberSchema = mongoose.Schema({
   familyMemberId: {
-    type: mongoose.ObjectId,
+    type: String,
     unique: true,
   },
   firstName: {
@@ -80,7 +80,7 @@ const familyMemberSchema = mongoose.Schema({
 // beneficiary schema or structure
 const beneficiarySchema = mongoose.Schema({
   beneficiaryId: {
-    type: mongoose.ObjectId,
+    type: String,
     unique: true,
   },
   firstName: {
@@ -115,7 +115,7 @@ const beneficiarySchema = mongoose.Schema({
     required: [false, `please provide valid family member `],
   },
   insurancePolicyId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid insurance policy id`],
   },
   residentCity: {
@@ -126,7 +126,7 @@ const beneficiarySchema = mongoose.Schema({
   account: {
     hasAccount: { type: Boolean, required: true },
     userId: {
-      type: mongoose.ObjectId,
+      type: String,
       unique: true,
     },
   },
