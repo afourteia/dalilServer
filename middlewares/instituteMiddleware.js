@@ -36,7 +36,6 @@ const getInstitutions = async (req, res) => {
 };
 
 const updateInstitution = async (req, res) => {
-  console.log("eq.params.id ", req.params.id);
   try {
     const institute = await Institute.findOneAndUpdate(
       { _id: req.params.id },
@@ -57,4 +56,24 @@ const updateInstitution = async (req, res) => {
   }
 };
 
-module.exports = { createInstitute, getInstitutions, updateInstitution };
+const deleteInstitution = async (req, res) => {
+  try {
+    const institute = await Institute.findOneAndDelete({ _id: req.params.id });
+    if (!institute) {
+      return res.status(404).json({ error: "No Institue found" });
+    }
+    res.status(200).json({
+      institute,
+      message: "Institute deleted!",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  createInstitute,
+  getInstitutions,
+  updateInstitution,
+  deleteInstitution,
+};
