@@ -82,6 +82,10 @@ const { createCity, allCity } = require(`../middlewares/cityMiddleware`);
 
 const { login, logout } = require(`../middlewares/loginMiddleware`);
 
+const {
+  createInstitute,
+  getInstitutions,
+} = require(`../middlewares/instituteMiddleware`);
 // importing authentication/authorization middleware
 const { authentication, cookieVerification, isAdmin } = require(`../auth`);
 
@@ -214,6 +218,12 @@ router.route(`/v1/login`).post(login);
 
 // routes for logout
 router.route(`/v1/logout`).post(logout);
+
+//routes for institution
+router
+  .route(`/v1/institutions`)
+  .post(authentication, createInstitute)
+  .get(authentication, getInstitutions);
 
 // exporting router
 module.exports = router;
