@@ -85,6 +85,8 @@ const { login, logout } = require(`../middlewares/loginMiddleware`);
 const {
   createInstitute,
   getInstitutions,
+  updateInstitution,
+  deleteInstitution,
 } = require(`../middlewares/instituteMiddleware`);
 // importing authentication/authorization middleware
 const { authentication, cookieVerification, isAdmin } = require(`../auth`);
@@ -224,6 +226,11 @@ router
   .route(`/v1/institutions`)
   .post(authentication, createInstitute)
   .get(authentication, getInstitutions);
+
+router
+  .route(`/v1/institutions/:id`)
+  .patch(authentication, updateInstitution)
+  .delete(authentication, deleteInstitution);
 
 // exporting router
 module.exports = router;
