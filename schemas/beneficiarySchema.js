@@ -7,11 +7,6 @@ const medicalFileSchema = mongoose.Schema({
     type: String,
     unique: true,
   },
-  // familyMemberId: {
-  //   type: String,
-  //   required: [true, `please provide unique familyMemberId`],
-  //   unique: true,
-  // },
   bloodType: {
     type: String,
   },

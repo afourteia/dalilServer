@@ -32,6 +32,13 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, `please provide valid password`],
   },
+
+  // the array should reference userRoleId from userRole collection
+  userRole: {
+    type: [String],
+    required: true,
+    unique: true
+  },
   created: {
     createdBy: { type: mongoose.ObjectId},
     dateCreated: { type: Date},
