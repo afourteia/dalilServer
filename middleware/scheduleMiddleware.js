@@ -217,12 +217,12 @@ const allSchedule = async (req, res) => {
     // These query parameters are optional, so we need to handle the situation where they are not provided
     if(doctorIdQP){
       // console.log(doctorIdQP);
-      query["$and"].push({"doctorId": {$eq: doctorIdQP}});
+      query["$and"].push({"doctorId": {$eq: mongoose.Types.ObjectId(doctorIdQP)}});
     }
 
     if(medicalCenterIdQP){
       // console.log(medicalCenterIdQP);
-      query["$and"].push({"medicalCenterId": {$eq: medicalCenterIdQP}});
+      query["$and"].push({"medicalCenterId": {$eq: mongoose.Types.ObjectId(medicalCenterIdQP)}});
     }
 
     if(cityQP){
