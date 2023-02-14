@@ -7,7 +7,6 @@ const router = express.Router();
 // const multer  = require('multer')
 // const upload = multer({ dest: 'uploads/' })
 
-
 // importing users middleware
 const { createUsers, getUsers } = require(`../middlewares/userMiddleware`);
 
@@ -16,7 +15,7 @@ const {
   benefitPolicies,
   getClaims,
   createClaim,
-  getExpenseReports
+  getExpenseReports,
 } = require(`../middlewares/benefitPoliciesMiddleware`);
 
 // importing medicalFiles middleware
@@ -76,21 +75,21 @@ const {
 } = require(`../middlewares/medicalSpecialtyMiddleware`);
 
 const {
-  allMedicalServices
+  allMedicalServices,
 } = require(`../middlewares/medicalServicesMiddelware`);
 
 const { createCity, allCity } = require(`../middlewares/cityMiddleware`);
 
-const {login, logout} = require(`../middlewares/loginMiddleware`);
+const { login, logout } = require(`../middlewares/loginMiddleware`);
 
 // importing authentication/authorization middleware
-const { authentication, cookieVerification } = require(`../auth`);
+const { authentication, cookieVerification, isAdmin } = require(`../auth`);
 
 // All routes
 // routes for user
 router
   .route(`/v1/users`)
-  .post(authentication, createUsers)
+  .post(authentication, isAdmin, createUsers)
   .get(authentication, getUsers);
 
 // routes for beneficiary
@@ -110,12 +109,11 @@ router
   .get(authentication, cookieVerification, singleBeneficiary)
   .patch(authentication, cookieVerification, updateBeneficiary);
 
-  
 // routes for single beneficiary's expense reports
 router
   .route(`/v1/beneficiaries/:beneficiaryId/expenseReports`)
-  .get(authentication, cookieVerification, getExpenseReports)
-  
+  .get(authentication, cookieVerification, getExpenseReports);
+
 // routes for beneficiary's benefit policy
 router
   .route(`/v1/beneficiaries/:beneficiaryId/benefitPolicies`)
@@ -203,10 +201,8 @@ router
   .get(authentication, allmedicalSpecialty);
 
 // routes for medicalServices
-router
-  .route(`/v1/medicalServices`)
-  .get(authentication, allMedicalServices);
-  
+router.route(`/v1/medicalServices`).get(authentication, allMedicalServices);
+
 // routes for cities
 router
   .route(`/v1/cities`)
@@ -218,7 +214,6 @@ router.route(`/v1/login`).post(login);
 
 // routes for logout
 router.route(`/v1/logout`).post(logout);
-
 
 // exporting router
 module.exports = router;
