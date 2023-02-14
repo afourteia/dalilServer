@@ -35,4 +35,26 @@ const getInstitutions = async (req, res) => {
   }
 };
 
-module.exports = { createInstitute, getInstitutions };
+const updateInstitution = async (req, res) => {
+  console.log("eq.params.id ", req.params.id);
+  try {
+    const institute = await Institute.findOneAndUpdate(
+      { _id: req.params.id },
+      { ...req.body },
+      { new: true }
+    )
+      .populate("employees")
+      .populate("beneficiaries");
+    if (!institute) {
+      return res.status(404).json({ error: "No Institue found" });
+    }
+    res.status(200).json({
+      institute,
+      message: "Institute updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createInstitute, getInstitutions, updateInstitution };
