@@ -33,6 +33,10 @@ const userSchema = mongoose.Schema({
     type: String,
     unique: true,
   },
+  userRole: {
+    type: String,
+    enum: ["patient", "admin", "doctor"],
+  },
   sd: {
     type: Number,
     unique: true,
