@@ -90,6 +90,12 @@ const singlemedicalCenter = async (req, res) => {
 // api/ logic for updating a medicalCenter
 const updatemedicalCenter = async (req, res) => {
   try {
+    if(req.params.medicalCenterId){
+      console.log(req.params.medicalCenterId)
+      req.params.medicalCenterId = mongoose.Types.ObjectId(req.params.medicalCenterId);
+      console.log(req.params.medicalCenterId)
+    }
+
     const document = await medicalCenter
       .findOneAndUpdate(req.params, req.body, {
         new: true,

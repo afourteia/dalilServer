@@ -83,6 +83,12 @@ const createAppointment = async (req, res) => {
 // api for updating appointment
 const updateAppointment = async (req, res) => {
   try {
+
+    if(req.params.appointmentId){
+      console.log(req.params.appointmentId)
+      req.params.appointmentId = mongoose.Types.ObjectId(req.params.appointmentId);
+      console.log(req.params.appointmentId)
+    }
     const document = await appointment
       .findOneAndUpdate(
         {
@@ -190,7 +196,7 @@ const specificAppointment = async (req, res) => {
     } else {
       objectCount = await appointment.find(query).countDocuments();
       if (starting_after_objectQP)
-        query["$and"].push({ appointmentId: { $gt: starting_after_objectQP } });
+        query["$and"].push({ appointmentId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) } } });
       documents = await appointment
         .find(query)
         .sort({ appointmentId: 1, _id: 1 })
@@ -475,7 +481,7 @@ const doctorAppointments = async (req, res) => {
     query["$and"].push({ timeslot: { $eq: req.query.timeSlot } });
     query["$and"].push({ medicalCenterId: { $eq: req.query.medicalCenterId } });
     if (starting_after_objectQP) {
-      query["$and"].push({ appointmentId: { $gt: starting_after_objectQP } });
+      query["$and"].push({ appointmentId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) } } });
     }
 
     documents = await appointment.aggregate([

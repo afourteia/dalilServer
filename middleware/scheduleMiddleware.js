@@ -23,7 +23,6 @@ const createSchedule = async (req, res) => {
     const document = await schedule.create({
       ...req.body,
       scheduleId: new mongoose.Types.ObjectId(),
-      appointmentId: new mongoose.Types.ObjectId(),
       creation: {
         createdBy: res.locals.user.userId,
         dateCreated: Date(),
@@ -45,12 +44,33 @@ const createSchedule = async (req, res) => {
 // api for updating schedule
 const updateSchedule = async (req, res) => {
   try {
+
+    if(req.body.doctorId){
+      console.log(req.body.doctorId)
+      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      console.log(req.body.doctorId)
+    }
+    if(req.body.medicalCenterId){
+      console.log(req.body.medicalCenterId)
+      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
+      console.log(req.body.medicalCenterId)
+    }
+
+    if(req.params.scheduleId){
+      console.log(req.params.scheduleId)
+      req.params.scheduleId = mongoose.Types.ObjectId(req.params.scheduleId);
+      console.log(req.params.scheduleId)
+    }
+
     const document = await schedule
       .findOneAndUpdate(
         req.params,
         {
           ...req.body,
-          lastUpdateDate: Date(),
+          updated: {
+            updatedBy:  res.locals.user.userId,
+            dateUpdated: Date(),
+          }
         },
         { new: true }
       )

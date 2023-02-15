@@ -73,6 +73,12 @@ const singleDoctor = async (req, res) => {
 // api for updating a single doctor
 const updateDoctor = async (req, res) => {
   try {
+
+    if(req.params.doctorId){
+      console.log(req.params.doctorId)
+      req.params.doctorId = mongoose.Types.ObjectId(req.params.doctorId);
+      console.log(req.params.doctorId)
+    }
     const document = await doctor
       .findOneAndUpdate(req.params, req.body, {
         new: true,

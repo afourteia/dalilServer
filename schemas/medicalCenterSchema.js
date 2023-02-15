@@ -44,11 +44,11 @@ const medicalCenterSchema = mongoose.Schema({
   originalNames: {type: Array},
   isActive: {type: Boolean},
   created: {
-    createdBy: { type: mongoose.ObjectId},
+    createdBy: { type: String},
     dateCreated: { type: Date},
   },
   updated: {
-    updatedBy: { type: mongoose.ObjectId},
+    updatedBy: { type: String},
     dateUpdated: { type: Date},
   }
 }, { collection: 'medicalCenters' });
