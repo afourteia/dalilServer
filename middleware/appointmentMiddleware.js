@@ -10,7 +10,7 @@ const mongoose = require(`mongoose`);
 // api for creating appointment
 const createAppointment = async (req, res) => {
   try {
-    console.log("creating an appointment")
+    console.log("creating an appointment");
     const userId = res.locals.user.userId;
     // const idNumber = Number(userId.split(`-`)[1]);
     // const doc = await appointment.find({});
@@ -19,28 +19,30 @@ const createAppointment = async (req, res) => {
     //   return res.status(401).json({ message: `Not Authorized` });
     // }
 
-    if(req.body.doctorId){
-      console.log(req.body.doctorId)
+    if (req.body.doctorId) {
+      console.log(req.body.doctorId);
       req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
-      console.log(req.body.doctorId)
+      console.log(req.body.doctorId);
     }
-    if(req.body.medicalCenterId){
-      console.log(req.body.medicalCenterId)
-      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
-      console.log(req.body.medicalCenterId)
+    if (req.body.medicalCenterId) {
+      console.log(req.body.medicalCenterId);
+      req.body.medicalCenterId = mongoose.Types.ObjectId(
+        req.body.medicalCenterId
+      );
+      console.log(req.body.medicalCenterId);
     }
 
-    if(req.body.scheduleId){
-      console.log(req.body.scheduleId)
+    if (req.body.scheduleId) {
+      console.log(req.body.scheduleId);
       req.body.scheduleId = mongoose.Types.ObjectId(req.body.scheduleId);
-      console.log(req.body.scheduleId)
+      console.log(req.body.scheduleId);
     }
 
     // Temp fix till we get a proper ID for patients
-    if(req.body.patient.patientId){
-      console.log(req.body.scheduleId)
+    if (req.body.patient.patientId) {
+      console.log(req.body.scheduleId);
       req.body.scheduleId = mongoose.Types.ObjectId(req.body.scheduleId);
-      console.log(req.body.scheduleId)
+      console.log(req.body.scheduleId);
     }
 
     const medicalCenterObject = await medicalCenter
@@ -52,8 +54,6 @@ const createAppointment = async (req, res) => {
     const scheduleObject = await schedule
       .findOne({ scheduleId: req.body.scheduleId })
       .lean();
-
-    
 
     const document = await appointment.create({
       ...req.body,
@@ -83,11 +83,12 @@ const createAppointment = async (req, res) => {
 // api for updating appointment
 const updateAppointment = async (req, res) => {
   try {
-
-    if(req.params.appointmentId){
-      console.log(req.params.appointmentId)
-      req.params.appointmentId = mongoose.Types.ObjectId(req.params.appointmentId);
-      console.log(req.params.appointmentId)
+    if (req.params.appointmentId) {
+      console.log(req.params.appointmentId);
+      req.params.appointmentId = mongoose.Types.ObjectId(
+        req.params.appointmentId
+      );
+      console.log(req.params.appointmentId);
     }
     const document = await appointment
       .findOneAndUpdate(
@@ -183,7 +184,11 @@ const specificAppointment = async (req, res) => {
     if (query["$and"].length === 0) {
       objectCount = await appointment.find({}).countDocuments();
       if (starting_after_objectQP)
-        query["$and"].push({ appointmentId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) } });
+        query["$and"].push({
+          appointmentId: {
+            $gt: mongoose.Types.ObjectId(starting_after_objectQP),
+          },
+        });
       documents = await appointment
         .find({})
         .sort({ appointmentId: 1, _id: 1 })
@@ -196,7 +201,11 @@ const specificAppointment = async (req, res) => {
     } else {
       objectCount = await appointment.find(query).countDocuments();
       if (starting_after_objectQP)
-        query["$and"].push({ appointmentId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) } } });
+        query["$and"].push({
+          appointmentId: {
+            $gt: mongoose.Types.ObjectId(starting_after_objectQP),
+          },
+        });
       documents = await appointment
         .find(query)
         .sort({ appointmentId: 1, _id: 1 })
@@ -252,8 +261,8 @@ const specificAppointment = async (req, res) => {
       document.doctorObject = document.doctorObject[0];
       document.medicalCenterObject = document.medicalCenterObject[0];
       // document.patient.birthDate = document.patient.birthDate
-        // .toISOString()
-        // .split("T")[0];
+      // .toISOString()
+      // .split("T")[0];
       document.patient.age = Math.floor(Math.random() * 91);
       document.patient.patientId = "LCS-1905-13";
       // console.log(document.appointmentDate.toISOString().split('T')[0])
@@ -481,7 +490,11 @@ const doctorAppointments = async (req, res) => {
     query["$and"].push({ timeslot: { $eq: req.query.timeSlot } });
     query["$and"].push({ medicalCenterId: { $eq: req.query.medicalCenterId } });
     if (starting_after_objectQP) {
-      query["$and"].push({ appointmentId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) } } });
+      query["$and"].push({
+        appointmentId: {
+          $gt: mongoose.Types.ObjectId(starting_after_objectQP),
+        },
+      });
     }
 
     documents = await appointment.aggregate([
@@ -606,8 +619,8 @@ const allAppointments = async (req, res) => {
       document.medicalCenterObject = document.medicalCenterObject[0];
       document.doctorObject = document.doctorObject[0];
       // document.patient.birthDate = document.patient.birthDate
-        // .toISOString()
-        // .split("T")[0];
+      // .toISOString()
+      // .split("T")[0];
       document.patient.age = Math.floor(Math.random() * 91);
       document.patient.patientId = "LCS-1905-13";
       // document.appointmentDate = document.appointmentDate
