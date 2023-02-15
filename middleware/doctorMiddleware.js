@@ -169,10 +169,15 @@ const allDoctor = async (req, res) => {
 
     // console.log("query['$and']");
     // console.log(query["$and"]);
+
+    let count = 0;
+
     if (query["$and"].length === 0) {
       documents = await doctor.find({}).sort(sortByQP_).skip(skipQP).limit(limitQP).lean();
 
       objectCount = await doctor.find({}).countDocuments();
+
+      count = objectCount;
     } else {
       documents = await doctor.aggregate([
         {
@@ -227,7 +232,7 @@ const allDoctor = async (req, res) => {
       ]);
     }
 
-    let count = 0;
+    
     // console.log(objectCount[0].objectCount)
     if (objectCount[0] !== undefined) {
       count = objectCount[0].objectCount;
