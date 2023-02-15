@@ -53,6 +53,9 @@ const userSchema = mongoose.Schema(
       updatedBy: { type: mongoose.ObjectId },
       dateUpdated: { type: Date },
     },
+    userFile: {
+      type: String,
+    },
   },
   { collection: "users" }
 );
