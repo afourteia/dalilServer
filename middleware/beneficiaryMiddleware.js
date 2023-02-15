@@ -1,4 +1,4 @@
-const beneficiarys = require(`../schemas/beneficiarySchema`);
+const beneficiaries = require(`../schemas/beneficiarySchema`);
 // importing all dependencies
 const user = require(`../schemas/userSchema`);
 const bcrypt = require("bcrypt");
@@ -10,7 +10,7 @@ const createBeneficiary = async (req, res) => {
   try {
     const auth = req.headers.authorization;
     const payload = jwt.decode(auth.split(` `)[1]);
-    const beneficiaries = await beneficiarys.find().sort({ _id: -1 }).limit(1);
+    const beneficiaries = await beneficiaries.find().sort({ _id: -1 }).limit(1);
     console.log(beneficiaries, payload);
     if (beneficiaries.length === 0) {
       const actualUser = await user.find({ userId: payload.userId });
@@ -25,7 +25,7 @@ const createBeneficiary = async (req, res) => {
         beneficiaryId: beneficiary + `-1`,
         sd: sd,
       };
-      const document = await beneficiarys.create(newBody);
+      const document = await beneficiaries.create(newBody);
       delete document._doc.sd;
 
       // server response
@@ -45,7 +45,7 @@ const createBeneficiary = async (req, res) => {
         beneficiaryId: beneficiary + `-${idNumber + 1}`,
         sd: sd,
       };
-      const document = await beneficiarys.create(newBody);
+      const document = await beneficiaries.create(newBody);
       delete document._doc.sd;
 
       // server response
@@ -82,10 +82,10 @@ const getBeneficiaries = async (req, res) => {
     }
 
     if (!insurancePolicy) {
-      const totalBeneficiaries = await beneficiarys.find({
+      const totalBeneficiaries = await beneficiaries.find({
         sd: { $gt: beneficiaryId },
       });
-      let object = await beneficiarys
+      let object = await beneficiaries
         .find({
           sd: {
             $gt: beneficiaryId,
@@ -110,7 +110,7 @@ const getBeneficiaries = async (req, res) => {
 
     // checking for isurancePolicy Query
     if (insurancePolicy) {
-      const totalBeneficiaries = await beneficiarys.find({
+      const totalBeneficiaries = await beneficiaries.find({
         sd: { $gt: beneficiaryId },
         insurancePolicyId: insurancePolicy,
       });
@@ -146,7 +146,7 @@ const getBeneficiaries = async (req, res) => {
 // api for getting a single Beneficiary
 const singleBeneficiary = async (req, res) => {
   try {
-    const document = await beneficiarys.findOne(req.params).lean();
+    const document = await beneficiaries.findOne(req.params).lean();
     
     if (!document) {
       return res.status(404).json({ message: `beneficiary not found` });
@@ -174,14 +174,14 @@ const singleBeneficiary = async (req, res) => {
 // api for updating a single Beneficiary
 const updateBeneficiary = async (req, res) => {
   try {
-    const doc = await beneficiarys.findOne(req.params).lean();
+    const doc = await beneficiaries.findOne(req.params).lean();
     if (!doc) {
       return res.status(404).json({ message: `beneficiary to update not found` });
     }
     // if (res.locals.user.userId !== doc.account.userId) {
     //   return res.status(401).json({ message: `Not Authorized` });
     // }
-    const document = await beneficiarys
+    const document = await beneficiaries
       .findOneAndUpdate(
         { beneficiaryId: req.params.beneficiaryId, userId: doc.userId },
         req.body,

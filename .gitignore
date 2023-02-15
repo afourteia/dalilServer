@@ -1,4 +1,5 @@
 /databaseDev/fakeData
 databaseDev/fakeData
 /node_modules
+/uploads
 .env
