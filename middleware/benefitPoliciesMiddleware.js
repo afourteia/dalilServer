@@ -472,12 +472,14 @@ const getClaims = async (req, res) => {
 const createClaim = async (req, res) => {
   try {
     console.log("Submit Claim -----------------------------------------------")
-    // console.log(req.headers)
-    console.log("req.body")
-    console.log(req.body)
+    console.log("req.headers")
+    console.log(req.headers)
 
-    console.log("req.files")
-    console.log(req.files)
+    // console.log("req.body")
+    // console.log(req.body)
+
+    // console.log("req.files")
+    // console.log(req.files)
     // console.log("req")
     // console.log(req)
 

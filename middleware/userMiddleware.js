@@ -42,7 +42,9 @@ const createUsers = async (req, res) => {
       // server response
       res.status(200).json({ ...document._doc, token: `Bearer ${token}` });
     } else {
+      console.log(users);
       const lastUser = users[0].userId;
+      console.log("lastUser", lastUser);
       const idNumber = Number(lastUser.split(`-`)[1]);
       const newBody = {
         ...req.body,

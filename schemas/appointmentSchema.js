@@ -7,7 +7,7 @@ const appointmentSchema = mongoose.Schema({
   //   type: String,
   // },
   appointmentId: mongoose.ObjectId,
-  appointmentDate: String,
+  appointmentDate: Date,
   timeslot: String,
   appointmentStatus: {
     type: String,
@@ -35,15 +35,15 @@ const appointmentSchema = mongoose.Schema({
     },
   },
   scheduleId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid schedule id`],
   },
   medicalCenterId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid medicalCenter id`],
   },
   doctorId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid doctor id`],
   },  
   notes: String,
@@ -54,13 +54,17 @@ const appointmentSchema = mongoose.Schema({
     type: String,
     required: [true, `please provide valid userId`],
   },
-  dateCreated: { type: Date },
-  lastUpdateDate: {
-    type: Date,
+  created: {
+    createdBy: { type: String},
+    dateCreated: { type: Date},
+  },
+  updated: {
+    updatedBy: { type: String},
+    dateUpdated: { type: Date},
   }
-});
+}, { collection: 'appointments' });
 
-const appointment = mongoose.model(`appointment`, appointmentSchema);
+const appointment = mongoose.model(`appointments`, appointmentSchema);
 
 // exporting appointment collection
 module.exports = appointment;

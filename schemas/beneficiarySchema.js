@@ -1,19 +1,12 @@
 // importing mongoose dependency for beneficiary schema and model creation
 const mongoose = require(`mongoose`);
 
-
 // medicalFile schema or structure
 const medicalFileSchema = mongoose.Schema({
   medicalFileId: {
     type: String,
-    required: [true, `please provide unique medicalFileID`],
     unique: true,
   },
-  // familyMemberId: {
-  //   type: String,
-  //   required: [true, `please provide unique familyMemberId`],
-  //   unique: true,
-  // },
   bloodType: {
     type: String,
   },
@@ -39,7 +32,7 @@ const medicalFileSchema = mongoose.Schema({
   medicalTests: {
     type: Array,
     required: [false, `specify medical tests`],
-  }
+  },
 });
 
 // familyMember schema or structure
@@ -70,9 +63,9 @@ const familyMemberSchema = mongoose.Schema({
   },
   relationshipToBeneficiary: {
     type: String,
-    enum: ['self', 'father', 'mother', 'wife', 'husband', 'daughter', 'son'],
+    enum: ["self", "father", "mother", "wife", "husband", "daughter", "son"],
     required: [true, `please specify relationship to the main beneficiary `],
-  },  
+  },
   medicalFiles: {
     type: medicalFileSchema,
     required: [false, `please provide valid family member `],
@@ -81,6 +74,10 @@ const familyMemberSchema = mongoose.Schema({
 
 // beneficiary schema or structure
 const beneficiarySchema = mongoose.Schema({
+  beneficiaryId: {
+    type: String,
+    unique: true,
+  },
   firstName: {
     type: String,
     required: [true, `please provide valid firstName`],
@@ -88,6 +85,9 @@ const beneficiarySchema = mongoose.Schema({
   middleName: {
     type: String,
     required: [true, `please provide valid middleName`],
+  },
+  thirdName: {
+    type: String,
   },
   lastName: {
     type: String,
@@ -122,23 +122,20 @@ const beneficiarySchema = mongoose.Schema({
     hasAccount: { type: Boolean, required: true },
     userId: {
       type: String,
+      unique: true,
     },
   },
-
-  sd: {
-    type: Number,
-    // unique: true,
+  created: {
+    createdBy: { type: mongoose.ObjectId},
+    dateCreated: { type: Date},
   },
-  beneficiaryId: {
-    type: String,
-    unique: true,
-  },
-});
+  updated: {
+    updatedBy: { type: mongoose.ObjectId},
+    dateUpdated: { type: Date},
+  }
+}, { collection: 'beneficiaries' });
 
-
-
-
-const beneficiarys = mongoose.model(`beneficiary`, beneficiarySchema);
+const beneficiaries = mongoose.model(`beneficiaries`, beneficiarySchema);
 
 // exporting beneficiary model to beneficiarymiddleware for querying beneficiary collection
-module.exports = beneficiarys;
+module.exports = beneficiaries;

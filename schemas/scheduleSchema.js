@@ -1,21 +1,18 @@
-// importing mongoose for scheduke schema and collection
+// importing mongoose for schedule schema and collection
 const mongoose = require(`mongoose`);
 
-// scheduke schema or structure
+// schedule schema or structure
 const scheduleSchema = mongoose.Schema({
   scheduleId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid  scheduleId`],
   },
-  sd: {
-    type: Number,
-  },
   medicalCenterId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid medicalCenter id`],
   },
   doctorId: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, `please provide valid doctor id`],
   },
   timeslot: {
@@ -56,56 +53,28 @@ const scheduleSchema = mongoose.Schema({
     required: [true, `please provide valid price`],
   },
   startDate: {
-    type: Date,
+    type: String,
     required: [true, `please provide valid startDate`],
   },
   endDate: {
-    type: Date,
+    type: String,
     required: [true, `please provide valid endDate`],
-  },
-
-  doctor: {
-    type: Array,
-  },
-  medicalcenter: {
-    medicalCenterId: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
-    city: {
-      type: String,
-    },
-    district: {
-      type: String,
-    },
-    description: {
-      type: String,
-    },
-    address: {
-      type: String,
-    },
-    phoneNumber: Array,
-    email: String,
-    facebookLink: String,
-    googleMaplink: String,
-    website: String,
   },
   isActive: {
     type: Boolean,
   },
-  dateCreated: { type: Date },
-  dateCreatedMilliSeconds: {
-    type: Number,
+  created: {
+    createdBy: { type: String},
+    dateCreated: { type: Date},
   },
-  lastUpdateDate: {
-    type: Date,
-  },
-  sid: Number,
-});
+  updated: {
+    updatedBy: { type: String},
+    dateUpdated: { type: Date},
+  }
 
-const schedule = mongoose.model(`schedule`, scheduleSchema);
+}, { collection: 'schedules' });
+
+const schedule = mongoose.model(`schedules`, scheduleSchema);
 
 // exporting schedule collection
 module.exports = schedule;
