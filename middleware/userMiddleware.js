@@ -129,4 +129,26 @@ const getUsers = async (req, res) => {
   }
 };
 
-module.exports = { createUsers, getUsers };
+const updateUser = async (req, res) => {
+  try {
+    if (!req.files[0].location) {
+      return res.status(401).json({ error: "Please upload a picture" });
+    }
+    const users = await user.findOneAndUpdate(
+      { _id: req.params.id },
+      { userFile: req.files[0].location },
+      { new: true }
+    );
+    if (!users) {
+      return res.status(404).json({ error: "No user found" });
+    }
+    res.status(200).json({
+      users,
+      message: "User updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createUsers, getUsers, updateUser };

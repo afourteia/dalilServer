@@ -8,7 +8,11 @@ const router = express.Router();
 // const upload = multer({ dest: 'uploads/' })
 
 // importing users middleware
-const { createUsers, getUsers } = require(`../middlewares/userMiddleware`);
+const {
+  createUsers,
+  getUsers,
+  updateUser,
+} = require(`../middleware/userMiddleware`);
 
 // importing benefitPolicies middleware
 const {
@@ -16,13 +20,13 @@ const {
   getClaims,
   createClaim,
   getExpenseReports,
-} = require(`../middlewares/benefitPoliciesMiddleware`);
+} = require(`../middleware/benefitPoliciesMiddleware`);
 
 // importing medicalFiles middleware
 const {
   singleMedicalFiles,
   singlePatientMedicalFiles,
-} = require(`../middlewares/medicalFilesMiddleware`);
+} = require(`../middleware/medicalFilesMiddleware`);
 
 // importing beneficiary middleware
 const {
@@ -30,7 +34,7 @@ const {
   getBeneficiaries,
   singleBeneficiary,
   updateBeneficiary,
-} = require(`../middlewares/beneficiaryMiddleware`);
+} = require(`../middleware/beneficiaryMiddleware`);
 
 // importing appointment middleware
 const {
@@ -40,7 +44,7 @@ const {
   doctorAppointmentSummaries,
   doctorAppointments,
   allAppointments,
-} = require(`../middlewares/appointmentMiddleware`);
+} = require(`../middleware/appointmentMiddleware`);
 
 // importing schedules middleware
 const {
@@ -50,7 +54,7 @@ const {
   specificSchedule,
   allSchedule,
   deleteSchedule,
-} = require(`../middlewares/scheduleMiddleware`);
+} = require(`../middleware/scheduleMiddleware`);
 
 // importing doctor middleware
 const {
@@ -59,7 +63,7 @@ const {
   updateDoctor,
   deleteDoctor,
   allDoctor,
-} = require(`../middlewares/doctorMiddleware`);
+} = require(`../middleware/doctorMiddleware`);
 
 const {
   createmedicalCenter,
@@ -67,36 +71,40 @@ const {
   updatemedicalCenter,
   deletemedicalCenter,
   allmedicalCenter,
-} = require(`../middlewares/medicalCenterMiddleware`);
+} = require(`../middleware/medicalCenterMiddleware`);
 
 const {
   createmedicalSpecialty,
   allmedicalSpecialty,
-} = require(`../middlewares/medicalSpecialtyMiddleware`);
+} = require(`../middleware/medicalSpecialtyMiddleware`);
 
 const {
   allMedicalServices,
-} = require(`../middlewares/medicalServicesMiddelware`);
+} = require(`../middleware/medicalServicesMiddelware`);
 
-const { createCity, allCity } = require(`../middlewares/cityMiddleware`);
+const { createCity, allCity } = require(`../middleware/cityMiddleware`);
 
-const { login, logout } = require(`../middlewares/loginMiddleware`);
+const { login, logout } = require(`../middleware/loginMiddleware`);
 
 const {
   createInstitute,
   getInstitutions,
   updateInstitution,
   deleteInstitution,
-} = require(`../middlewares/instituteMiddleware`);
+} = require(`../middleware/instituteMiddleware`);
 // importing authentication/authorization middleware
 const { authentication, cookieVerification, isAdmin } = require(`../auth`);
-
+const uploader = require("../uploader");
 // All routes
 // routes for user
 router
   .route(`/v1/users`)
   .post(authentication, isAdmin, createUsers)
   .get(authentication, getUsers);
+///route for upload user file on aws
+router
+  .route(`/v1/users/:id`)
+  .patch(uploader.singleFileUpload.any({ name: "userImage" }), updateUser);
 
 // routes for beneficiary
 router

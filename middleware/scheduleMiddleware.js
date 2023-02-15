@@ -1,109 +1,40 @@
 //importing appointments collection
 const { find } = require("../schemas/scheduleSchema");
 const schedule = require(`../schemas/scheduleSchema`);
+const mongoose = require(`mongoose`);
 // importing dependencies
 
 // api for creating schedule
 const createSchedule = async (req, res) => {
   try {
     const userId = res.locals.user.userId;
-    const idNumber = Number(userId.split(`-`)[1]);
-    const doc = await schedule.find({});
-    if (doc.length === 0) {
-      const document = await schedule.create({
-        ...req.body,
-        scheduleId: `SCH-${1}`,
-        sid: 1,
-        isActive: true,
-        dateCreated: Date(),
-        dateCreatedMilliSeconds: new Date().valueOf(),
-      });
 
-      const test = await schedule
-        .aggregate([
-          {
-            $match: { _id: document._id },
-          },
-          {
-            $lookup: {
-              from: `medicalcenters`,
-              localField: `medicalCenterId`,
-              foreignField: `medicalCenterId`,
-              as: `medicalcenter`,
-            },
-          },
-          {
-            $lookup: {
-              from: `doctors`,
-              localField: `doctorId`,
-              foreignField: `doctorId`,
-              as: `doctor`,
-            },
-          },
-        ])
-        .exec();
-      test.forEach((each) => {
-        delete each._id;
-      });
-      console.log(document, test[0].doctor);
-      const newDoc = await schedule.findOneAndReplace(
-        { _id: document._id },
-        test[0],
-        {
-          new: true,
-        }
-      );
-
-      res.status(200).json(newDoc);
-    } else {
-      let lastDoc = doc[doc.length - 1];
-      const changedId = Number(lastDoc.scheduleId.split(`-`)[1]);
-      const document = await schedule.create({
-        ...req.body,
-        scheduleId: `SCH-${changedId + 1}`,
-        sid: changedId + 1,
-        isActive: true,
-        dateCreated: Date(),
-        dateCreatedMilliSeconds: new Date().valueOf(),
-      });
-
-      const test = await schedule
-        .aggregate([
-          {
-            $match: { _id: document._id },
-          },
-          {
-            $lookup: {
-              from: `medicalcenters`,
-              localField: `medicalCenterId`,
-              foreignField: `medicalCenterId`,
-              as: `medicalcenter`,
-            },
-          },
-          {
-            $lookup: {
-              from: `doctors`,
-              localField: `doctorId`,
-              foreignField: `doctorId`,
-              as: `doctor`,
-            },
-          },
-        ])
-        .exec();
-      test.forEach((each) => {
-        delete each._id;
-      });
-      console.log(document, test[0].doctor);
-      const newDoc = await schedule.findOneAndReplace(
-        { _id: document._id },
-        test[0],
-        {
-          new: true,
-        }
-      );
-
-      res.status(200).json(newDoc);
+    if(req.body.doctorId){
+      console.log(req.body.doctorId)
+      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      console.log(req.body.doctorId)
     }
+    if(req.body.medicalCenterId){
+      console.log(req.body.medicalCenterId)
+      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
+      console.log(req.body.medicalCenterId)
+    }
+
+    const document = await schedule.create({
+      ...req.body,
+      scheduleId: new mongoose.Types.ObjectId(),
+      creation: {
+        createdBy: res.locals.user.userId,
+        dateCreated: Date(),
+      },
+      isActive: true,
+    });
+    const responseBody = {
+      codeStatus: "201",
+      message: "document created",
+      data: document,
+    };
+    return res.status(201).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -113,12 +44,33 @@ const createSchedule = async (req, res) => {
 // api for updating schedule
 const updateSchedule = async (req, res) => {
   try {
+
+    if(req.body.doctorId){
+      console.log(req.body.doctorId)
+      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      console.log(req.body.doctorId)
+    }
+    if(req.body.medicalCenterId){
+      console.log(req.body.medicalCenterId)
+      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
+      console.log(req.body.medicalCenterId)
+    }
+
+    if(req.params.scheduleId){
+      console.log(req.params.scheduleId)
+      req.params.scheduleId = mongoose.Types.ObjectId(req.params.scheduleId);
+      console.log(req.params.scheduleId)
+    }
+
     const document = await schedule
       .findOneAndUpdate(
         req.params,
         {
           ...req.body,
-          lastUpdateDate: Date(),
+          updated: {
+            updatedBy:  res.locals.user.userId,
+            dateUpdated: Date(),
+          }
         },
         { new: true }
       )
@@ -148,7 +100,7 @@ const allDoctorSchedule = async (req, res) => {
     // objectCount = await schedule.aggregate([
     //   {
     //     $lookup: {
-    //       from: `medicalcenters`,
+    //       from: `medicalCenters`,
     //       localField: `medicalCenterId`,
     //       foreignField: `medicalCenterId`,
     //       as: `medicalCenterObject`,
@@ -183,7 +135,7 @@ const allDoctorSchedule = async (req, res) => {
     documents = await schedule.aggregate([
       {
         $lookup: {
-          from: `medicalcenters`,
+          from: `medicalCenters`,
           localField: `medicalCenterId`,
           foreignField: `medicalCenterId`,
           as: `medicalCenterObject`,
@@ -267,6 +219,7 @@ const allSchedule = async (req, res) => {
     const specialtyQP = req.query.specialty;
     const starting_after_objectQP = req.query.starting_after_object;
     const timeslotQP = req.query.timeSlot;
+    const skipQP =  Number(req.query.skip ?? 0);
 
     let limitQP = req.query.limit;
     if (limitQP) {
@@ -282,18 +235,19 @@ const allSchedule = async (req, res) => {
     let query = {};
     query['$and']=[];
 
+    // These query parameters are optional, so we need to handle the situation where they are not provided
     if(doctorIdQP){
-      // console.log(cityQP);
-      query["$and"].push({"doctorId": {$eq: doctorIdQP}});
+      // console.log(doctorIdQP);
+      query["$and"].push({"doctorId": {$eq: mongoose.Types.ObjectId(doctorIdQP)}});
     }
 
     if(medicalCenterIdQP){
-      // console.log(cityQP);
-      query["$and"].push({"medicalCenterId": {$eq: medicalCenterIdQP}});
+      // console.log(medicalCenterIdQP);
+      query["$and"].push({"medicalCenterId": {$eq: mongoose.Types.ObjectId(medicalCenterIdQP)}});
     }
 
     if(cityQP){
-      console.log(cityQP);
+      // console.log(cityQP);
       query["$and"].push({"medicalCenterObject.city": {$eq: cityQP}});
     }
 
@@ -317,38 +271,68 @@ const allSchedule = async (req, res) => {
       query["$and"].push({endDate: {$gte: fromDateQP}});      
     }
 
+    // Sort by scheduleId by default. If specified, then either sort by doctorId or medicalCenterId
     let sortByQP_ = {}
     if(sortByQP === "doctor"){
       // console.log(sortByQP);
       sortByQP_ = {"doctorId": 1, "scheduleId": 1};
 
       if (starting_after_objectQP){
-        query["$and"].push({"doctorId": {$gt: starting_after_objectQP}});
+        query["$and"].push({"doctorId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP) }});
       }
     }else if(sortByQP === "medicalCenter"){
       // console.log(sortByQP);
       sortByQP_ = {"medicalCenterId": 1, "scheduleId": 1};
       if (starting_after_objectQP){
-        query["$and"].push({"medicalCenterId": {$gt: starting_after_objectQP}});
+        query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
       }
     }else{
       sortByQP_ = {"scheduleId": 1};
       if (starting_after_objectQP){
-        query["$and"].push({"scheduleId": {$gt: starting_after_objectQP}});
+        query["$and"].push({"scheduleId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
       }
     }
     
     let objectCount = 0;
+    let count = 0
 
+    // Error will be thrown if you pass an empty query to the $match filter
     if (query["$and"].length === 0) { 
-      documents = await schedule.find({},
-        // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
-        ).sort( sortByQP_ ).limit(limitQP).lean();
+      // documents = await schedule.find({},
+      //   // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
+      //   ).sort( sortByQP_ ).limit(limitQP).lean();
+      documents = await schedule.aggregate([
+        {
+          $lookup: {
+            from: `medicalCenters`,
+            localField: `medicalCenterId`,
+            foreignField: `medicalCenterId`,
+            as: `medicalCenterObject`,
+          },
+        },
+        {
+          $lookup: {
+            from: `doctors`,
+            localField: `doctorId`,
+            foreignField: `doctorId`,
+            as: `doctorObject`,
+          },
+        },
+        {
+          $sort: sortByQP_
+        },
+        { $skip : skipQP },
+        {
+          $limit: limitQP
+        }
+      ]);        
         
 
       objectCount = await schedule.find({},
         // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
         ).countDocuments();
+
+      count = objectCount;
         
     }else {
       // documents = await schedule.find(query,
@@ -362,7 +346,7 @@ const allSchedule = async (req, res) => {
         documents = await schedule.aggregate([
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalCenterObject`,
@@ -383,6 +367,7 @@ const allSchedule = async (req, res) => {
           {
             $sort: sortByQP_
           },
+          { $skip : skipQP },
           {
             $limit: limitQP
           }
@@ -397,7 +382,7 @@ const allSchedule = async (req, res) => {
         lastDocument = await schedule.aggregate([
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalCenterObject`,
@@ -429,8 +414,10 @@ const allSchedule = async (req, res) => {
           }
         ]);
 
+        // console.log("lastDocument[0]")
+        // console.log(lastDocument[0])
         documents.forEach((document) => {
-          if (document.scheduleId === lastDocument[0].scheduleId) hasMore = false;
+          if (document.scheduleId.equals(lastDocument[0].scheduleId)) hasMore = false;
           document.doctorObject = document.doctorObject[0]
           document.medicalCenterObject = document.medicalCenterObject[0]
         });
@@ -441,7 +428,7 @@ const allSchedule = async (req, res) => {
         objectCount = await schedule.aggregate([
           {
             $lookup: {
-              from: `medicalcenters`,
+              from: `medicalCenters`,
               localField: `medicalCenterId`,
               foreignField: `medicalCenterId`,
               as: `medicalCenterObject`,
@@ -473,7 +460,7 @@ const allSchedule = async (req, res) => {
           }
         ]);
     }
-    let count = 0
+    
     // console.log(objectCount[0].objectCount)
     if(objectCount[0] !== undefined){
       count = objectCount[0].objectCount

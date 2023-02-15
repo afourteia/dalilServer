@@ -1,14 +1,13 @@
-const multerS3 = require("multer-s3");
+const multerS3 = require("multer-s3-v2");
 const multer = require("multer");
 const path = require("path");
 const aws = require("aws-sdk");
-
 require("dotenv").config();
 
 const s3 = new aws.S3({
   accessKeyId: process.env.aws_accessKeyID,
   secretAccessKey: process.env.aws_secretAccessKey,
-  params: { Bucket: process.env.aws_bucketName },
+  Bucket: process.env.aws_bucketName,
 });
 
 const singleFileUpload = multer({
@@ -19,7 +18,6 @@ const singleFileUpload = multer({
     contentType: multerS3.AUTO_CONTENT_TYPE, // very important
 
     key: function (req, file, cb) {
-      // console.log("hello from uploader", file);
       cb(
         null,
         path.basename(file.originalname, path.extname(file.originalname)) +
@@ -37,7 +35,7 @@ const singleFileUpload = multer({
 
 function checkFileType(file, cb) {
   // Allowed ext
-  const filetypes = /jpeg|jpg|png|pdf/;
+  const filetypes = /jpeg|jpg|png/;
   // Check ext
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   // Check mime
