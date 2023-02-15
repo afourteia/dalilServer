@@ -199,6 +199,7 @@ const allSchedule = async (req, res) => {
     const specialtyQP = req.query.specialty;
     const starting_after_objectQP = req.query.starting_after_object;
     const timeslotQP = req.query.timeSlot;
+    const skipQP =  Number(req.query.skip ?? 0);
 
     let limitQP = req.query.limit;
     if (limitQP) {
@@ -300,6 +301,7 @@ const allSchedule = async (req, res) => {
         {
           $sort: sortByQP_
         },
+        { $skip : skipQP },
         {
           $limit: limitQP
         }
@@ -345,6 +347,7 @@ const allSchedule = async (req, res) => {
           {
             $sort: sortByQP_
           },
+          { $skip : skipQP },
           {
             $limit: limitQP
           }

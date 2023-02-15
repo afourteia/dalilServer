@@ -123,6 +123,7 @@ const allDoctor = async (req, res) => {
     const starting_after_objectQP = req.query.starting_after_object;
     const specialtyQP = req.query.specialty;
     const searchQueryQP = req.query.searchQuery;
+    const skipQP =  Number(req.query.skip ?? 0);
 
     let hasMore = true;
     let query = {};
@@ -169,7 +170,7 @@ const allDoctor = async (req, res) => {
     // console.log("query['$and']");
     // console.log(query["$and"]);
     if (query["$and"].length === 0) {
-      documents = await doctor.find({}).sort(sortByQP_).limit(limitQP).lean();
+      documents = await doctor.find({}).sort(sortByQP_).skip(skipQP).limit(limitQP).lean();
 
       objectCount = await doctor.find({}).countDocuments();
     } else {
@@ -182,6 +183,7 @@ const allDoctor = async (req, res) => {
         {
           $sort: sortByQP_,
         },
+        { $skip : skipQP },
         {
           $limit: limitQP,
         },

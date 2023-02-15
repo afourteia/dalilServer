@@ -140,6 +140,9 @@ const allmedicalCenter = async (req, res) => {
 
     const starting_after_objectQP = req.query.starting_after_object;
     const starting_before_objectQP = req.query.starting_before_object;
+    const skipQP =  Number(req.query.skip ?? 0);
+    console.log(req.query.skip) 
+    console.log(skipQP) 
     const cityQP = req.query.city;
     const searchQueryQP = req.query.searchQuery;
     let hasMore = true;
@@ -174,7 +177,7 @@ const allmedicalCenter = async (req, res) => {
     let count = 0
     if (query["$and"].length === 0) { 
       documents = await medicalCenter.find({},
-        ).sort( sortByQP_ ).limit(limitQP).lean();
+        ).sort( sortByQP_ ).skip(skipQP).limit(limitQP).lean();
         
 
       objectCount = await medicalCenter.find({},
@@ -191,6 +194,7 @@ const allmedicalCenter = async (req, res) => {
         {
           $sort: sortByQP_
         },
+        { $skip : skipQP },
         {
           $limit: limitQP
         }
