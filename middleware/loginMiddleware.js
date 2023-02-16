@@ -16,6 +16,7 @@ const login = async (req, res) => {
     }
     const hashedPassword = doc.password;
     const userId = doc.userId;
+    const role = doc.userRole;
     // comparing hashed password
     const hash = await bcrypt.compare(myPlaintextPassword, hashedPassword);
     if (!hash) {
@@ -26,9 +27,8 @@ const login = async (req, res) => {
       password: hashedPassword,
       username: username,
     });
-
     const token = jwt.sign(
-      { userId, username, hashedPassword },
+      { userId, username, hashedPassword, role },
       process.env.jwtSecret,
       {
         expiresIn: `30d`,
@@ -55,56 +55,56 @@ const login = async (req, res) => {
             as: `beneficiary`,
           },
         },
-        {$unwind: '$beneficiary'},
-        {$project: { 
-          __v: 0,
-          sd: 0,
-          _id: 0,
-          password: 0,
-          "beneficiary._id": 0,
-          "beneficiary.__v": 0,
-          "beneficiary.sd": 0
-        }},
-        
-        
+        { $unwind: "$beneficiary" },
+        {
+          $project: {
+            __v: 0,
+            sd: 0,
+            _id: 0,
+            password: 0,
+            "beneficiary._id": 0,
+            "beneficiary.__v": 0,
+            "beneficiary.sd": 0,
+          },
+        },
       ])
       .exec();
-    
+
     const responseBody = {
       statusCode: "200",
       message: "good",
       token: `Bearer ${token}`,
-      data: response[0]
-    }
+      data: response[0],
+    };
 
-    res.status(200).json({...responseBody });
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
-
 const logout = async (req, res) => {
   try {
-    console.log("Create Medical Center -----------------------------------------------")
+    console.log(
+      "Create Medical Center -----------------------------------------------"
+    );
     // console.log(req.headers)
-    console.log("req.body")
-    console.log(req.body)
+    console.log("req.body");
+    console.log(req.body);
 
-    console.log("req.body")
-    console.log(req.body)
+    console.log("req.body");
+    console.log(req.body);
 
-
-    console.log("Create Medical Center response ---------------------------------------------------")
+    console.log(
+      "Create Medical Center response ---------------------------------------------------"
+    );
     const responseBody = {
       codeStatus: "200",
-      message: "logout successful"
+      message: "logout successful",
     };
 
-    res.status(200).json({...responseBody });
-
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     //   checking for server errors
     console.log(error);
@@ -114,5 +114,5 @@ const logout = async (req, res) => {
 
 module.exports = {
   login,
-  logout
+  logout,
 };
