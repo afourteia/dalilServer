@@ -6,7 +6,7 @@ const authentication = (req, res, next) => {
   if (!req.headers.authorization) {
     return res
       .status(401)
-      .json({ msg: `No Authorization header found or wrong format` });
+      .json({ message: `No Authorization header found or wrong format` });
   }
   const auth = req.headers.authorization;
   try {
