@@ -42,7 +42,6 @@ const isAdmin = (req, res, next) => {
   }
   // res.locals.id = payload._id;
   res.locals.user = payload;
-  console.log("payload: ", payload);
   if (payload.role !== "admin") {
     return res.status(401).json({ msg: `You can not perform this action` });
   }

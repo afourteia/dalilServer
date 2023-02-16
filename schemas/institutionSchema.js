@@ -14,7 +14,7 @@ const institutionSchema = mongoose.Schema(
 
     employees: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "user",
+      ref: "users",
     },
     // employeeCount: {
     //   type: Number,
@@ -25,7 +25,7 @@ const institutionSchema = mongoose.Schema(
 
     beneficiaries: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "user",
+      ref: "users",
     },
     // beneficiaryCount: {
     //   type: Number,
