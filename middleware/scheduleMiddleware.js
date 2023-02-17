@@ -491,6 +491,12 @@ const allSchedule = async (req, res) => {
 // deleting schedule
 const deleteSchedule = async (req, res) => {
   try {
+
+    if(req.params.scheduleId){
+      console.log(req.params.scheduleId)
+      req.params.scheduleId = mongoose.Types.ObjectId(req.params.scheduleId);
+      console.log(req.params.scheduleId)
+    }
     const document = await schedule.findOneAndDelete(req.params).lean();
     if (!document) {
       return res.status(404).json({ message: `schedule not found` });
