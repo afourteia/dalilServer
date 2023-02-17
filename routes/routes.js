@@ -8,7 +8,11 @@ const router = express.Router();
 // const upload = multer({ dest: 'uploads/' })
 
 // importing users middleware
-const { createUsers, getUsers } = require(`../middleware/userMiddleware`);
+const {
+  createUsers,
+  getUsers,
+  updateUser,
+} = require(`../middleware/userMiddleware`);
 
 // importing benefitPolicies middleware
 const {
@@ -90,13 +94,17 @@ const {
 } = require(`../middleware/instituteMiddleware`);
 // importing authentication/authorization middleware
 const { authentication, cookieVerification, isAdmin } = require(`../auth`);
-
+// const uploader = require("../uploader");
 // All routes
 // routes for user
 router
   .route(`/v1/users`)
   .post(authentication, isAdmin, createUsers)
   .get(authentication, getUsers);
+///route for upload user file on aws
+router
+  .route(`/v1/users/:id`)
+  // .patch(uploader.singleFileUpload.any({ name: "userImage" }), updateUser);
 
 // routes for beneficiary
 router

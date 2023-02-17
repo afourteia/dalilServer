@@ -555,11 +555,12 @@ const doctorAppointments = async (req, res) => {
 // getting all appointments
 const allAppointments = async (req, res) => {
   try {
-    const bookedQP = req.query.booked ?? true;
-    const cancelledQP = req.query.cancelled ?? true;
-    const rejectedQP = req.query.rejected ?? true;
-    const completedQP = req.query.completed ?? true;
-    const pendingQP = req.query.pending ?? true;
+    console.log("all appointments")
+    const bookedQP = req.query.booked ?? "true";
+    const cancelledQP = req.query.cancelled ?? "true";
+    const rejectedQP = req.query.rejected ?? "true";
+    const completedQP = req.query.completed ?? "true";
+    const pendingQP = req.query.pending ?? "true";
     const medicalCenterIdQP = req.query.medicalCenterId;
     const starting_after_objectQP = req.query.starting_after_object;
     let limitQP = Number(req.query.limit) ?? 30;
@@ -585,6 +586,9 @@ const allAppointments = async (req, res) => {
     let query = {};
     query["$and"] = [];
     query["$and"].push({ appointmentStatus: { $in: bookingStatusQP } });
+    
+    console.log("bookingStatusQP")
+    console.log(bookingStatusQP)
 
     let objectCount = 0;
     let hasMore = true;

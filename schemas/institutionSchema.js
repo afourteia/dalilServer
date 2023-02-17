@@ -38,9 +38,8 @@ const benefitPolicySchema = mongoose.Schema({
     required: true
   },
   balanceResetDate:{
-    month: String,
-    year: String,
-    required: true
+    month: {type: String, required: true},
+    year: {type: String, required: true}
   },
   insuranceBudget: Number,
   inPatientBenefitCat: {
@@ -79,9 +78,8 @@ const institutionSchema = mongoose.Schema({
     required: [false, `please provide valid family member `],
   },
   created: {
-    createdBy: { type: mongoose.ObjectId},
-    dateCreated: { type: Date},
-    required: true
+    createdBy: { type: mongoose.ObjectId, required: true},
+    dateCreated: { type: Date, required: true},
   },
   updated: {
     updatedBy: { type: mongoose.ObjectId},

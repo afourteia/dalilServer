@@ -97,6 +97,11 @@ const topExpensesByMedicalCenterSchema = mongoose.Schema({
     required: true,
     enum: ["LYD", "USD", "EUR"]
   },
+  claimStatus: {
+    type: String,
+    required: true,
+    enum: ["Paid", "Under Review", "Processing", "Rejected"]
+  },
   servicesCount: {
     type: Number,
     required: true,
@@ -187,6 +192,11 @@ const annualStatisticsSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  claimCount: {
+    type: Number,
+    required: true,
+    unique: true
+  },
   claimAmount: {
     type: Number,
     required: true,
@@ -245,59 +255,22 @@ const annualStatisticsSchema = mongoose.Schema({
 })
 
 // institution schema or structure
-const institutionSchema = mongoose.Schema({
+const institutionStatisticsSchema = mongoose.Schema({
   institutionId: {
     type: mongoose.ObjectId,
     required: true,
     unique: true
   },
-  institutionDate: Date,
-  timeslot: String,
   institutionStatus: {
     type: String,
+    enum: ["active", "notActive"]
   },
-  patient: {
-    userId: {
-      type: String,
-      required: [true, `please provide valid userId`],
-    },
-    patientType: {
-      type: String,
-      required: [true, `please provide valid patientType`],
-    },
-    patientId: {
-      type: String,
-      required: [true, `please provide valid patientId`],
-    },
-    patientName: {
-      type: String,
-      required: [true, `please provide valid patientName`],
-    },
-    patientRelationship: {
-      type: String,
-      required: [true, `please provide valid patientRelationship`],
-    },
+
+  annualStatistics: {
+    type: [annualStatisticsSchema],
+    required: true
   },
-  scheduleId: {
-    type: mongoose.ObjectId,
-    required: [true, `please provide valid schedule id`],
-  },
-  medicalCenterId: {
-    type: mongoose.ObjectId,
-    required: [true, `please provide valid medicalCenter id`],
-  },
-  doctorId: {
-    type: mongoose.ObjectId,
-    required: [true, `please provide valid doctor id`],
-  },  
-  notes: String,
-  medicalCenterObject: Object,
-  doctorObject: Object,
-  scheduleObject: Object,
-  userId: {
-    type: String,
-    required: [true, `please provide valid userId`],
-  },
+
   created: {
     createdBy: { type: String},
     dateCreated: { type: Date},
@@ -308,7 +281,7 @@ const institutionSchema = mongoose.Schema({
   }
 }, { collection: 'institutions' });
 
-const institution = mongoose.model(`institutions`, institutionSchema);
+const institutionStatistics = mongoose.model(`institutions`, institutionStatistics);
 
 // exporting institution collection
-module.exports = institution;
+module.exports = institutionStatistics;
