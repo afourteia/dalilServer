@@ -18,10 +18,12 @@ app.use(cookieParser());
 // wrapping request body with json
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
+var cors = require('cors');
 
 // for parsing multipart/form-data
 app.use(upload.any()); 
 app.use(express.static('public'));
+app.use(cors());
 
 
 const Server = async () => {
