@@ -9,15 +9,17 @@ const createSchedule = async (req, res) => {
   try {
     const userId = res.locals.user.userId;
 
-    if(req.body.doctorId){
-      console.log(req.body.doctorId)
+    if (req.body.doctorId) {
+      console.log(req.body.doctorId);
       req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
-      console.log(req.body.doctorId)
+      console.log(req.body.doctorId);
     }
-    if(req.body.medicalCenterId){
-      console.log(req.body.medicalCenterId)
-      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
-      console.log(req.body.medicalCenterId)
+    if (req.body.medicalCenterId) {
+      console.log(req.body.medicalCenterId);
+      req.body.medicalCenterId = mongoose.Types.ObjectId(
+        req.body.medicalCenterId
+      );
+      console.log(req.body.medicalCenterId);
     }
 
     const document = await schedule.create({
@@ -44,22 +46,23 @@ const createSchedule = async (req, res) => {
 // api for updating schedule
 const updateSchedule = async (req, res) => {
   try {
-
-    if(req.body.doctorId){
-      console.log(req.body.doctorId)
+    if (req.body.doctorId) {
+      console.log(req.body.doctorId);
       req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
-      console.log(req.body.doctorId)
+      console.log(req.body.doctorId);
     }
-    if(req.body.medicalCenterId){
-      console.log(req.body.medicalCenterId)
-      req.body.medicalCenterId = mongoose.Types.ObjectId(req.body.medicalCenterId);
-      console.log(req.body.medicalCenterId)
+    if (req.body.medicalCenterId) {
+      console.log(req.body.medicalCenterId);
+      req.body.medicalCenterId = mongoose.Types.ObjectId(
+        req.body.medicalCenterId
+      );
+      console.log(req.body.medicalCenterId);
     }
 
-    if(req.params.scheduleId){
-      console.log(req.params.scheduleId)
+    if (req.params.scheduleId) {
+      console.log(req.params.scheduleId);
       req.params.scheduleId = mongoose.Types.ObjectId(req.params.scheduleId);
-      console.log(req.params.scheduleId)
+      console.log(req.params.scheduleId);
     }
 
     const document = await schedule
@@ -68,9 +71,9 @@ const updateSchedule = async (req, res) => {
         {
           ...req.body,
           updated: {
-            updatedBy:  res.locals.user.userId,
+            updatedBy: res.locals.user.userId,
             dateUpdated: Date(),
-          }
+          },
         },
         { new: true }
       )
@@ -92,11 +95,11 @@ const allDoctorSchedule = async (req, res) => {
 
     let hasMore = true;
     let query = {};
-    query['$and']=[];
+    query["$and"] = [];
 
-    query["$and"].push({"doctorId": {$eq: doctorIdQP}});
-    
-    // let objectCount = 0;    
+    query["$and"].push({ doctorId: { $eq: doctorIdQP } });
+
+    // let objectCount = 0;
     // objectCount = await schedule.aggregate([
     //   {
     //     $lookup: {
@@ -114,7 +117,7 @@ const allDoctorSchedule = async (req, res) => {
     //       as: `doctorObject`,
     //     },
     //   },
-    //   { $match: { 
+    //   { $match: {
     //     $and: query["$and"]
     //    }
     //   },
@@ -149,33 +152,33 @@ const allDoctorSchedule = async (req, res) => {
           as: `doctorObject`,
         },
       },
-      { $match: { 
-        $and: query["$and"]
-        }
+      {
+        $match: {
+          $and: query["$and"],
+        },
       },
-      { $group:
-        {
+      {
+        $group: {
           _id: "$medicalCenterId",
-          medicalCenterId: {$first: "$medicalCenterId"},
-          medicalCenterName: {$first: "$medicalCenterObject.name"},
-          scheduleList: { $push: "$$ROOT"}
-        }
-      }
+          medicalCenterId: { $first: "$medicalCenterId" },
+          medicalCenterName: { $first: "$medicalCenterObject.name" },
+          scheduleList: { $push: "$$ROOT" },
+        },
+      },
     ]);
-
 
     documents.forEach((document) => {
       document.medicalCenterName = document.medicalCenterName[0];
       // document.medicalCenterId = document.medicalCenterId[0];
       document.scheduleList.forEach((document) => {
-        document.medicalCenterObject = document.medicalCenterObject[0]
-        document.doctorObject = document.doctorObject[0]
-      })
+        document.medicalCenterObject = document.medicalCenterObject[0];
+        document.doctorObject = document.doctorObject[0];
+      });
     });
-    let count = documents.length
+    let count = documents.length;
 
-    let message = "good"
-    if (documents.length === 0){
+    let message = "good";
+    if (documents.length === 0) {
       message = "list is empty change your query";
     }
     const responseBody = {
@@ -183,11 +186,11 @@ const allDoctorSchedule = async (req, res) => {
       message: message,
       data: {
         objectCount: count,
-        objectArray: documents
-      }
+        objectArray: documents,
+      },
     };
 
-    res.status(200).json({...responseBody});
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -219,7 +222,8 @@ const allSchedule = async (req, res) => {
     const specialtyQP = req.query.specialty;
     const starting_after_objectQP = req.query.starting_after_object;
     const timeslotQP = req.query.timeSlot;
-    const skipQP =  Number(req.query.skip ?? 0);
+    const skipQP = Number(req.query.skip ?? 0);
+    const groupByQP = req.query.groupBy;
 
     let limitQP = req.query.limit;
     if (limitQP) {
@@ -227,247 +231,255 @@ const allSchedule = async (req, res) => {
       if (limitQP > 100 || limitQP < 1) {
         limitQP = 30;
       }
-    }else{
+    } else {
       limitQP = 30;
     }
 
     let hasMore = true;
     let query = {};
-    query['$and']=[];
+    query["$and"] = [];
 
     // These query parameters are optional, so we need to handle the situation where they are not provided
-    if(doctorIdQP){
+    if (doctorIdQP) {
       // console.log(doctorIdQP);
-      query["$and"].push({"doctorId": {$eq: mongoose.Types.ObjectId(doctorIdQP)}});
+      query["$and"].push({
+        doctorId: { $eq: mongoose.Types.ObjectId(doctorIdQP) },
+      });
     }
 
-    if(medicalCenterIdQP){
+    if (medicalCenterIdQP) {
       // console.log(medicalCenterIdQP);
-      query["$and"].push({"medicalCenterId": {$eq: mongoose.Types.ObjectId(medicalCenterIdQP)}});
+      query["$and"].push({
+        medicalCenterId: { $eq: mongoose.Types.ObjectId(medicalCenterIdQP) },
+      });
     }
 
-    if(cityQP){
+    if (cityQP) {
       // console.log(cityQP);
-      query["$and"].push({"medicalCenterObject.city": {$eq: cityQP}});
+      query["$and"].push({ "medicalCenterObject.city": { $eq: cityQP } });
     }
 
-    if(timeslotQP){
+    if (timeslotQP) {
       // console.log(timeslotQP);
-      query["$and"].push({timeslot: {$eq: timeslotQP}});
+      query["$and"].push({ timeslot: { $eq: timeslotQP } });
     }
 
-    if(specialtyQP){
+    if (specialtyQP) {
       // console.log(specialtyQP);
-      query["$and"].push({"doctorObject.specialty": {$eq: specialtyQP}});
+      query["$and"].push({ "doctorObject.specialty": { $eq: specialtyQP } });
     }
 
-    if(toDateQP){
+    if (toDateQP) {
       // console.log(toDateQP);
-      query["$and"].push({startDate: {$lte: toDateQP}});      
+      query["$and"].push({ startDate: { $lte: toDateQP } });
     }
 
-    if(fromDateQP){
+    if (fromDateQP) {
       // console.log(fromDateQP);
-      query["$and"].push({endDate: {$gte: fromDateQP}});      
+      query["$and"].push({ endDate: { $gte: fromDateQP } });
     }
 
     // Sort by scheduleId by default. If specified, then either sort by doctorId or medicalCenterId
-    let sortByQP_ = {}
-    if(sortByQP === "doctor"){
+    let sortByQP_ = {};
+    if (sortByQP === "doctor") {
       // console.log(sortByQP);
-      sortByQP_ = {"doctorId": 1, "scheduleId": 1};
+      sortByQP_ = { doctorId: 1, scheduleId: 1 };
 
-      if (starting_after_objectQP){
-        query["$and"].push({"doctorId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP) }});
-      }
-    }else if(sortByQP === "medicalCenter"){
-      // console.log(sortByQP);
-      sortByQP_ = {"medicalCenterId": 1, "scheduleId": 1};
-      if (starting_after_objectQP){
-        query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
-      }
-    }else{
-      sortByQP_ = {"scheduleId": 1};
-      if (starting_after_objectQP){
-        query["$and"].push({"scheduleId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
-      }
-    }
-    
-    let objectCount = 0;
-    let count = 0
-
-    // Error will be thrown if you pass an empty query to the $match filter
-    if (query["$and"].length === 0) { 
-      // documents = await schedule.find({},
-      //   // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
-      //   ).sort( sortByQP_ ).limit(limitQP).lean();
-      documents = await schedule.aggregate([
-        {
-          $lookup: {
-            from: `medicalCenters`,
-            localField: `medicalCenterId`,
-            foreignField: `medicalCenterId`,
-            as: `medicalCenterObject`,
-          },
-        },
-        {
-          $lookup: {
-            from: `doctors`,
-            localField: `doctorId`,
-            foreignField: `doctorId`,
-            as: `doctorObject`,
-          },
-        },
-        {
-          $sort: sortByQP_
-        },
-        { $skip : skipQP },
-        {
-          $limit: limitQP
-        }
-      ]);        
-        
-
-      objectCount = await schedule.find({},
-        // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
-        ).countDocuments();
-
-      count = objectCount;
-        
-    }else {
-      // documents = await schedule.find(query,
-      //   // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
-      //   ).sort( sortByQP_ ).limit(limitQP).lean();
-
-      // documents = await schedule.find({},
-        // { scheduleId: 1, "doctor.doctorId": 1,"medicalcenter.medicalCenterId": 1, _id: 1 } 
-        // ).sort( sortByQP_ ).limit(limitQP).lean();
-        
-        documents = await schedule.aggregate([
-          {
-            $lookup: {
-              from: `medicalCenters`,
-              localField: `medicalCenterId`,
-              foreignField: `medicalCenterId`,
-              as: `medicalCenterObject`,
-            },
-          },
-          {
-            $lookup: {
-              from: `doctors`,
-              localField: `doctorId`,
-              foreignField: `doctorId`,
-              as: `doctorObject`,
-            },
-          },
-          { $match: { 
-            $and: query["$and"]
-           }
-          },
-          {
-            $sort: sortByQP_
-          },
-          { $skip : skipQP },
-          {
-            $limit: limitQP
-          }
-        ]);        
-
-        // console.log(documents[0])
-        for (const key in sortByQP_) {
-          sortByQP_[key] = sortByQP_[key] *-1;
-          // console.log(`obj.${key} = ${sortByQP_[key]}`);
-        }
-
-        lastDocument = await schedule.aggregate([
-          {
-            $lookup: {
-              from: `medicalCenters`,
-              localField: `medicalCenterId`,
-              foreignField: `medicalCenterId`,
-              as: `medicalCenterObject`,
-            },
-          },
-          {
-            $lookup: {
-              from: `doctors`,
-              localField: `doctorId`,
-              foreignField: `doctorId`,
-              as: `doctorObject`,
-            },
-          },
-          { $match: { 
-            $and: query["$and"]
-           }
-          },
-          // {
-          //   $group: {
-          //     _id: '$age',
-          //     count: { $sum: 1 }
-          //   }
-          // }
-          {
-            $sort: sortByQP_
-          },
-          {
-            $limit: limitQP
-          }
-        ]);
-
-        // console.log("lastDocument[0]")
-        // console.log(lastDocument[0])
-        documents.forEach((document) => {
-          if (document.scheduleId.equals(lastDocument[0].scheduleId)) hasMore = false;
-          document.doctorObject = document.doctorObject[0]
-          document.medicalCenterObject = document.medicalCenterObject[0]
+      if (starting_after_objectQP) {
+        query["$and"].push({
+          doctorId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) },
         });
-
-        if (starting_after_objectQP){
-          query["$and"].pop();
-        }
-        objectCount = await schedule.aggregate([
-          {
-            $lookup: {
-              from: `medicalCenters`,
-              localField: `medicalCenterId`,
-              foreignField: `medicalCenterId`,
-              as: `medicalCenterObject`,
-            },
+      }
+    } else if (sortByQP === "medicalCenter") {
+      // console.log(sortByQP);
+      sortByQP_ = { medicalCenterId: 1, scheduleId: 1 };
+      if (starting_after_objectQP) {
+        query["$and"].push({
+          medicalCenterId: {
+            $gt: mongoose.Types.ObjectId(starting_after_objectQP),
           },
-          {
-            $lookup: {
-              from: `doctors`,
-              localField: `doctorId`,
-              foreignField: `doctorId`,
-              as: `doctorObject`,
-            },
-          },
-          { $match: { 
-            $and: query["$and"]
-           }
-          },
-          // {
-          //   $group: {
-          //     _id: '$age',
-          //     count: { $sum: 1 }
-          //   }
-          // }
-          {
-            $sort: sortByQP_
-          },
-          {
-            $count: "objectCount"
-          }
-        ]);
+        });
+      }
+    } else {
+      sortByQP_ = { scheduleId: 1 };
+      if (starting_after_objectQP) {
+        query["$and"].push({
+          scheduleId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) },
+        });
+      }
     }
+
+    let objectCount = 0;
+    let count = 0;
+
+    const aggregationPipeline = [
+      {
+        $lookup: {
+          from: `medicalCenters`,
+          localField: `medicalCenterId`,
+          foreignField: `medicalCenterId`,
+          as: `medicalCenterObject`,
+        },
+      },
+      {
+        $lookup: {
+          from: `doctors`,
+          localField: `doctorId`,
+          foreignField: `doctorId`,
+          as: `doctorObject`,
+        },
+      },
+    ];
+    if (query["$and"].length > 0)
+      aggregationPipeline.push({ $match: { $and: query["$and"] } });
+    aggregationPipeline.push({ $sort: sortByQP_ });
+    if (groupByQP === "doctor") {
+      aggregationPipeline.push({
+        $group: {
+          _id: "$doctorId",
+          doctorObject: { $first: "$doctorObject" },
+          scheduleCount: { $sum: 1 },
+          scheduleList: { $push: "$$ROOT" },
+        },
+      });
+    }
+    if (groupByQP === "medicalCenter") {
+      aggregationPipeline.push({
+        $group: {
+          _id: "$medicalCenterId",
+          medicalCenterObject: { $first: "$medicalCenterObject" },
+          scheduleCount: { $sum: 1 },
+          scheduleList: { $push: "$$ROOT" },
+        },
+        // sortByQP_ = { doctorId: 1, scheduleId: 1 };
+      });
+    }
+    aggregationPipeline.push({ $skip: skipQP });
+    aggregationPipeline.push({ $limit: limitQP });
+
+    // console.log("aggregationPipeline")
+    // console.log(aggregationPipeline[2])
+
+    documents = await schedule.aggregate(aggregationPipeline);
     
-    // console.log(objectCount[0].objectCount)
-    if(objectCount[0] !== undefined){
-      count = objectCount[0].objectCount
+    // console.log(documents[0])
+    for (const key in sortByQP_) {
+      sortByQP_[key] = sortByQP_[key] * -1;
+      // console.log(`obj.${key} = ${sortByQP_[key]}`);
     }
 
-    let message = "good"
-    if (documents.length === 0){
+    const aggregationPipelineLast = [
+      {
+        $lookup: {
+          from: `medicalCenters`,
+          localField: `medicalCenterId`,
+          foreignField: `medicalCenterId`,
+          as: `medicalCenterObject`,
+        },
+      },
+      {
+        $lookup: {
+          from: `doctors`,
+          localField: `doctorId`,
+          foreignField: `doctorId`,
+          as: `doctorObject`,
+        },
+      },
+    ];
+    if (query["$and"].length > 0)
+      aggregationPipelineLast.push({ $match: { $and: query["$and"] } });
+    aggregationPipelineLast.push({ $sort: sortByQP_ });
+    if (groupByQP === "doctor") {
+      aggregationPipelineLast.push({
+        $group: {
+          _id: "$doctorId",
+          doctorObject: { $first: "$doctorObject" },
+          scheduleCount: { $sum: 1 },
+          scheduleList: { $push: "$$ROOT" },
+        },
+      });
+    }
+    if (groupByQP === "medicalCenter") {
+      aggregationPipelineLast.push({
+        $group: {
+          _id: "$medicalCenterId",
+          medicalCenterObject: { $first: "$medicalCenterObject" },
+          scheduleCount: { $sum: 1 },
+          scheduleList: { $push: "$$ROOT" },
+        },
+      });
+    }
+    // aggregationPipelineLast.push({ $skip: skipQP });
+    aggregationPipelineLast.push({ $limit: 1 });
+
+    lastDocument = await schedule.aggregate(aggregationPipelineLast);
+
+
+    documents.forEach((document) => {
+      if (document._id.equals(lastDocument[0]._id))
+        hasMore = false;
+      
+      if(typeof document.doctorObject !== 'undefined') document.doctorObject = document.doctorObject[0];
+      if(typeof document.medicalCenterObject !== 'undefined') document.medicalCenterObject = document.medicalCenterObject[0];
+    });
+
+    if (starting_after_objectQP) {
+      query["$and"].pop();
+    }
+
+    const aggregationPipelineCount = [
+      {
+        $lookup: {
+          from: `medicalCenters`,
+          localField: `medicalCenterId`,
+          foreignField: `medicalCenterId`,
+          as: `medicalCenterObject`,
+        },
+      },
+      {
+        $lookup: {
+          from: `doctors`,
+          localField: `doctorId`,
+          foreignField: `doctorId`,
+          as: `doctorObject`,
+        },
+      },
+    ];
+    if (query["$and"].length > 0)
+      aggregationPipelineCount.push({ $match: { $and: query["$and"] } });
+    aggregationPipelineCount.push({ $sort: sortByQP_ });
+    if (groupByQP === "doctor") {
+      aggregationPipelineCount.push({
+        $group: {
+          _id: "$doctorId",
+          doctorObject: { $first: "$doctorObject" },
+          scheduleCount: { $sum: 1 },
+          scheduleList: { $push: "$$ROOT" },
+        },
+      });
+    }
+    if (groupByQP === "medicalCenter") {
+      aggregationPipelineCount.push({
+        $group: {
+          _id: "$medicalCenterId",
+          medicalCenterObject: { $first: "$medicalCenterObject" },
+          scheduleCount: { $sum: 1 },
+          scheduleList: { $push: "$$ROOT" },
+        },
+      });
+    }
+    aggregationPipelineCount.push({ $count:  "objectCount" });
+    objectCount = await schedule.aggregate(aggregationPipelineCount);
+    
+    console.log("objectCount")
+    console.log(objectCount)
+    console.log(objectCount[0].objectCount)
+    if (objectCount[0] !== undefined) {
+      count = objectCount[0].objectCount;
+    }
+
+    let message = "good";
+    if (documents.length === 0) {
       message = "list is empty change your query";
       hasMore = false;
     }
@@ -477,11 +489,11 @@ const allSchedule = async (req, res) => {
       data: {
         objectCount: count,
         hasMore,
-        objectArray: documents
-      }
+        objectArray: documents,
+      },
     };
 
-    res.status(200).json({...responseBody});
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -491,11 +503,10 @@ const allSchedule = async (req, res) => {
 // deleting schedule
 const deleteSchedule = async (req, res) => {
   try {
-
-    if(req.params.scheduleId){
-      console.log(req.params.scheduleId)
+    if (req.params.scheduleId) {
+      console.log(req.params.scheduleId);
       req.params.scheduleId = mongoose.Types.ObjectId(req.params.scheduleId);
-      console.log(req.params.scheduleId)
+      console.log(req.params.scheduleId);
     }
     const document = await schedule.findOneAndDelete(req.params).lean();
     if (!document) {
