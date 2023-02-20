@@ -71,7 +71,7 @@ class Institution {
         Key: image.split(S3_BUCKET_URL)[1],
         Expires: expiry_time ? Number(expiry_time) : 60,
       };
-
+      //returning the signed url
       return s3.getSignedUrl("getObject", bucket_params);
     };
 
