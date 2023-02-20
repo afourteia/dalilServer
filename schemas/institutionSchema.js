@@ -27,6 +27,9 @@ const institutionSchema = mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "users",
     },
+    institute_image: {
+      type: String,
+    },
     // beneficiaryCount: {
     //   type: Number,
     //   get: (v) => Math.round(v),
