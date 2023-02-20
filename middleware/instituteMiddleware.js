@@ -6,11 +6,17 @@ const createInstitute = async (req, res) => {
     if (institute) {
       return res.status(400).json({ error: "Institue already exist" });
     }
-    const document = await Institute.create({
+
+    let query = {
       ...req.body,
       createdBy: res.locals.userId,
       updatedBy: res.locals.userId,
-    });
+    };
+    if (req.files.length > 0) {
+      query.institute_image = req.files[0].location;
+    }
+
+    const document = await Institute.create(query);
     res.status(200).json(document);
   } catch (error) {
     console.log(error);
