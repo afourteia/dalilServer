@@ -7,6 +7,7 @@ const router = express.Router();
 // const multer  = require('multer')
 // const upload = multer({ dest: 'uploads/' })
 
+const Institution = require("../controller/institutionController");
 // importing users middleware
 const {
   createUsers,
@@ -232,13 +233,21 @@ router.route(`/v1/logout`).post(logout);
 //routes for institution
 router
   .route(`/v1/institutions`)
-  .post(authentication, createInstitute)
+  .post(
+    authentication,
+    uploader.singleFileUpload.any({
+      name: "instituteImage",
+    }),
+    createInstitute
+  )
   .get(authentication, getInstitutions);
 
 router
-  .route(`/v1/institutions/:id`)
+  .route(`/v1/institution`)
+  .get(Institution.getInstitutionById)
   .patch(authentication, updateInstitution)
   .delete(authentication, deleteInstitution);
 
+// router.route("/getURL").get(Institution.getPreSignedURL);
 // exporting router
 module.exports = router;
