@@ -35,16 +35,16 @@ const userSchema = mongoose.Schema(
     },
 
     // the array should reference userRoleId from userRole collection
+    userRole: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "userRoles",
+    },
+
     // userRole: {
-    //   type: [String],
-    //   required: true,
-    //   unique: true
+    //   type: String,
+    //   enum: ["patient", "admin", "doctor", "staff"],
     // },
 
-    userRole: {
-      type: String,
-      enum: ["patient", "admin", "doctor"],
-    },
     created: {
       createdBy: { type: mongoose.ObjectId },
       dateCreated: { type: Date },

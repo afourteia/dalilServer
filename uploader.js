@@ -18,13 +18,12 @@ const singleFileUpload = multer({
     contentType: multerS3.AUTO_CONTENT_TYPE, // very important
 
     key: function (req, file, cb) {
-      cb(
-        null,
+      let fullPath =
         path.basename(file.originalname, path.extname(file.originalname)) +
-          "-" +
-          Date.now() +
-          path.extname(file.originalname)
-      );
+        "-" +
+        Date.now() +
+        path.extname(file.originalname);
+      cb(null, `institutions/` + fullPath);
     },
   }),
   limits: { fileSize: 5242880 }, // In bytes: 5000000 bytes = 5 MB
