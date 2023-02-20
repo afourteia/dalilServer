@@ -20,8 +20,6 @@ class Institution {
       }
       let query = {
         ...req.body,
-        createdBy: res.locals.userId,
-        updatedBy: res.locals.userId,
       };
       if (req.files.length > 0) {
         query.institute_image = req.files[0].location;
