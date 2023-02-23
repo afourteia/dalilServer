@@ -10,9 +10,12 @@ const router = express.Router();
 // importing users middleware
 
 const allowCrossDomain = (req, res, next) => {
-  res.header(`Access-Control-Allow-Origin`, `*`);
-  res.header(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE,PATCH`);
-  res.header(`Access-Control-Allow-Headers`, `Content-Type`);
+  console.log(res.header())
+  res.setHeader(`Access-Control-Allow-Origin`, `*`);
+  res.setHeader(`Vary`, `Origin`);
+  res.setHeader(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE,PATCH`);
+  res.setHeader(`Access-Control-Allow-Headers`, `Content-Type`);
+  console.log(res.header())
   console.log(`headers allowed`)
   next();
 };
