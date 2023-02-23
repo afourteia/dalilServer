@@ -94,7 +94,7 @@ const updateAppointment = async (req, res) => {
       .findOneAndUpdate(
         {
           appointmentId: req.params.appointmentId,
-          userId: res.locals.user.userId,
+          // userId: res.locals.user.userId,
         },
         {
           ...req.body,
