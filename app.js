@@ -24,6 +24,11 @@ var cors = require('cors');
 app.use(upload.any()); 
 app.use(express.static('public'));
 app.use(cors());
+app.use(cors({
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
+
+app.options('*', cors()) // include before other routes
 
 
 const Server = async () => {
