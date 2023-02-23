@@ -8,6 +8,16 @@ const router = express.Router();
 // const upload = multer({ dest: 'uploads/' })
 
 // importing users middleware
+
+const allowCrossDomain = (req, res, next) => {
+  res.header(`Access-Control-Allow-Origin`, `*`);
+  res.header(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`);
+  res.header(`Access-Control-Allow-Headers`, `Content-Type`);
+  console.log(`headers allowed`)
+  next();
+};
+
+
 const {
   createUsers,
   getUsers,
@@ -149,7 +159,7 @@ router.route(`/v1/appointments`).get(authentication, allAppointments);
 router
   .route(`/v1/appointments/:appointmentId`)
   .get(authentication, cookieVerification)
-  .patch(authentication, cookieVerification, updateAppointment);
+  .patch(authentication, cookieVerification, allowCrossDomain,  updateAppointment);
 
 // routes for schedules
 router
