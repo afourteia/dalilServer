@@ -138,7 +138,15 @@ const updateAppointment = async (req, res) => {
     response.forEach((each) => {
       delete each.sd;
     });
-    res.status(200).json(response[0]);
+
+    let message = "good";
+    const responseBody = {
+      codeStatus: "200",
+      message: message,
+      data: response[0],
+    };
+
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
