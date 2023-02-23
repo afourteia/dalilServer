@@ -159,7 +159,8 @@ router.route(`/v1/appointments`).get(authentication, allAppointments);
 router
   .route(`/v1/appointments/:appointmentId`)
   .get(authentication, cookieVerification)
-  .patch(authentication, cookieVerification, allowCrossDomain,  updateAppointment);
+  .patch(authentication, cookieVerification, allowCrossDomain,  updateAppointment)
+  .post(authentication, cookieVerification, allowCrossDomain,  updateAppointment);
 
 // routes for schedules
 router
