@@ -158,7 +158,6 @@ const Login = async (req, res) => {
     if (!doc) {
       return res.status(404).json({ message: `username is invalid` });
     }
-    console.log({ doc });
     const hashedPassword = doc.password;
     const { _id, role } = doc;
 

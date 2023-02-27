@@ -57,7 +57,7 @@ const AllAppointments = async (req, res) => {
       limitQP = 30;
     }
 
-    let documents = AppointmentServices.getAllAppointments({}, limitQP);
+    let documents = await AppointmentServices.getAllAppointments({}, limitQP);
     let count = documents.length;
 
     let message = "good";

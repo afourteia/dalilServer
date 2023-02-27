@@ -103,6 +103,10 @@ const AllMedicalCenter = async (req, res) => {
       {},
       limitQP
     );
+    let message = "good";
+    if (documents.length === 0) {
+      message = "list is empty change your query";
+    }
     const responseBody = {
       codeStatus: "200",
       message: message,
