@@ -12,22 +12,18 @@ let S3_BUCKET_URL = "https://pistas-bucket.s3.amazonaws.com/";
 // class Institution {
 const AddInstitution = async (req, res) => {
   try {
-    console.log("in add institute", req.body);
-
     const institute = await InstitutionServices.getInstitutionDetails({
       name: req.body.name,
     });
-    console.log("find institute", institute);
-
     if (institute) {
       return res.status(400).json({ error: "Institue already exist" });
     }
     let query = {
       ...req.body,
     };
-    // if (req.files.length > 0) {
-    //   query.institute_image = req.files[0].location;
-    // }
+    if (req.files.length > 0) {
+      query.institute_image = req.files[0].location;
+    }
     let institution = await InstitutionServices.createInstitution(query);
     res.status(200).json({
       institution,
