@@ -21,7 +21,7 @@ const AddInstitution = async (req, res) => {
     let query = {
       ...req.body,
     };
-    if (req.files.length > 0) {
+    if (req.files?.length > 0) {
       query.institute_image = req.files[0].location;
     }
     let institution = await InstitutionServices.createInstitution(query);

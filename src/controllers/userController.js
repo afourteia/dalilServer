@@ -48,17 +48,18 @@ const CreateUser = async (req, res) => {
       };
       const document = await UserServices.createUser(newBody);
       console.log("document: ", document);
-      const { userId, username, password } = document;
-      console.log("userid: ", userId);
+      const { _id, username, password } = document;
       // siginig/authenticating user with jwt token for authorization
       const token = jwt.sign(
-        { userId, username, password },
+        { userId: _id, username, password },
         process.env.jwtSecret,
         {
           expiresIn: `30d`,
         }
       );
-      delete document._doc.password;
+
+      delete document.password;
+      console.log("document._doc: ", document);
       // delete document._doc.sd;
       // server response
       res.status(200).json({ ...document._doc, token: `Bearer ${token}` });

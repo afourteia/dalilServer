@@ -17,7 +17,7 @@ describe("Sample Test", () => {
   });
 });
 
-describe("Post Endpoints", () => {
+describe("Should create an institution", () => {
   const todo = {
     name: "test 23",
   };
@@ -31,8 +31,15 @@ describe("Post Endpoints", () => {
       name: "test23",
       cityHQ: "test is cool",
     });
-    console.log("res: ", res);
     expect(res.status).toEqual(200);
     // expect(res.body).toHaveProperty("post");
+  });
+});
+
+describe("Should get all institutions", () => {
+  test("Should get list of institution", async () => {
+    const res = await request(app).get("/v1/institutions");
+    expect(res.status).toEqual(200);
+    expect(res.body.institutions.length).toBeGreaterThan(0);
   });
 });
