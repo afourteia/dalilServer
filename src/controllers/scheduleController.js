@@ -10,10 +10,6 @@ const CreateSchedule = async (req, res) => {
 
       isActive: true,
     });
-    console.log(
-      "🚀 ~ file: scheduleController.js:13 ~ CreateSchedule ~ document:",
-      document
-    );
 
     const responseBody = {
       codeStatus: "200",
