@@ -36,16 +36,30 @@ describe("Users Create Endpoints", () => {
     jest.spyOn(User, "create").mockImplementation(() => mockCreateUser());
 
     const res = await request(app).post("/v1/users").send(userData);
-    console.log("res: ", res.body);
     expect(res.status).toEqual(200);
     // expect(res.body).toHaveProperty("post");
   });
-});
-
-describe("Get Users", () => {
   test("Should get list of users", async () => {
     const res = await request(app).get("/v1/users");
     expect(res.status).toEqual(200);
     expect(res.body.object.length).toBeGreaterThan(0);
   });
+
+  test("Should login user", async () => {
+    const res = await request(app).post("/v1/users/login").send({
+      username: "admin",
+      password: "password",
+    });
+    expect(res.status).toEqual(200);
+    expect(res.body.message).toEqual("good");
+    // expect(res.body.object.length).toBeGreaterThan(0);
+  });
 });
+
+// describe("Get Users", () => {
+//   test("Should get list of users", async () => {
+//     const res = await request(app).get("/v1/users");
+//     expect(res.status).toEqual(200);
+//     expect(res.body.object.length).toBeGreaterThan(0);
+//   });
+// });
