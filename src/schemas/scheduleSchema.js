@@ -5,7 +5,7 @@ const scheduleSchema = mongoose.Schema(
     medicalCenterId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "medicalCenters",
-      required: [true, `please provide valid medicalCenter id`],
+      // required: [true, `please provide valid medicalCenter id`],
     },
     doctorId: {
       type: mongoose.Schema.Types.ObjectId,

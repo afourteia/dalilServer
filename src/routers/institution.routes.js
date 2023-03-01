@@ -6,12 +6,12 @@ const {
   InstitutionById,
   AllInstitutions,
 } = require("../controllers/institutionController");
-const { checkToken } = require("../utilities/tokenAuth");
+const { authentication } = require(`../utilities/auth`);
 var router = express.Router();
 
 router.post("", AddInstitution);
-router.patch("/:institutionId", checkToken, UpdateInstitution);
+router.patch("/:institutionId", authentication, UpdateInstitution);
 router.get("", AllInstitutions);
-router.get("/:id", checkToken, InstitutionById);
-router.delete("/:id", checkToken, DeleteInstitution);
+router.get("/:id", authentication, InstitutionById);
+router.delete("/:id", authentication, DeleteInstitution);
 module.exports = router;

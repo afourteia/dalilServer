@@ -10,13 +10,17 @@ const CreateSchedule = async (req, res) => {
 
       isActive: true,
     });
+    console.log(
+      "🚀 ~ file: scheduleController.js:13 ~ CreateSchedule ~ document:",
+      document
+    );
 
     const responseBody = {
-      codeStatus: "201",
+      codeStatus: "200",
       message: "document created",
       data: document,
     };
-    return res.status(201).json({ ...responseBody });
+    return res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

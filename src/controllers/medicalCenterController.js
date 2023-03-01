@@ -2,11 +2,10 @@ const MedicalCenterServices = require("../services/medicalCenterServices");
 
 const CreateMedicalCenter = async (req, res) => {
   try {
+    console.log(req.userId);
     const fieldNamesList = [];
     const originalNamesList = [];
 
-    // console.log("files in req");
-    // console.log("files" in req);
     // check if files are submitted
     if ("files" in req) {
       req.files.forEach((file) => {
@@ -18,17 +17,17 @@ const CreateMedicalCenter = async (req, res) => {
     const document = await MedicalCenterServices.createMedicalCenter({
       ...req.body,
       createdBy: req.userId,
-
+      updatedBy: req.userId,
       isActive: true,
       fieldNames: fieldNamesList,
       originalNames: originalNamesList,
     });
     const responseBody = {
-      codeStatus: "201",
+      codeStatus: "200",
       message: "document created",
       data: document,
     };
-    return res.status(201).json({ ...responseBody });
+    return res.status(200).json({ ...responseBody });
   } catch (error) {
     //   checking for server errors
     console.log(error);

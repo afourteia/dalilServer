@@ -46,7 +46,6 @@ describe("Users Post Endpoints", () => {
 describe("Get Endpoints", () => {
   test("Should get list of user roles", async () => {
     const res = await request(app).get("/v1/roles");
-    console.log("res.body: ", res.body);
     expect(res.status).toEqual(200);
     expect(res.body.roles.length).toBeGreaterThan(0);
   });

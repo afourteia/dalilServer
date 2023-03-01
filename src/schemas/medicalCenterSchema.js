@@ -4,7 +4,6 @@ const mongoose = require(`mongoose`);
 // medicalCenter schema setup
 const medicalCenterSchema = mongoose.Schema(
   {
-    // medicalCenterId: { type: mongoose.ObjectId, unique: true },
     name: {
       type: String,
       required: [true, `please enter valid  name`],
@@ -17,7 +16,7 @@ const medicalCenterSchema = mongoose.Schema(
       type: String,
       required: [true, `please enter valid district`],
     },
-    description: String,
+    description: { type: String },
     address: {
       type: String,
       required: [true, `please enter valid address`],
