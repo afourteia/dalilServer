@@ -18,11 +18,14 @@ exports.getAllUsers = async (query, limit) => {
   return await UserSchema.find(query)
     .sort({ userId: -1 })
     .limit(limit)
+    .populate("userRole")
     .select("-__v -password -sd");
 };
 
 exports.getUserDetails = async (query) => {
-  return await UserSchema.findOne(query).select("-__v -createdAt -updatedAt");
+  return await UserSchema.findOne(query)
+    .populate("userRole")
+    .select("-__v -createdAt -updatedAt");
 };
 
 exports.updateUserById = async (query, data) => {

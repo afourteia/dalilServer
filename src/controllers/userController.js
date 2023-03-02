@@ -72,38 +72,33 @@ const CreateUser = async (req, res) => {
 
 const GetUsers = async (req, res) => {
   try {
-    let userIdQuery = req.query.starting_after_object;
+    // let userIdQuery = req.query.starting_after_object;
     let limitQuery = req.query.limit;
 
-    if (!userIdQuery) {
-      userIdQuery = `SSD-0`;
-    }
+    // if (!userIdQuery) {
+    //   userIdQuery = `SSD-0`;
+    // }
 
     if (!limitQuery) {
       limitQuery = 5;
     }
 
     let limit = Number(limitQuery);
-    if (!userIdQuery.startsWith(`SSD-`)) {
-      return res.status(404).json({
-        message: `User not found, check your starting_after_object input`,
-      });
-    }
+    // if (!userIdQuery.startsWith(`SSD-`)) {
+    //   return res.status(404).json({
+    //     message: `User not found, check your starting_after_object input`,
+    //   });
+    // }
 
-    const idNumber = Number(userIdQuery.split(`-`)[1]);
+    // const idNumber = Number(userIdQuery.split(`-`)[1]);
     if (limit > 100 || limit < 1) {
       limit = 5;
     }
     const totalUsers = await UserServices.getAllUsers({
-      sd: { $gt: idNumber },
+      // sd: { $gt: idNumber },
     });
 
-    const object = await UserServices.getAllUsers(
-      {
-        sd: { $gt: idNumber },
-      },
-      limit
-    );
+    const object = await UserServices.getAllUsers({}, limit);
 
     if (object.length === 0) {
       return res.status(404).json({

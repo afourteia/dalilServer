@@ -7,6 +7,7 @@ const appointmentRouter = require("./appointment.routes");
 const instituteRouter = require("./institution.routes");
 const medicalRouter = require("./medicalCenter.routes");
 const scheduleRouter = require("./schedule.routes");
+const doctorRouter = require("./doctor.routes");
 
 router.use("/v1/users", userRouter);
 router.use("/v1/roles", userRoleRouter);
@@ -14,5 +15,6 @@ router.use("/v1/appointments", appointmentRouter);
 router.use("/v1/institutions", instituteRouter);
 router.use("/v1/medicalCenters", medicalRouter);
 router.use("/v1/schedules", scheduleRouter);
+router.use("/v1/doctors", doctorRouter);
 
 module.exports = router;

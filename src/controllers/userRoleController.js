@@ -30,26 +30,22 @@ const GetAllRoles = async (req, res) => {
   }
 };
 
-const UpdateUser = async (req, res) => {
+const UpdateUserRole = async (req, res) => {
   try {
-    if (!req.files[0].location) {
-      return res.status(401).json({ error: "Please upload a picture" });
-    }
-    const users = await UserRoleServices.updateUser(
+    const userRole = await UserRoleServices.updateUserRole(
       { _id: req.params.id },
-      { userFile: req.files[0].location },
-      { new: true }
+      { ...req.body }
     );
-    if (!users) {
+    if (!userRole) {
       return res.status(404).json({ error: "No user found" });
     }
     res.status(200).json({
-      users,
-      message: "User updated successfully",
+      userRole,
+      message: "User role updated successfully",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { CreateUserRole, GetAllRoles, UpdateUser };
+module.exports = { CreateUserRole, GetAllRoles, UpdateUserRole };

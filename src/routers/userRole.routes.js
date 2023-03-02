@@ -7,9 +7,12 @@ const {
 const {
   CreateUserRole,
   GetAllRoles,
+  UpdateUserRole,
 } = require("../controllers/userRoleController");
 var router = express.Router();
 
 router.post("", authentication, CreateUserRole);
 router.get("", GetAllRoles);
+router.patch("/:id", UpdateUserRole);
+
 module.exports = router;

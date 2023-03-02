@@ -11,15 +11,16 @@ const {
   SendNotificationToUsers,
 } = require("../controllers/userController");
 const { checkToken } = require("../utilities/tokenAuth");
+const { authentication, checkAccess } = require(`../utilities/auth`);
 var router = express.Router();
 
 router.post("/login", Login);
 // router.post("/signup", UserSignUp);
 router.post("", CreateUser);
 router.patch("/:id", UpdateUser);
-router.get("", GetUsers);
-router.post("/registerToken", checkToken, RegisterAppToken);
-router.post("/sendNotification", checkToken, SendNotification);
+router.get("", authentication, checkAccess, GetUsers);
+router.post("/registerToken", authentication, RegisterAppToken);
+router.post("/sendNotification", authentication, SendNotification);
 router.post("/sendToAll", SendNotificationToUsers);
-router.post("/logout", checkToken, Logout);
+router.post("/logout", authentication, Logout);
 module.exports = router;

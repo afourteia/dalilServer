@@ -17,7 +17,6 @@ const userSchema = mongoose.Schema(
     beneficiary: {
       hasBeneficiary: {
         type: Boolean,
-        required: true,
       },
       beneficiaryId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,6 +29,11 @@ const userSchema = mongoose.Schema(
       required: [true, `please provide valid password`],
     },
 
+    doctor_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "doctors",
+      default: null,
+    },
     // the array should reference userRoleId from userRole collection
     userRole: {
       type: [mongoose.Schema.Types.ObjectId],

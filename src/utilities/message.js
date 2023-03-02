@@ -1,5 +1,5 @@
 module.exports = {
-  tokenInvalid: "Verification code is invalid",
+  tokenInvalid: "Authorization credentials (token) not valid",
   userRegister: "Register successfull",
   userLogin: "Login successfull",
   updateSuccess: "Updated successfull",
@@ -11,4 +11,6 @@ module.exports = {
   tokenRegistered: "User app token registered",
   logout: "Logged out sccessfully",
   found: "Users found sccessfully",
+  unauthorized: "You are not authorized to perform this action.",
+  tokenNotFound: "No Authorization header found or wrong format",
 };

@@ -6,12 +6,12 @@ const {
   InstitutionById,
   AllInstitutions,
 } = require("../controllers/institutionController");
-const { authentication } = require(`../utilities/auth`);
+const { authentication, checkAccess } = require(`../utilities/auth`);
 var router = express.Router();
 
-router.post("", AddInstitution);
+router.post("/create", authentication, checkAccess, AddInstitution);
 router.patch("/:institutionId", authentication, UpdateInstitution);
-router.get("", AllInstitutions);
+router.get("", authentication, checkAccess, AllInstitutions);
 router.get("/:id", authentication, InstitutionById);
 router.delete("/:id", authentication, DeleteInstitution);
 module.exports = router;
