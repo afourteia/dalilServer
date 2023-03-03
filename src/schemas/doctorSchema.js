@@ -16,7 +16,7 @@ const doctorSchema = mongoose.Schema(
       type: String,
       required: [true, `please enter valid last name`],
     },
-    specialty: {
+    speciality: {
       type: String,
       required: [true, `please enter valid specialty`],
     },
