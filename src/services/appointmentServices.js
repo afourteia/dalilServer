@@ -14,13 +14,15 @@ exports.deleteAppointment = async (query) => {
   return await AppointmentSchema.findOneAndDelete(query);
 };
 
-exports.getAllAppointments = async (query, limit) => {
+exports.getAllAppointments = async (query, sortObj, pagination) => {
   return await AppointmentSchema.find(query)
     .populate("scheduleId")
     .populate("medicalCenterId")
     .populate("doctorId")
     .populate("userId")
-    .limit(limit)
+    .limit(pagination.limit)
+    .skip(pagination.skip)
+    .sort(sortObj)
     .select("-__v");
 };
 

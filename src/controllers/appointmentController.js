@@ -1,4 +1,10 @@
 const AppointmentServices = require("../services/appointmentServices");
+const uriDecoder = require('../utilities/URIdecoder');
+const paginate = require('../utilities/pagination.utility');
+const { successResponse, serverErrorResponse } = require("../utilities/response");
+const { count } = require("../services/documentCounter.service");
+const AppointmentSchema = require("../schemas/appointmentSchema");
+
 const CreateAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.createAppointment({
@@ -46,37 +52,49 @@ const UpdateAppointment = async (req, res) => {
 
 const AllAppointments = async (req, res) => {
   try {
-    let limitQP = Number(req.query.limit) ?? 30;
+    let query = {};
+    let sortObj = {};
+    let limit = req.query.limit || 10;
+    let page = req.query.page || 1;
 
-    if (limitQP) {
-      limitQP = Number(limitQP);
-      if (limitQP > 100 || limitQP < 1) {
-        limitQP = 30;
-      }
-    } else {
-      limitQP = 30;
+    // Filters from query
+    let { appointmentStatus, date, price, timeSlot, sortBy } = req.query;
+
+    if(appointmentStatus) {
+      query.appointmentStatus = uriDecoder(appointmentStatus, 'multi-select');
     }
 
-    let documents = await AppointmentServices.getAllAppointments({}, limitQP);
-    let count = documents.length;
+    if(date) {
+      query.appointmentDate = uriDecoder(date, 'date-range');
+    }
+
+    if(price) {
+      query.price = uriDecoder(price, 'number-range');
+    }
+
+    if(timeSlot) {
+      query.timeslot = uriDecoder(timeSlot, 'multi-select');
+    }
+
+    // Sort fields
+    if(sortBy) {
+      sortObj = uriDecoder(sortBy, 'sort');
+    }
+
+    // Server side pagination
+    let pagination = paginate(limit, page);
+
+    let documents = await AppointmentServices.getAllAppointments(query, sortObj, pagination);
+    let docCount = await count(AppointmentSchema);
 
     let message = "good";
     if (documents.length === 0) {
       message = "list is empty change your query";
     }
-    const responseBody = {
-      codeStatus: "200",
-      message: message,
-      data: {
-        objectCount: count,
-        objectArray: documents,
-      },
-    };
-
-    res.status(200).json({ ...responseBody });
+    return successResponse(res, message, documents, docCount);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.message });
+    return serverErrorResponse(res, error.message);
   }
 };
 

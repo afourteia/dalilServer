@@ -46,6 +46,7 @@ const appointmentSchema = mongoose.Schema(
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
 
     updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    price: { type: Number }
   },
   { timestamps: true }
 );

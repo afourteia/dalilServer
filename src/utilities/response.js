@@ -1,7 +1,7 @@
 const messageUtil = require("./message.js");
 const { StatusCodes, getReasonPhrase } = require("http-status-codes");
 
-const successResponse = (res, message, data, token) => {
+const successResponse = (res, message, data, count, token) => {
   const response = {
     success: true,
     message,
@@ -10,6 +10,7 @@ const successResponse = (res, message, data, token) => {
   if (data) {
     response.data = data;
     response.token = token;
+    response.count = count;
   }
 
   res.status(StatusCodes.OK).send(response);
