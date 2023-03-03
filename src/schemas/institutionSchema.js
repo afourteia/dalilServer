@@ -42,9 +42,9 @@ const institutionSchema = mongoose.Schema(
     //   required: [false, `please provide valid family member `],
     // },
 
-    // createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
 
-    // updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }
 );
