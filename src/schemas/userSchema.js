@@ -38,6 +38,11 @@ const userSchema = mongoose.Schema(
       ref: "institutions",
       default: null,
     },
+    medical_center_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "medicalCenters",
+      default: null,
+    },
     // the array should reference userRoleId from userRole collection
     userRole: {
       type: [mongoose.Schema.Types.ObjectId],
