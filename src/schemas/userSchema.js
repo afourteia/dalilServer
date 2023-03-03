@@ -28,10 +28,14 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, `please provide valid password`],
     },
-
     doctor_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "doctors",
+      default: null,
+    },
+    institution_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "institutions",
       default: null,
     },
     // the array should reference userRoleId from userRole collection
