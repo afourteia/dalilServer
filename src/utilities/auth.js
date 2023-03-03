@@ -51,14 +51,27 @@ const checkAccess = async (req, res, next) => {
 
   let allowed = false;
   res.locals.user = payload;
-
+  //getting user to get user roles
   let getUserRole = await UserServices.getUserDetails({ _id: payload.userId });
 
-  getUserRole.userRole?.forEach((each) => {
-    if (each.apiPrivilages?.includes(req.originalUrl)) {
-      allowed = true;
-    }
+  //checking each role
+  getUserRole?.userRole?.forEach((each) => {
+    //checking each route in role
+    each.apiPrivilages?.forEach((route) => {
+      //checking if user have all authority
+      if (route.slice(-1) === "*") {
+        let url = route.slice(0, -2);
+        if (req.originalUrl.includes(url)) {
+          allowed = true;
+        }
+      }
+      //checking for specific authority
+      if (req.originalUrl === route) {
+        allowed = true;
+      }
+    });
   });
+  //returning if user don't have permission
   if (!allowed) {
     return authorizationErrorResponse(res, messageUtil.unauthorized);
   }

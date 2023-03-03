@@ -47,7 +47,6 @@ const CreateUser = async (req, res) => {
         // sd: idNumber + 1,
       };
       const document = await UserServices.createUser(newBody);
-      console.log("document: ", document);
       const { _id, username, password } = document;
       // siginig/authenticating user with jwt token for authorization
       const token = jwt.sign(
@@ -59,7 +58,6 @@ const CreateUser = async (req, res) => {
       );
 
       delete document.password;
-      console.log("document._doc: ", document);
       // delete document._doc.sd;
       // server response
       res.status(200).json({ ...document._doc, token: `Bearer ${token}` });
@@ -124,13 +122,9 @@ const GetUsers = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
   try {
-    if (!req.files[0].location) {
-      return res.status(401).json({ error: "Please upload a picture" });
-    }
     const users = await UserServices.updateUser(
       { _id: req.params.id },
-      { userFile: req.files[0].location },
-      { new: true }
+      { ...req.body }
     );
     if (!users) {
       return res.status(404).json({ error: "No user found" });
@@ -190,14 +184,12 @@ const Login = async (req, res) => {
 };
 
 const RegisterAppToken = async (req, res) => {
-  console.log("req.body", req.body);
   let user;
   try {
     user = await UserServices.updateUserById(
       { _id: req.userId },
       { userAppToken: req.body.registrationToken }
     );
-    console.log("🚀  ~ user:", user);
     if (!user) {
       return notFoundResponse(res, messageUtil.notFound);
     }

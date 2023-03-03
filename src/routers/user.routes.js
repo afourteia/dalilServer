@@ -16,7 +16,7 @@ var router = express.Router();
 
 router.post("/login", Login);
 // router.post("/signup", UserSignUp);
-router.post("", CreateUser);
+router.post("", authentication, checkAccess, CreateUser);
 router.patch("/:id", UpdateUser);
 router.get("", authentication, checkAccess, GetUsers);
 router.post("/registerToken", authentication, RegisterAppToken);
