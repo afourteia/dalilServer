@@ -6,7 +6,7 @@ exports.createAppointment = async (query) => {
 
 exports.updateAppointment = async (query, data) => {
   return await AppointmentSchema.findOneAndUpdate(query, data, {
-    new: true,
+    new: false,
   });
 };
 

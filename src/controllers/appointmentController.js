@@ -1,11 +1,45 @@
 const AppointmentServices = require("../services/appointmentServices");
 const CreateAppointment = async (req, res) => {
   try {
+    if (req.params.userId) {
+      req.params.userId = mongoose.Types.ObjectId(req.params.userId);
+    }
+
+    if (req.body.doctorId) {
+      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+    }
+    if (req.body.medicalCenterId) {
+      req.body.medicalCenterId = mongoose.Types.ObjectId(
+        req.body.medicalCenterId
+      );
+    }
+
+    if (req.body.scheduleId) {
+      req.body.scheduleId = mongoose.Types.ObjectId(req.body.scheduleId);
+    }
+
+    if (req.body.patient.patientId) {
+      req.body.scheduleId = mongoose.Types.ObjectId(req.body.patientId);
+    }
+
+    const medicalCenterObject = await medicalCenter
+      .findOne({ medicalCenterId: req.body.medicalCenterId })
+      .lean();
+    const doctorObject = await doctor
+      .findOne({ doctorId: req.body.doctorId })
+      .lean();
+    const scheduleObject = await schedule
+      .findOne({ scheduleId: req.body.scheduleId })
+      .lean();
+
     const document = await AppointmentServices.createAppointment({
       ...req.body,
       userId: req.params.userId,
       appointmentStatus: `pending`,
       dateCreated: Date(),
+      medicalCenterObject: medicalCenterObject,
+      doctorObject: doctorObject,
+      scheduleObject: scheduleObject,
     });
 
     let message = "good";
