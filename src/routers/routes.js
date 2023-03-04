@@ -1,18 +1,23 @@
 var express = require("express");
 var router = express.Router();
 
-const userRouter = require("./user.routes");
-const userRoleRouter = require("./userRole.routes");
-const appointmentRouter = require("./appointment.routes");
-const instituteRouter = require("./institution.routes");
-const medicalRouter = require("./medicalCenter.routes");
-const scheduleRouter = require("./schedule.routes");
+const usersRouter = require("./user.routes");
+const userRolesRouter = require("./userRole.routes");
+const appointmentsRouter = require("./appointment.routes");
+const institutesRouter = require("./institution.routes");
+const medicalCentersRouter = require("./medicalCenter.routes");
+const schedulesRouter = require("./schedule.routes");
 
-router.use("/user", userRouter);
-router.use("/roles", userRoleRouter);
-router.use("/appointment", appointmentRouter);
-router.use("/institute", instituteRouter);
-router.use("/medical", medicalRouter);
-router.use("/schedule", scheduleRouter);
+router.use("/login", usersRouter);
+router.use("/logout", usersRouter);
+router.use("/users", usersRouter);
+router.use("/userRoles", userRolesRouter);
+router.use("/appointments", appointmentsRouter);
+router.use("/institutions", institutesRouter);
+router.use("/medicalCenters", medicalCentersRouter);
+router.use("/schedules", schedulesRouter);
+router.use("/claims", claimsRouter);
+
+
 
 module.exports = router;
