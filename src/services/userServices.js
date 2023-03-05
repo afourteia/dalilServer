@@ -14,15 +14,22 @@ exports.deleteUser = async (query) => {
   return await UserSchema.findOneAndDelete(query);
 };
 
-exports.getAllUsers = async (query, limit) => {
-  return await UserSchema.find(query)
-    .sort({ userId: -1 })
-    .limit(limit)
-    .select("-__v -password -sd");
+exports.getUsers = async (filter, sort, skip, limit) => {
+  
+  documentsCount = await UserSchema.find(filter)
+  .count(sort);
+
+  documents = await UserSchema.find(filter)
+  .sort(sort)
+  .skip(skip)
+  .limit(limit)
+  .select("-__v -password")
+  .lean();
+  return [documents, documentsCount];
 };
 
-exports.getUserDetails = async (query) => {
-  return await UserSchema.findOne(query).select("-__v -createdAt -updatedAt");
+exports.getUser = async (query) => {
+  return await UserSchema.findOne(query).select("-__v");
 };
 
 exports.updateUserById = async (query, data) => {

@@ -1,11 +1,10 @@
 var express = require("express");
 const {
-  CreateUser,
-  GetUsers,
-  UpdateUser,
-  GetAll,
-  Login,
-  Logout,
+  createUser,
+  getUsers,
+  updateUser,
+  login,
+  logout,
   RegisterAppToken,
   SendNotification,
   SendNotificationToUsers,
@@ -13,13 +12,17 @@ const {
 const { checkToken } = require("../utilities/tokenAuth");
 var router = express.Router();
 
-router.post("/login", Login);
-// router.post("/signup", UserSignUp);
-router.post("", CreateUser);
-router.patch("/:id", UpdateUser);
-router.get("", GetUsers);
+router.post("/v1/login", login);
+router.post("/logout", checkToken, logout);
+
+router.get("", getUsers);
+router.post("", createUser);
+// router.get("/:id", getUser);
+router.post("/:id", updateUser);
+router.patch("/:id", updateUser);
+// router.delete("/:id", deleteUser);
+
 router.post("/registerToken", checkToken, RegisterAppToken);
 router.post("/sendNotification", checkToken, SendNotification);
 router.post("/sendToAll", SendNotificationToUsers);
-router.post("/logout", checkToken, Logout);
 module.exports = router;

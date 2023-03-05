@@ -1,81 +1,65 @@
 // importing mongoose dependency for user schema and model creation
 const mongoose = require(`mongoose`);
 
-const userSchema = mongoose.Schema(
-  {
-    username: {
-      type: String,
-      required: [true, `please provide valid username`],
-      unique: true,
-    },
-    phoneNumber: {
-      type: String,
-      required: [true, `please provide valid phoneNumber`],
-    },
-    phoneAuthenticated: { type: Boolean, default: false },
-    whatsAppNumber: { type: String },
-    beneficiary: {
-      hasBeneficiary: {
-        type: Boolean,
-        required: true,
-      },
-      beneficiaryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
-        // unique: true,
-      },
-    },
-    password: {
-      type: String,
-      required: [true, `please provide valid password`],
-    },
-
-    // the array should reference userRoleId from userRole collection
-    userRole: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "userRoles",
-    },
-
-    level: {
-      type: String,
-      // required: [true, `please enter valid level`],
-    },
-    gender: {
-      type: String,
-      // required: [true, `please enter valid gender`],
-    },
-    birthdate: {
-      type: String,
-      // required: [true, `please enter valid birthdate`],
-    },
-    middleName: {
-      type: String,
-      // required: [true, `please enter valid middle name`],
-    },
-    lastName: {
-      type: String,
-      // required: [true, `please enter valid last name`],
-    },
-    specialty: {
-      type: String,
-      // required: [true, `please enter valid specialty`],
-    },
-
-    // userRole: {
-    //   type: String,
-    //   enum: ["patient", "admin", "doctor", "staff"],
-    // },
-
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-
-    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-
-    userFile: {
-      type: String,
-    },
+const userSchema = mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, `please provide valid username`],
+    unique: [true, 'username already exist']
   },
-  { timestamps: true }
-);
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    set: () => new mongoose.Types.ObjectId(),
+    // get: (v) => v.toISOString(),
+    required: [true, `please provide valid userId`],
+    default: new mongoose.Types.ObjectId(),
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: [true, `please provide valid password`],
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, `please provide valid phoneNumber`],
+  },
+  phoneAuthenticated: { type: Boolean, default: false },
+  whatsAppNumber: { type: String },
+  gender: { type: String, enum: ["male", "female"] },
+  birthdate: { type: String },
+  firstName: {
+    type: String,
+    required: [true, `please enter valid first name`],
+  },
+  middleName: { type: String },
+  lastName: {
+    type: String,
+    required: [true, `please enter valid last name`],
+  },
+  subscriberId: {
+    type: mongoose.Schema.Types.ObjectId,
+    set: (v) => mongoose.Types.ObjectId(v),
+    unique: [true, 'employee ID has to be unique'],
+    ref: "subscribers",
+  },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  createdTimeStamp: {
+    type: Date,
+    set: (v) => Date(v),
+    get: (v) => v.toISOString(),
+    default: new Date(),
+  },
+
+  updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  updatedTimeStamp: {
+    type: Date,
+    set: (v) => Date(v),
+    get: (v) => v.toISOString(),
+  },
+  userFile: {
+    type: [String],
+  },
+});
 
 const user = mongoose.model(`users`, userSchema);
 
