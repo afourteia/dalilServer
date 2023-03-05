@@ -1,22 +1,21 @@
 const messageUtil = require("./message.js");
 const { StatusCodes, getReasonPhrase } = require("http-status-codes");
 
-const successResponse = (res, message, data, token) => {
+const successResponse = (res, message, data, dataCount, token) => {
   const response = {
+    statusCode: StatusCodes.OK,
     success: true,
     message,
   };
-
-  if (data) {
-    response.data = data;
-    response.token = token;
-  }
-
+  if (token) response.token = token;
+  if (dataCount) response.dataCount = dataCount;
+  if (data) response.data = data;
   res.status(StatusCodes.OK).send(response);
 };
 
 const serverErrorResponse = (res, error) => {
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
     success: false,
     error: error.toString(),
     message: messageUtil.serverError,
@@ -33,6 +32,7 @@ const validationErrorResponse = (res, errors) => {
 
 const badRequestErrorResponse = (res, message) => {
   res.status(StatusCodes.BAD_REQUEST).send({
+    statusCode: StatusCodes.BAD_REQUEST,
     success: false,
     message,
   });
@@ -40,6 +40,7 @@ const badRequestErrorResponse = (res, message) => {
 
 const userExistResponse = (res, message) => {
   res.status(StatusCodes.OK).send({
+    statusCode: StatusCodes.OK,
     success: false,
     message,
   });
@@ -54,6 +55,7 @@ const existAlreadyResponse = (res, message) => {
 
 const notFoundResponse = (res, message) => {
   res.status(StatusCodes.NOT_FOUND).send({
+    statusCode: StatusCodes.NOT_FOUND,
     success: false,
     message,
   });

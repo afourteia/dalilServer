@@ -1,132 +1,83 @@
 const UserServices = require("../services/userServices");
 const bcrypt = require("bcrypt");
 const jwt = require(`jsonwebtoken`);
+const {
+  successResponse,
+  serverErrorResponse,
+  badRequestErrorResponse
+} = require("../utilities/response");
+const { messageUtil } = require("../utilities/message");
 
-const CreateUser = async (req, res) => {
+const createUser = async (req, res) => {
   try {
+    console.log("getUsers");
     const myPlaintextPassword = req.body.password;
 
     // hashing user password
     const hash = bcrypt.hashSync(myPlaintextPassword, 10);
-    const users = await UserServices.getAllUsers();
 
-    if (users.length === 0) {
-      const newBody = {
-        ...req.body,
-        password: hash,
-        // userId: `SSD-${1}`,
-        // sd: 1,
-      };
-      const document = await UserServices.createUser(newBody);
-      const { _id, username, password } = document;
-      // console.log("userId: ", userId);
-      // siginig/authenticating user with jwt token for authorization
-      const token = jwt.sign(
-        { userId: _id, username, password },
-        process.env.jwtSecret,
-        {
-          expiresIn: `30d`,
-        }
-      );
-      res.cookie("access_token", `Bearer ${token}`, {
-        expires: new Date(Date.now() + 720 * 3600000),
-        httpOnly: true,
-        path: `/`,
-      });
-      delete document._doc.password;
-      delete document._doc.sd;
-      // server response
-      res.status(200).json({ ...document._doc, token: `Bearer ${token}` });
-    } else {
-      // const lastUser = users[0].userId;
-      // const idNumber = Number(lastUser.split(`-`)[1]);
-      const newBody = {
-        ...req.body,
-        password: hash,
-        // userId: `SSD-${idNumber + 1}`,
-        // sd: idNumber + 1,
-      };
-      const document = await UserServices.createUser(newBody);
-      console.log("document: ", document);
-      const { userId, username, password } = document;
-      console.log("userid: ", userId);
-      // siginig/authenticating user with jwt token for authorization
-      const token = jwt.sign(
-        { userId, username, password },
-        process.env.jwtSecret,
-        {
-          expiresIn: `30d`,
-        }
-      );
-      delete document._doc.password;
-      // delete document._doc.sd;
-      // server response
-      res.status(200).json({ ...document._doc, token: `Bearer ${token}` });
-    }
+    // const lastUser = users[0].userId;
+    // const idNumber = Number(lastUser.split(`-`)[1]);
+    const newBody = {
+      ...req.body,
+      password: hash,
+      // userId: `SSD-${idNumber + 1}`,
+      // sd: idNumber + 1,
+    };
+    const document = await UserServices.createUser(newBody);
+    console.log("document: ", document);
+    const { userId, username, password } = document;
+    console.log("userid: ", userId);
+    // siginig/authenticating user with jwt token for authorization
+    const token = jwt.sign(
+      { userId, username, password },
+      process.env.jwtSecret,
+      {
+        expiresIn: `30d`,
+      }
+    );
+    delete document._doc.password;
+    // delete document._doc.sd;
+    // server response
+    res.status(200).json({ ...document._doc, token: `Bearer ${token}` });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: error.message });
   }
 };
 
-const GetUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
-    let userIdQuery = req.query.starting_after_object;
-    let limitQuery = req.query.limit;
+    console.log("getUsers");
+    let limitQP = Number(req.query.limit) ?? 100;
+    if (limitQP > 100) limitQP = 100;
+    if (limitQP < 1) limitQP = 1;
 
-    if (!userIdQuery) {
-      userIdQuery = `SSD-0`;
-    }
+    let skipQP = Number(req.query.skip) ?? 0;
+    if (skipQP < 0) skipQP = 0;
 
-    if (!limitQuery) {
-      limitQuery = 5;
-    }
+    let sortByQP = Number(req.query.sortBy) ?? { userId: 1 };
 
-    let limit = Number(limitQuery);
-    if (!userIdQuery.startsWith(`SSD-`)) {
-      return res.status(404).json({
-        message: `User not found, check your starting_after_object input`,
-      });
-    }
+    const filterQP = null; // temporary
 
-    const idNumber = Number(userIdQuery.split(`-`)[1]);
-    if (limit > 100 || limit < 1) {
-      limit = 5;
-    }
-    const totalUsers = await UserServices.getAllUsers({
-      sd: { $gt: idNumber },
-    });
-
-    const object = await UserServices.getAllUsers(
-      {
-        sd: { $gt: idNumber },
-      },
-      limit
+    const [docArray, docCount] = await UserServices.getUsers(
+      filterQP,
+      sortByQP,
+      skipQP,
+      limitQP
     );
 
-    if (object.length === 0) {
-      return res.status(404).json({
-        message: `User not found`,
-      });
-    }
+    let message = "good";
+    if (docArray.length === 0) message = "list is empty change your query";
 
-    // object.forEach((each) => {
-    //   delete each.password;
-    //   delete each.sd;
-    // });
-
-    res.status(200).json({
-      object,
-      objectCount: totalUsers.length,
-      hasMore: object.length >= totalUsers.length ? false : true,
-    });
+    return successResponse(res, message, docArray, docCount);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    return serverErrorResponse(res, error.message);
   }
 };
 
-const UpdateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     if (!req.files[0].location) {
       return res.status(401).json({ error: "Please upload a picture" });
@@ -148,49 +99,60 @@ const UpdateUser = async (req, res) => {
   }
 };
 
-const Login = async (req, res) => {
+const login = async (req, res) => {
   try {
+    console.log("login");
     const { username, password } = req.body;
-
-    const doc = await UserServices.getUserDetails({
+    const doc = await UserServices.getUser({
       username,
     });
     if (!doc) {
-      return res.status(404).json({ message: `username is invalid` });
+      return badRequestErrorResponse(
+        res,
+        `Either username or password is invalid`
+      );
     }
-    console.log({ doc });
     const hashedPassword = doc.password;
-    const { _id, role } = doc;
+
+    const { userId, role } = doc;
 
     // comparing hashed password
     const hash = await bcrypt.compare(password, hashedPassword);
     if (!hash) {
-      return res.status(404).json({ message: `password is invalid` });
+      return badRequestErrorResponse(
+        res,
+        `Either username or password is invalid`
+      );
     }
     const token = jwt.sign(
-      { userId: _id, username, hashedPassword, role },
+      { userId: userId, username, role },
       process.env.jwtSecret,
       {
         expiresIn: `30d`,
       }
     );
+
     res.cookie("access_token", `Bearer ${token}`, {
       expires: new Date(Date.now() + 720 * 3600000),
       httpOnly: true,
       path: `/`,
     });
 
-    const responseBody = {
-      statusCode: "200",
-      message: "good",
-      token: `Bearer ${token}`,
-      // data: response[0],
-    };
+    // removing password from doc
+    doc.password = undefined;
+    // delete doc.password; Does not work
+    // delete doc[password]; Does not work
 
-    res.status(200).json({ ...responseBody });
+    return successResponse(
+      res,
+      messageUtil.loginSuccessful,
+      doc,
+      undefined,
+      `Bearer ${token}`
+    );
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.message });
+    return serverErrorResponse(res, error.message);
   }
 };
 
@@ -265,29 +227,21 @@ const SendNotificationToUsers = async (req, res) => {
   }
 };
 
-const Logout = async (req, res) => {
-  let user;
+const logout = async (req, res) => {
   try {
-    user = await UserServices.updateUserById(
-      { _id: req.userId },
-      { userAppToken: "" }
-    );
-    if (!user) {
-      return notFoundResponse(res, messageUtil.notFound);
-    }
-
-    return successResponse(res, messageUtil.logout, user);
+    console.log("logout");
+    return successResponse(res, messageUtil.logoutSuccessful);
   } catch (err) {
     serverErrorResponse(res, err);
   }
 };
 module.exports = {
-  CreateUser,
-  GetUsers,
-  UpdateUser,
+  createUser,
+  getUsers,
+  updateUser,
   GetAll,
-  Login,
-  Logout,
+  login,
+  logout,
   RegisterAppToken,
   SendNotification,
   SendNotificationToUsers,

@@ -23,14 +23,14 @@ const institutionSchema = mongoose.Schema(
     //   alias: "i",
     // },
 
-    beneficiaries: {
+    subscribers: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "users",
     },
     institute_image: {
       type: String,
     },
-    // beneficiaryCount: {
+    // subscriberCount: {
     //   type: Number,
     //   get: (v) => Math.round(v),
     //   set: (v) => Math.round(v),
