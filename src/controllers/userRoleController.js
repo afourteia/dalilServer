@@ -1,8 +1,8 @@
 const UserRoleServices = require("../services/userRoleServices");
 
 const CreateUserRole = async (req, res) => {
-  console.log("req.locals: ", req.userId);
   try {
+    
     const document = await UserRoleServices.createUserRole({
       ...req.body,
       createdBy: req.userId,
@@ -30,7 +30,7 @@ const GetAllRoles = async (req, res) => {
   }
 };
 
-const UpdateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     if (!req.files[0].location) {
       return res.status(401).json({ error: "Please upload a picture" });
@@ -52,4 +52,4 @@ const UpdateUser = async (req, res) => {
   }
 };
 
-module.exports = { CreateUserRole, GetAllRoles, UpdateUser };
+module.exports = { CreateUserRole, GetAllRoles, updateUser };

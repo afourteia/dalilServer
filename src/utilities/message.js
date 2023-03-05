@@ -1,14 +1,21 @@
-module.exports = {
+
+messageUtil = {
+  resourceCreated: "Resource created",
+  resourceUpdated: "Resource updated",
+  resourceDeleted: "Resource deleted",
   tokenInvalid: "Verification code is invalid",
-  userRegister: "Register successfull",
-  userLogin: "Login successfull",
-  updateSuccess: "Updated successfull",
+  userRegister: "Register successful",
+  loginSuccessful: "login successful",
+  logoutSuccessful: "Logout successful",
+  updateSuccess: "Updated successful",
   validationErrors: "Validation Errors",
   incorrectPassword: "Password is not correct",
   serverError: "Internal server error",
   emailAlreadyExist: "User already exist",
   notFound: "User not found",
   tokenRegistered: "User app token registered",
-  logout: "Logged out sccessfully",
-  found: "Users found sccessfully",
-};
+  found: "Users found successful",
+  methodUnderDev: "method under development"
+}
+
+module.exports = {messageUtil};

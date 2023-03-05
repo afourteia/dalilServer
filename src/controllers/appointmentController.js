@@ -1,5 +1,5 @@
 const AppointmentServices = require("../services/appointmentServices");
-const CreateAppointment = async (req, res) => {
+const createAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.createAppointment({
       ...req.body,
@@ -22,7 +22,7 @@ const CreateAppointment = async (req, res) => {
   }
 };
 
-const UpdateAppointment = async (req, res) => {
+const updateAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.updateAppointment(
       {
@@ -44,7 +44,7 @@ const UpdateAppointment = async (req, res) => {
   }
 };
 
-const AllAppointments = async (req, res) => {
+const getAppointments = async (req, res) => {
   try {
     let limitQP = Number(req.query.limit) ?? 30;
 
@@ -57,7 +57,7 @@ const AllAppointments = async (req, res) => {
       limitQP = 30;
     }
 
-    let documents = AppointmentServices.getAllAppointments({}, limitQP);
+    let documents = AppointmentServices.getAppointments({}, limitQP);
     let count = documents.length;
 
     let message = "good";
@@ -80,8 +80,14 @@ const AllAppointments = async (req, res) => {
   }
 };
 
+const getAppointment = async (req, res) => {};
+const deleteAppointment = async (req, res) => {};
+
+
 module.exports = {
-  CreateAppointment,
-  UpdateAppointment,
-  AllAppointments,
+  createAppointment,
+  updateAppointment,
+  getAppointment,
+  deleteAppointment,
+  getAppointments,
 };

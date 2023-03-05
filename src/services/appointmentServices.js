@@ -14,7 +14,7 @@ exports.deleteAppointment = async (query) => {
   return await AppointmentSchema.findOneAndDelete(query);
 };
 
-exports.getAllAppointments = async (query, limit) => {
+exports.getAppointments = async (query, limit) => {
   return await AppointmentSchema.find(query)
     .populate("scheduleId")
     .populate("medicalCenterId")
