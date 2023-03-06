@@ -10,8 +10,8 @@ const appointmentsRouter = require("./appointment.routes");
 const institutesRouter = require("./institution.routes");
 const medicalCentersRouter = require("./medicalCenter.routes");
 const schedulesRouter = require("./schedule.routes");
-
-const API_VERSION = "/v1"
+const smsRouter = require("./sms.routes");
+const API_VERSION = "/v1";
 
 router.use(API_VERSION + "/login", loginRouter);
 router.use(API_VERSION + "/logout", logoutRouter);
@@ -22,8 +22,7 @@ router.use(API_VERSION + "/appointments", appointmentsRouter);
 router.use(API_VERSION + "/institutions", institutesRouter);
 router.use(API_VERSION + "/medicalCenters", medicalCentersRouter);
 router.use(API_VERSION + "/schedules", schedulesRouter);
+router.use(API_VERSION + "/sms", smsRouter);
 // router.use("/claims", claimsRouter);
-
-
 
 module.exports = router;
