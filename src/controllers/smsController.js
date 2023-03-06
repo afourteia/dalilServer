@@ -35,7 +35,9 @@ const UpdateSms = async (req, res) => {
 
 const AllSms = async (req, res) => {
   try {
-    let documents = SmsServices.getAllSms({ status: "pending" });
+    let documents = await SmsServices.getAllSms({ status: "pending" });
+
+    let message = "good";
     if (documents.length === 0) {
       message = "list is empty ";
     }
