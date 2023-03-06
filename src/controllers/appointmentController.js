@@ -1,11 +1,21 @@
 const AppointmentServices = require("../services/appointmentServices");
+const SmsServices = require("../services/smsServices");
 const createAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.createAppointment({
       ...req.body,
-      userId: req.params.userId,
+      // userId: req.params.userId,
       appointmentStatus: `pending`,
       dateCreated: Date(),
+    });
+    const findDocument = await AppointmentServices.getAppointmentDetails({
+      _id: document._id,
+    });
+
+    let message_body = `Your appointment for ${findDocument.doctorId?.firstName} at ${findDocument.medicalCenterId?.name} on ${findDocument.appointmentDate} is ${findDocument.appointmentStatus}`;
+    const sms = await SmsServices.createSms({
+      phone: findDocument.userId?.phoneNumber,
+      message: message_body,
     });
 
     let message = "good";
@@ -82,7 +92,6 @@ const getAppointments = async (req, res) => {
 
 const getAppointment = async (req, res) => {};
 const deleteAppointment = async (req, res) => {};
-
 
 module.exports = {
   createAppointment,
