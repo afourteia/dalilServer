@@ -39,8 +39,9 @@ const createUsers = async (req, res) => {
       });
       delete document._doc.password;
       delete document._doc.sd;
+      document.statusCode = 
       // server response
-      res.status(200).json({ ...document._doc, token: `Bearer ${token}` });
+      res.status(200).json({ ...document._doc,statusCode: "200", token: `Bearer ${token}` });
     } else {
       const lastUser = users[0].userId;
       const idNumber = Number(lastUser.split(`-`)[1]);
@@ -63,11 +64,11 @@ const createUsers = async (req, res) => {
       delete document._doc.password;
       delete document._doc.sd;
       // server response
-      res.status(200).json({ ...document._doc, token: `Bearer ${token}` });
+      res.status(200).json({ ...document._doc,statusCode: "200", token: `Bearer ${token}` });
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({statusCode: "500", message: error.message });
   }
 };
 
@@ -88,6 +89,7 @@ const getUsers = async (req, res) => {
     let limit = Number(limitQuery);
     if (!userIdQuery.startsWith(`SSD-`)) {
       return res.status(404).json({
+        statusCode: "404",
         message: `User not found, check your starting_after_object input`,
       });
     }
@@ -109,6 +111,7 @@ const getUsers = async (req, res) => {
 
     if (object.length === 0) {
       return res.status(404).json({
+        statusCode: "404",
         message: `User not found`,
       });
     }
@@ -119,13 +122,14 @@ const getUsers = async (req, res) => {
     });
 
     res.status(200).json({
+      statusCode: "200",
       object,
       objectCount: totalUsers.length,
       hasMore: object.length >= totalUsers.length ? false : true,
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({statusCode: "500", message: error.message });
   }
 };
 
@@ -140,14 +144,15 @@ const updateUser = async (req, res) => {
       { new: true }
     );
     if (!users) {
-      return res.status(404).json({ error: "No user found" });
+      return res.status(404).json({statusCode: "404", error: "No user found" });
     }
     res.status(200).json({
+      statusCode: "200",
       users,
       message: "User updated successfully",
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({statusCode: "404", message: error.message });
   }
 };
 
