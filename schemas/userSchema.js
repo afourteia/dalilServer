@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema({
   whatsAppNumber: String,
   beneficiaryId: {
     type: mongoose.ObjectId,
-    // unique: true,
+    index: { unique: true, sparse: true }
   },
   password: {
     type: String,
