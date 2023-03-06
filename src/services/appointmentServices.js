@@ -25,7 +25,9 @@ exports.getAppointments = async (query, limit) => {
 };
 
 exports.getAppointmentDetails = async (query) => {
-  return await AppointmentSchema.findOne(query).select(
-    "-__v -createdAt -updatedAt"
-  );
+  return await AppointmentSchema.findOne(query)
+    .populate("doctorId")
+    .populate("medicalCenterId")
+    .populate("userId")
+    .select("-__v -createdAt -updatedAt");
 };
