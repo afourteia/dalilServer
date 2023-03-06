@@ -2,7 +2,7 @@ const mongoose = require(`mongoose`);
 
 const smsSchema = mongoose.Schema(
   {
-    status: { type: String, enum: ["pending", "sent"] },
+    status: { type: String, enum: ["pending", "sent"], default: "pending" },
 
     phone: {
       type: String,
