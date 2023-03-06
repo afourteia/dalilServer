@@ -3,6 +3,7 @@ const user = require(`../schemas/userSchema`);
 // importing  dependencies
 const bcrypt = require("bcrypt");
 const jwt = require(`jsonwebtoken`);
+const mongoose = require(`mongoose`);
 
 // api for creating new user
 
@@ -12,63 +13,41 @@ const createUsers = async (req, res) => {
 
     // hashing user password
     const hash = bcrypt.hashSync(myPlaintextPassword, 10);
-    const users = await user.find().sort({ userId: -1 }).limit(1);
+    const newBody = {
+      ...req.body,
+      password: hash,
+      userId: new mongoose.Types.ObjectId().toString(),
+    };
+    const document = await user.create(newBody);
+    const { userId, username, password } = document._doc;
 
-    if (users.length === 0) {
-      const newBody = {
-        ...req.body,
-        password: hash,
-        userId: `SSD-${1}`,
-        sd: 1,
-      };
-      const document = await user.create(newBody);
-      const { userId, username, password } = document._doc;
-
-      // siginig/authenticating user with jwt token for authorization
-      const token = jwt.sign(
-        { userId, username, password },
-        process.env.jwtSecret,
-        {
-          expiresIn: `30d`,
-        }
-      );
-      res.cookie("access_token", `Bearer ${token}`, {
-        expires: new Date(Date.now() + 720 * 3600000),
-        httpOnly: true,
-        path: `/`,
-      });
-      delete document._doc.password;
-      delete document._doc.sd;
-      document.statusCode = 
+    // siginig/authenticating user with jwt token for authorization
+    const token = jwt.sign(
+      { userId, username, password },
+      process.env.jwtSecret,
+      {
+        expiresIn: `30d`,
+      }
+    );
+    res.cookie("access_token", `Bearer ${token}`, {
+      expires: new Date(Date.now() + 720 * 3600000),
+      httpOnly: true,
+      path: `/`,
+    });
+    delete document._doc.password;
+    delete document._doc.sd;
+    document.statusCode =
       // server response
-      res.status(200).json({ ...document._doc,statusCode: "200", token: `Bearer ${token}` });
-    } else {
-      const lastUser = users[0].userId;
-      const idNumber = Number(lastUser.split(`-`)[1]);
-      const newBody = {
-        ...req.body,
-        password: hash,
-        userId: `SSD-${idNumber + 1}`,
-        sd: idNumber + 1,
-      };
-      const document = await user.create(newBody);
-      const { userId, username, password } = document._doc;
-      // siginig/authenticating user with jwt token for authorization
-      const token = jwt.sign(
-        { userId, username, password },
-        process.env.jwtSecret,
-        {
-          expiresIn: `30d`,
-        }
-      );
-      delete document._doc.password;
-      delete document._doc.sd;
-      // server response
-      res.status(200).json({ ...document._doc,statusCode: "200", token: `Bearer ${token}` });
-    }
+      res
+        .status(200)
+        .json({
+          ...document._doc,
+          statusCode: "200",
+          token: `Bearer ${token}`,
+        });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({statusCode: "500", message: error.message });
+    res.status(500).json({ statusCode: "500", message: error.message });
   }
 };
 
@@ -129,7 +108,7 @@ const getUsers = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({statusCode: "500", message: error.message });
+    res.status(500).json({ statusCode: "500", message: error.message });
   }
 };
 
@@ -144,7 +123,9 @@ const updateUser = async (req, res) => {
       { new: true }
     );
     if (!users) {
-      return res.status(404).json({statusCode: "404", error: "No user found" });
+      return res
+        .status(404)
+        .json({ statusCode: "404", error: "No user found" });
     }
     res.status(200).json({
       statusCode: "200",
@@ -152,7 +133,7 @@ const updateUser = async (req, res) => {
       message: "User updated successfully",
     });
   } catch (error) {
-    res.status(500).json({statusCode: "404", message: error.message });
+    res.status(500).json({ statusCode: "404", message: error.message });
   }
 };
 

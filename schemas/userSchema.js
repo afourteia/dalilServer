@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema({
   whatsAppNumber: String,
   beneficiaryId: {
     type: mongoose.ObjectId,
-    unique: true,
+    // unique: true,
   },
   password: {
     type: String,
@@ -28,11 +28,11 @@ const userSchema = mongoose.Schema({
   },
 
   // the array should reference userRoleId from userRole collection
-  userRole: {
-    type: [String],
-    // required: true,
-    unique: true
-  },
+  // userRole: {
+  //   type: [String],
+  //   // required: true,
+  //   unique: true
+  // },
   // created: {
   //   createdBy: { type: mongoose.ObjectId},
   //   dateCreated: { type: Date},
