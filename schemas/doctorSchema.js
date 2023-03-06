@@ -10,7 +10,7 @@ const doctorSchema = mongoose.Schema({
   },
   middleName: {
     type: String,
-    required: [true, `please enter valid middle name`],
+    // required: [true, `please enter valid middle name`],
   },
   lastName: {
     type: String,
@@ -22,7 +22,7 @@ const doctorSchema = mongoose.Schema({
   },
   level: {
     type: String,
-    required: [true, `please enter valid level`],
+    // required: [true, `please enter valid level`],
   },
   gender: {
     type: String,
@@ -30,10 +30,10 @@ const doctorSchema = mongoose.Schema({
   },
   birthdate: {
     type: String,
-    required: [true, `please enter valid birthdate`],
+    // required: [true, `please enter valid birthdate`],
   },
-  fieldNames: {type: Array},
-  originalNames: {type: Array},
+  // fieldNames: {type: Array},
+  // originalNames: {type: Array},
   created: {
     createdBy: { type: mongoose.ObjectId},
     dateCreated: { type: Date},

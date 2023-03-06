@@ -50,8 +50,8 @@ const login = async (req, res) => {
         {
           $lookup: {
             from: `beneficiaries`,
-            localField: `userId`,
-            foreignField: `userId`,
+            localField: `beneficiaryId`,
+            foreignField: `beneficiaryId`,
             as: `beneficiary`,
           },
         },

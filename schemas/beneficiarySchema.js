@@ -66,10 +66,10 @@ const familyMemberSchema = mongoose.Schema({
     enum: ["self", "father", "mother", "wife", "husband", "daughter", "son"],
     required: [true, `please specify relationship to the main beneficiary `],
   },
-  medicalFiles: {
-    type: medicalFileSchema,
-    required: [false, `please provide valid family member `],
-  },
+  // medicalFiles: {
+  //   type: medicalFileSchema,
+  //   required: [false, `please provide valid family member `],
+  // },
 });
 
 // beneficiary schema or structure
@@ -109,30 +109,30 @@ const beneficiarySchema = mongoose.Schema({
     type: [familyMemberSchema],
     required: [false, `please provide valid family member `],
   },
-  insurancePolicyId: {
+  institutionId: {
     type: String,
     required: [true, `please provide valid insurance policy id`],
   },
-  residentCity: {
-    type: String,
-    required: [true, `please provide valid resident City `],
-  },
-  residentDistrict: String,
-  account: {
-    hasAccount: { type: Boolean, required: true },
-    userId: {
-      type: String,
-      unique: true,
-    },
-  },
-  created: {
-    createdBy: { type: mongoose.ObjectId},
-    dateCreated: { type: Date},
-  },
-  updated: {
-    updatedBy: { type: mongoose.ObjectId},
-    dateUpdated: { type: Date},
-  }
+  // residentCity: {
+  //   type: String,
+  //   required: [true, `please provide valid resident City `],
+  // },
+  // residentDistrict: String,
+  // account: {
+  //   hasAccount: { type: Boolean, required: true },
+  //   userId: {
+  //     type: String,
+  //     unique: true,
+  //   },
+  // },
+  // created: {
+  //   createdBy: { type: mongoose.ObjectId},
+  //   dateCreated: { type: Date},
+  // },
+  // updated: {
+  //   updatedBy: { type: mongoose.ObjectId},
+  //   dateUpdated: { type: Date},
+  // }
 }, { collection: 'beneficiaries' });
 
 const beneficiaries = mongoose.model(`beneficiaries`, beneficiarySchema);

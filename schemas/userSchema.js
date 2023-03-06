@@ -18,15 +18,9 @@ const userSchema = mongoose.Schema({
   },
   phoneAuthenticated: Boolean,
   whatsAppNumber: String,
-  beneficiary: {
-    hasBeneficiary: {
-      type: Boolean,
-      required: true,
-    },
-    beneficiaryId: {
-      type: mongoose.ObjectId,
-      unique: true,
-    },
+  beneficiaryId: {
+    type: mongoose.ObjectId,
+    unique: true,
   },
   password: {
     type: String,
@@ -36,17 +30,17 @@ const userSchema = mongoose.Schema({
   // the array should reference userRoleId from userRole collection
   userRole: {
     type: [String],
-    required: true,
+    // required: true,
     unique: true
   },
-  created: {
-    createdBy: { type: mongoose.ObjectId},
-    dateCreated: { type: Date},
-  },
-  updated: {
-    updatedBy: { type: mongoose.ObjectId},
-    dateUpdated: { type: Date},
-  }
+  // created: {
+  //   createdBy: { type: mongoose.ObjectId},
+  //   dateCreated: { type: Date},
+  // },
+  // updated: {
+  //   updatedBy: { type: mongoose.ObjectId},
+  //   dateUpdated: { type: Date},
+  // }
 }, { collection: 'users' });
 
 const user = mongoose.model(`users`, userSchema);

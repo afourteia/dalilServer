@@ -73,18 +73,14 @@ const institutionSchema = mongoose.Schema({
     set: v => Math.round(v),
     alias: 'i'
   },
-  benefitPolicy: {
-    type: benefitPolicySchema,
-    required: [false, `please provide valid family member `],
-  },
-  created: {
-    createdBy: { type: mongoose.ObjectId, required: true},
-    dateCreated: { type: Date, required: true},
-  },
-  updated: {
-    updatedBy: { type: mongoose.ObjectId},
-    dateUpdated: { type: Date},
-  }
+  // created: {
+  //   createdBy: { type: mongoose.ObjectId, required: true},
+  //   dateCreated: { type: Date, required: true},
+  // },
+  // updated: {
+  //   updatedBy: { type: mongoose.ObjectId},
+  //   dateUpdated: { type: Date},
+  // }
 }, { collection: 'institutions' });
 
 const institution = mongoose.model(`institutions`, institutionSchema);

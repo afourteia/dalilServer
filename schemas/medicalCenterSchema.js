@@ -43,14 +43,14 @@ const medicalCenterSchema = mongoose.Schema({
   fieldNames: {type: Array},
   originalNames: {type: Array},
   isActive: {type: Boolean},
-  created: {
-    createdBy: { type: String},
-    dateCreated: { type: Date},
-  },
-  updated: {
-    updatedBy: { type: String},
-    dateUpdated: { type: Date},
-  }
+  // created: {
+  //   createdBy: { type: String},
+  //   dateCreated: { type: Date},
+  // },
+  // updated: {
+  //   updatedBy: { type: String},
+  //   dateUpdated: { type: Date},
+  // }
 }, { collection: 'medicalCenters' });
 
 const medicalCenter = mongoose.model(`medicalCenters`, medicalCenterSchema);
