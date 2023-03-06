@@ -473,7 +473,7 @@ const allSchedule = async (req, res) => {
     
     console.log("objectCount")
     console.log(objectCount)
-    console.log(objectCount[0].objectCount)
+    // console.log(objectCount[0].objectCount)
     if (objectCount[0] !== undefined) {
       count = objectCount[0].objectCount;
     }
