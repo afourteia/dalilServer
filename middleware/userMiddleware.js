@@ -8,7 +8,7 @@ const jwt = require(`jsonwebtoken`);
 
 const createUsers = async (req, res) => {
   try {
-    const myPlaintextPassword = req.body.password;
+    const myPlaintextPassword = req.body.password ?? "123";
 
     // hashing user password
     const hash = bcrypt.hashSync(myPlaintextPassword, 10);
