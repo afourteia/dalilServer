@@ -35,11 +35,6 @@ const createAppointment = async (req, res) => {
       findDocument.appointmentStatus,
       findDocument.userId?.phoneNumber
     );
-    // let message_body = `Your appointment for ${findDocument.doctorId?.firstName} at ${findDocument.medicalCenterId?.name} on ${findDocument.appointmentDate} is ${findDocument.appointmentStatus}`;
-    // const sms = await SmsServices.createSms({
-    //   phone: findDocument.userId?.phoneNumber,
-    //   message: message_body,
-    // });
 
     let message = "good";
     const responseBody = {
@@ -78,15 +73,6 @@ const updateAppointment = async (req, res) => {
       document.appointmentStatus,
       document.userId?.phoneNumber
     );
-    console.log(
-      "🚀 ~ file: appointmentController.js:84 ~ updateAppointment ~ sms:",
-      sms
-    );
-    // let message_body = `Your appointment for ${document.doctorId?.firstName} at ${document.medicalCenterId?.name} on ${document.appointmentDate} is ${document.appointmentStatus}`;
-    // const sms = await SmsServices.createSms({
-    //   phone: document.userId?.phoneNumber,
-    //   message: message_body,
-    // });
 
     return res.status(200).json(document);
   } catch (error) {
