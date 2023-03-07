@@ -7,7 +7,11 @@ exports.createAppointment = async (query) => {
 exports.updateAppointment = async (query, data) => {
   return await AppointmentSchema.findOneAndUpdate(query, data, {
     new: true,
-  });
+  })
+    .populate("doctorId")
+    .populate("medicalCenterId")
+    .populate("userId")
+    .select("-__v -createdAt -updatedAt");
 };
 
 exports.deleteAppointment = async (query) => {
@@ -25,7 +29,9 @@ exports.getAppointments = async (query, limit) => {
 };
 
 exports.getAppointmentDetails = async (query) => {
-  return await AppointmentSchema.findOne(query).select(
-    "-__v -createdAt -updatedAt"
-  );
+  return await AppointmentSchema.findOne(query)
+    .populate("doctorId")
+    .populate("medicalCenterId")
+    .populate("userId")
+    .select("-__v -createdAt -updatedAt");
 };

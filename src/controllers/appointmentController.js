@@ -1,12 +1,40 @@
 const AppointmentServices = require("../services/appointmentServices");
+const SmsServices = require("../services/smsServices");
+
+const createMessage = async (
+  doctor,
+  medicalCenterName,
+  appointmentDate,
+  appointmentStatus,
+  phone
+) => {
+  let message_body = `Your appointment for ${doctor} at ${medicalCenterName} on ${appointmentDate} is ${appointmentStatus}`;
+  const sms = await SmsServices.createSms({
+    phone: phone,
+    message: message_body,
+  });
+  return sms;
+};
+
 const createAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.createAppointment({
       ...req.body,
-      userId: req.params.userId,
+      // userId: req.params.userId,
       appointmentStatus: `pending`,
       dateCreated: Date(),
     });
+    const findDocument = await AppointmentServices.getAppointmentDetails({
+      _id: document._id,
+    });
+
+    const sms = await createMessage(
+      findDocument.doctorId?.firstName,
+      findDocument.medicalCenterId?.name,
+      findDocument.appointmentDate,
+      findDocument.appointmentStatus,
+      findDocument.userId?.phoneNumber
+    );
 
     let message = "good";
     const responseBody = {
@@ -26,16 +54,25 @@ const updateAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.updateAppointment(
       {
-        appointmentId: req.params.appointmentId,
-        userId: req.userId,
+        _id: req.params.appointmentId,
+        // userId: req.userId,
       },
       {
         ...req.body,
       }
     );
+
     if (!document) {
       return res.status(404).json({ message: `document not found` });
     }
+
+    const sms = await createMessage(
+      document.doctorId?.firstName,
+      document.medicalCenterId?.name,
+      document.appointmentDate,
+      document.appointmentStatus,
+      document.userId?.phoneNumber
+    );
 
     return res.status(200).json(document);
   } catch (error) {
@@ -82,7 +119,6 @@ const getAppointments = async (req, res) => {
 
 const getAppointment = async (req, res) => {};
 const deleteAppointment = async (req, res) => {};
-
 
 module.exports = {
   createAppointment,
