@@ -1,5 +1,21 @@
 const AppointmentServices = require("../services/appointmentServices");
 const SmsServices = require("../services/smsServices");
+
+const createMessage = async (
+  doctor,
+  medicalCenterName,
+  appointmentDate,
+  appointmentStatus,
+  phone
+) => {
+  let message_body = `Your appointment for ${doctor} at ${medicalCenterName} on ${appointmentDate} is ${appointmentStatus}`;
+  const sms = await SmsServices.createSms({
+    phone: phone,
+    message: message_body,
+  });
+  return sms;
+};
+
 const createAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.createAppointment({
@@ -12,11 +28,18 @@ const createAppointment = async (req, res) => {
       _id: document._id,
     });
 
-    let message_body = `Your appointment for ${findDocument.doctorId?.firstName} at ${findDocument.medicalCenterId?.name} on ${findDocument.appointmentDate} is ${findDocument.appointmentStatus}`;
-    const sms = await SmsServices.createSms({
-      phone: findDocument.userId?.phoneNumber,
-      message: message_body,
-    });
+    const sms = await createMessage(
+      findDocument.doctorId?.firstName,
+      findDocument.medicalCenterId?.name,
+      findDocument.appointmentDate,
+      findDocument.appointmentStatus,
+      findDocument.userId?.phoneNumber
+    );
+    // let message_body = `Your appointment for ${findDocument.doctorId?.firstName} at ${findDocument.medicalCenterId?.name} on ${findDocument.appointmentDate} is ${findDocument.appointmentStatus}`;
+    // const sms = await SmsServices.createSms({
+    //   phone: findDocument.userId?.phoneNumber,
+    //   message: message_body,
+    // });
 
     let message = "good";
     const responseBody = {
@@ -36,16 +59,34 @@ const updateAppointment = async (req, res) => {
   try {
     const document = await AppointmentServices.updateAppointment(
       {
-        appointmentId: req.params.appointmentId,
-        userId: req.userId,
+        _id: req.params.appointmentId,
+        // userId: req.userId,
       },
       {
         ...req.body,
       }
     );
+
     if (!document) {
       return res.status(404).json({ message: `document not found` });
     }
+
+    const sms = await createMessage(
+      document.doctorId?.firstName,
+      document.medicalCenterId?.name,
+      document.appointmentDate,
+      document.appointmentStatus,
+      document.userId?.phoneNumber
+    );
+    console.log(
+      "🚀 ~ file: appointmentController.js:84 ~ updateAppointment ~ sms:",
+      sms
+    );
+    // let message_body = `Your appointment for ${document.doctorId?.firstName} at ${document.medicalCenterId?.name} on ${document.appointmentDate} is ${document.appointmentStatus}`;
+    // const sms = await SmsServices.createSms({
+    //   phone: document.userId?.phoneNumber,
+    //   message: message_body,
+    // });
 
     return res.status(200).json(document);
   } catch (error) {
