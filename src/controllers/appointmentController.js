@@ -1,4 +1,8 @@
 const AppointmentServices = require("../services/appointmentServices");
+const MedicalCenterServices = require("../services/medicalCenterServices");
+const ScheduleServices = require("../services/scheduleServices");
+const DoctorServices = require("../services/doctorServices");
+const UserServices = require("../services/userServices");
 const SmsServices = require("../services/smsServices");
 
 const createMessage = async (
@@ -18,22 +22,36 @@ const createMessage = async (
 
 const createAppointment = async (req, res) => {
   try {
+    const doctorObject = await DoctorServices.getDoctorDetails({
+      _id: req.body.doctorId,
+    });
+    const medicalCenterObject =
+      await MedicalCenterServices.getMedicalCenterDetails({
+        _id: req.body.medicalCenterId,
+      });
+
+    const scheduleObject = await ScheduleServices.getScheduleDetails({
+      _id: req.body.scheduleId,
+    });
+    const userObject = await UserServices.getUser({
+      _id: req.body.userId,
+    });
     const document = await AppointmentServices.createAppointment({
       ...req.body,
+      doctor: doctorObject,
+      medicalCenter: medicalCenterObject,
+      schedule: scheduleObject,
       // userId: req.params.userId,
       appointmentStatus: `pending`,
       dateCreated: Date(),
     });
-    const findDocument = await AppointmentServices.getAppointmentDetails({
-      _id: document._id,
-    });
 
     const sms = await createMessage(
-      findDocument.doctorId?.firstName,
-      findDocument.medicalCenterId?.name,
-      findDocument.appointmentDate,
-      findDocument.appointmentStatus,
-      findDocument.userId?.phoneNumber
+      doctorObject?.firstName,
+      medicalCenterObject?.name,
+      document.appointmentDate,
+      document.appointmentStatus,
+      userObject?.phoneNumber
     );
 
     let message = "good";
@@ -67,11 +85,11 @@ const updateAppointment = async (req, res) => {
     }
 
     const sms = await createMessage(
-      document.doctorId?.firstName,
-      document.medicalCenterId?.name,
+      document.doctor?.firstName,
+      document.medicalCenter?.name,
       document.appointmentDate,
       document.appointmentStatus,
-      document.userId?.phoneNumber
+      document.user?.phoneNumber
     );
 
     return res.status(200).json(document);
