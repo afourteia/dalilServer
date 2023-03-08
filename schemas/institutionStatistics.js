@@ -3,7 +3,7 @@ const mongoose = require(`mongoose`);
 
 const transactionSchema = mongoose.Schema({
   transactionId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: true,
     unique: true,
   },
@@ -34,7 +34,7 @@ const transactionSchema = mongoose.Schema({
 
 const topExpensesBySubscriberSchema = mongoose.Schema({
   subscriberId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: true,
     unique: true,
   },
@@ -74,7 +74,7 @@ const topExpensesBySubscriberSchema = mongoose.Schema({
 
 const topExpensesByMedicalCenterSchema = mongoose.Schema({
   medicalCenterId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: true,
     unique: true,
   },
@@ -257,7 +257,7 @@ const annualStatisticsSchema = mongoose.Schema({
 // institution schema or structure
 const institutionStatisticsSchema = mongoose.Schema({
   institutionId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: true,
     unique: true
   },

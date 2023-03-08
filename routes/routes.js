@@ -24,6 +24,7 @@ const allowCrossDomain = (req, res, next) => {
 const {
   createUsers,
   getUsers,
+  getUser,
   updateUser,
 } = require(`../middleware/userMiddleware`);
 
@@ -116,7 +117,8 @@ router
   .get(authentication, getUsers);
 ///route for upload user file on aws
 router
-  .route(`/v1/users/:id`)
+  .route(`/v1/users/:userId`)
+  .get(authentication, getUser);
   // .patch(uploader.singleFileUpload.any({ name: "userImage" }), updateUser);
 
 // routes for beneficiary

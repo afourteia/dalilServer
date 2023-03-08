@@ -3,7 +3,7 @@ const mongoose = require(`mongoose`);
 
 // medicalCenter schema setup
 const medicalCenterSchema = mongoose.Schema({
-  medicalCenterId: { type: mongoose.ObjectId, unique: true },
+  medicalCenterId: { type: String, unique: true },
   name: {
     type: String,
     required: [true, `please enter valid  name`],

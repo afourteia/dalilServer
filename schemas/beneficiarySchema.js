@@ -126,11 +126,11 @@ const beneficiarySchema = mongoose.Schema({
   //   },
   // },
   // created: {
-  //   createdBy: { type: mongoose.ObjectId},
+  //   createdBy: { type: String},
   //   dateCreated: { type: Date},
   // },
   // updated: {
-  //   updatedBy: { type: mongoose.ObjectId},
+  //   updatedBy: { type: String},
   //   dateUpdated: { type: Date},
   // }
 }, { collection: 'beneficiaries' });

@@ -3,7 +3,7 @@ const mongoose = require(`mongoose`);
 
 const benefitTableSchema = mongoose.Schema({
   _id: {
-    type: mongoose.ObjectId,
+    type: String,
     unique: true,
     required: true
   },
@@ -74,7 +74,7 @@ const institutionSchema = mongoose.Schema({
     alias: 'i'
   },
   // created: {
-  //   createdBy: { type: mongoose.ObjectId, required: true},
+  //   createdBy: { type: String, required: true},
   //   dateCreated: { type: Date, required: true},
   // },
   // updated: {

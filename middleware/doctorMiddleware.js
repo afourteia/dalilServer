@@ -31,7 +31,7 @@ const createDoctor = async (req, res) => {
 
     const document = await doctor.create({
       ...req.body,
-      doctorId: new mongoose.Types.ObjectId(),
+      doctorId: new mongoose.Types.ObjectId().toString(),
       creation: {
         createdBy: res.locals.user.userId,
         dateCreated: Date(),
@@ -76,7 +76,7 @@ const updateDoctor = async (req, res) => {
 
     if(req.params.doctorId){
       console.log(req.params.doctorId)
-      req.params.doctorId = mongoose.Types.ObjectId(req.params.doctorId);
+      req.params.doctorId = (req.params.doctorId);
       console.log(req.params.doctorId)
     }
     const document = await doctor
@@ -167,7 +167,7 @@ const allDoctor = async (req, res) => {
 
     if (starting_after_objectQP) {
       query["$and"].push({
-        doctorId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) },
+        doctorId: { $gt: (starting_after_objectQP) },
       });
     }
 

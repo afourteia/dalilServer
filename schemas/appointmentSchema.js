@@ -6,7 +6,7 @@ const appointmentSchema = mongoose.Schema({
   // appointmentId: {
   //   type: String,
   // },
-  appointmentId: mongoose.ObjectId,
+  appointmentId: String,
   appointmentDate: Date,
   timeslot: String,
   appointmentStatus: {
@@ -35,15 +35,15 @@ const appointmentSchema = mongoose.Schema({
     },
   },
   scheduleId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid schedule id`],
   },
   medicalCenterId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid medicalCenter id`],
   },
   doctorId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid doctor id`],
   },  
   notes: String,

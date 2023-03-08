@@ -3,7 +3,7 @@ const mongoose = require(`mongoose`);
 
 // doctor schema setup
 const doctorSchema = mongoose.Schema({
-  doctorId: { type: mongoose.ObjectId, unique: true },
+  doctorId: { type: String, unique: true },
   firstName: {
     type: String,
     required: [true, `please enter valid first name`],
@@ -35,11 +35,11 @@ const doctorSchema = mongoose.Schema({
   // fieldNames: {type: Array},
   // originalNames: {type: Array},
   created: {
-    createdBy: { type: mongoose.ObjectId},
+    createdBy: { type: String},
     dateCreated: { type: Date},
   },
   updated: {
-    updatedBy: { type: mongoose.ObjectId},
+    updatedBy: { type: String},
     dateUpdated: { type: Date},
   }
 }, { collection: 'doctors' });

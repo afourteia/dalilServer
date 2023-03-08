@@ -6,11 +6,11 @@ const medicalSpecialtySchema = mongoose.Schema({
     required: [true, `please provide valid specialty name`],
   },
   created: {
-    createdBy: { type: mongoose.ObjectId},
+    createdBy: { type: String},
     dateCreated: { type: Date},
   },
   updated: {
-    updatedBy: { type: mongoose.ObjectId},
+    updatedBy: { type: String},
     dateUpdated: { type: Date},
   }
 }, { collection: 'medicalSpecialties' });

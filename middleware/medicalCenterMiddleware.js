@@ -48,7 +48,7 @@ const createmedicalCenter = async (req, res) => {
     
     const document = await medicalCenter.create({      
       ...req.body,
-      medicalCenterId: new mongoose.Types.ObjectId(),
+      medicalCenterId: new mongoose.Types.ObjectId().toString(),
       creation:{
         createdBy: res.locals.user.userId,
         dateCreated: Date(),
@@ -92,7 +92,7 @@ const updatemedicalCenter = async (req, res) => {
   try {
     if(req.params.medicalCenterId){
       console.log(req.params.medicalCenterId)
-      req.params.medicalCenterId = mongoose.Types.ObjectId(req.params.medicalCenterId);
+      req.params.medicalCenterId = (req.params.medicalCenterId);
       console.log(req.params.medicalCenterId)
     }
 
@@ -172,11 +172,11 @@ const allmedicalCenter = async (req, res) => {
     
     sortByQP_ = {"medicalCenterId": 1};
     if (starting_after_objectQP){
-      query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
-      // query["$and"].push({"medicalCenterId": {$gt: mongoose.Types.ObjectId(starting_after_objectQP)}});
+      query["$and"].push({"medicalCenterId": {$gt: (starting_after_objectQP)}});
+      // query["$and"].push({"medicalCenterId": {$gt: (starting_after_objectQP)}});
     }
     if (starting_before_objectQP){
-      query["$and"].push({"medicalCenterId": {$lt: mongoose.Types.ObjectId(starting_before_objectQP)}});
+      query["$and"].push({"medicalCenterId": {$lt: (starting_before_objectQP)}});
     }
     console.log("query['$and']")
     console.log(query["$and"])

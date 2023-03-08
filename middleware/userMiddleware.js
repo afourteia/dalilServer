@@ -36,15 +36,12 @@ const createUsers = async (req, res) => {
     });
     delete document._doc.password;
     delete document._doc.sd;
-    document.statusCode =
-      // server response
-      res
-        .status(200)
-        .json({
-          ...document._doc,
-          statusCode: "200",
-          token: `Bearer ${token}`,
-        });
+    // server response
+    res.status(200).json({
+      ...document._doc,
+      statusCode: "200",
+      token: `Bearer ${token}`,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ statusCode: "500", message: error.message });
@@ -112,6 +109,30 @@ const getUsers = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  try {
+    let userIdQuery = req.query.starting_after_object;
+    let limitQuery = req.query.limit;
+
+    const object = await use.findOne(req.params).lean();
+
+    if (!document) {
+      return res.status(404).json({ statusCode: "404", message: `user not found` });
+    }
+
+    const responseBody = {
+      codeStatus: "200",
+      message: "good",
+      data: document
+    };
+
+    res.status(200).json({... responseBody});
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ statusCode: "500", message: error.message });
+  }
+};
+
 const updateUser = async (req, res) => {
   try {
     if (!req.files[0].location) {
@@ -137,4 +158,4 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { createUsers, getUsers, updateUser };
+module.exports = { createUsers, getUser, getUsers, updateUser };

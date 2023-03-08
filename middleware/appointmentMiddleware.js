@@ -21,12 +21,12 @@ const createAppointment = async (req, res) => {
 
     if (req.body.doctorId) {
       console.log(req.body.doctorId);
-      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      req.body.doctorId = (req.body.doctorId);
       console.log(req.body.doctorId);
     }
     if (req.body.medicalCenterId) {
       console.log(req.body.medicalCenterId);
-      req.body.medicalCenterId = mongoose.Types.ObjectId(
+      req.body.medicalCenterId = (
         req.body.medicalCenterId
       );
       console.log(req.body.medicalCenterId);
@@ -34,14 +34,14 @@ const createAppointment = async (req, res) => {
 
     if (req.body.scheduleId) {
       console.log(req.body.scheduleId);
-      req.body.scheduleId = mongoose.Types.ObjectId(req.body.scheduleId);
+      req.body.scheduleId = (req.body.scheduleId);
       console.log(req.body.scheduleId);
     }
 
     // Temp fix till we get a proper ID for patients
     if (req.body.patient.patientId) {
       console.log(req.body.scheduleId);
-      req.body.scheduleId = mongoose.Types.ObjectId(req.body.scheduleId);
+      req.body.scheduleId = (req.body.scheduleId);
       console.log(req.body.scheduleId);
     }
 
@@ -59,7 +59,7 @@ const createAppointment = async (req, res) => {
       ...req.body,
       userId: req.params.userId,
       appointmentStatus: `pending`,
-      appointmentId: new mongoose.Types.ObjectId(),
+      appointmentId: new mongoose.Types.ObjectId().toString(),
       dateCreated: Date(),
       medicalCenterObject: medicalCenterObject,
       doctorObject: doctorObject,
@@ -85,7 +85,7 @@ const updateAppointment = async (req, res) => {
   try {
     if (req.params.appointmentId) {
       console.log(req.params.appointmentId);
-      req.params.appointmentId = mongoose.Types.ObjectId(
+      req.params.appointmentId = (
         req.params.appointmentId
       );
       console.log(req.params.appointmentId);
@@ -194,7 +194,7 @@ const specificAppointment = async (req, res) => {
       if (starting_after_objectQP)
         query["$and"].push({
           appointmentId: {
-            $gt: mongoose.Types.ObjectId(starting_after_objectQP),
+            $gt: (starting_after_objectQP),
           },
         });
       documents = await appointment
@@ -211,7 +211,7 @@ const specificAppointment = async (req, res) => {
       if (starting_after_objectQP)
         query["$and"].push({
           appointmentId: {
-            $gt: mongoose.Types.ObjectId(starting_after_objectQP),
+            $gt: (starting_after_objectQP),
           },
         });
       documents = await appointment
@@ -500,7 +500,7 @@ const doctorAppointments = async (req, res) => {
     if (starting_after_objectQP) {
       query["$and"].push({
         appointmentId: {
-          $gt: mongoose.Types.ObjectId(starting_after_objectQP),
+          $gt: (starting_after_objectQP),
         },
       });
     }

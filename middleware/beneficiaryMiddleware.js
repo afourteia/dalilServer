@@ -149,14 +149,14 @@ const singleBeneficiary = async (req, res) => {
     const document = await beneficiaries.findOne(req.params).lean();
     
     if (!document) {
-      return res.status(404).json({ message: `beneficiary not found` });
+      return res.status(404).json({ statusCode: "404", message: `beneficiary not found` });
     }
 
     // if (res.locals.user.userId !== document.account.userId) {
     //   return res.status(401).json({ message: `Not Authorized for this user` });
     // }
 
-    document.birthdate = document.birthdate.toLocaleDateString("en-GB");
+    document.birthdate = document.birthdate.toISOString().split("T")[0];
     
     const responseBody = {
       codeStatus: "200",

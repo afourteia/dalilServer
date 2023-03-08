@@ -4,7 +4,7 @@ const mongoose = require(`mongoose`);
 // user schema or structure
 const userSchema = mongoose.Schema({  
   userId: {
-    type: mongoose.ObjectId,
+    type: String,
     unique: true,
   },
   username: {
@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
   phoneAuthenticated: Boolean,
   whatsAppNumber: String,
   beneficiaryId: {
-    type: mongoose.ObjectId,
+    type: String,
     index: { unique: true, sparse: true }
   },
   password: {
@@ -34,11 +34,11 @@ const userSchema = mongoose.Schema({
   //   unique: true
   // },
   // created: {
-  //   createdBy: { type: mongoose.ObjectId},
+  //   createdBy: { type: String},
   //   dateCreated: { type: Date},
   // },
   // updated: {
-  //   updatedBy: { type: mongoose.ObjectId},
+  //   updatedBy: { type: String},
   //   dateUpdated: { type: Date},
   // }
 }, { collection: 'users' });

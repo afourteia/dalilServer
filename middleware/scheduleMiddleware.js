@@ -11,12 +11,12 @@ const createSchedule = async (req, res) => {
 
     if (req.body.doctorId) {
       console.log(req.body.doctorId);
-      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      req.body.doctorId = (req.body.doctorId);
       console.log(req.body.doctorId);
     }
     if (req.body.medicalCenterId) {
       console.log(req.body.medicalCenterId);
-      req.body.medicalCenterId = mongoose.Types.ObjectId(
+      req.body.medicalCenterId = (
         req.body.medicalCenterId
       );
       console.log(req.body.medicalCenterId);
@@ -24,7 +24,7 @@ const createSchedule = async (req, res) => {
 
     const document = await schedule.create({
       ...req.body,
-      scheduleId: new mongoose.Types.ObjectId(),
+      scheduleId: new mongoose.Types.ObjectId().toString(),
       creation: {
         createdBy: res.locals.user.userId,
         dateCreated: Date(),
@@ -48,12 +48,12 @@ const updateSchedule = async (req, res) => {
   try {
     if (req.body.doctorId) {
       console.log(req.body.doctorId);
-      req.body.doctorId = mongoose.Types.ObjectId(req.body.doctorId);
+      req.body.doctorId = (req.body.doctorId);
       console.log(req.body.doctorId);
     }
     if (req.body.medicalCenterId) {
       console.log(req.body.medicalCenterId);
-      req.body.medicalCenterId = mongoose.Types.ObjectId(
+      req.body.medicalCenterId = (
         req.body.medicalCenterId
       );
       console.log(req.body.medicalCenterId);
@@ -61,7 +61,7 @@ const updateSchedule = async (req, res) => {
 
     if (req.params.scheduleId) {
       console.log(req.params.scheduleId);
-      req.params.scheduleId = mongoose.Types.ObjectId(req.params.scheduleId);
+      req.params.scheduleId = (req.params.scheduleId);
       console.log(req.params.scheduleId);
     }
 
@@ -243,14 +243,14 @@ const allSchedule = async (req, res) => {
     if (doctorIdQP) {
       // console.log(doctorIdQP);
       query["$and"].push({
-        doctorId: { $eq: mongoose.Types.ObjectId(doctorIdQP) },
+        doctorId: { $eq: (doctorIdQP) },
       });
     }
 
     if (medicalCenterIdQP) {
       // console.log(medicalCenterIdQP);
       query["$and"].push({
-        medicalCenterId: { $eq: mongoose.Types.ObjectId(medicalCenterIdQP) },
+        medicalCenterId: { $eq: (medicalCenterIdQP) },
       });
     }
 
@@ -287,7 +287,7 @@ const allSchedule = async (req, res) => {
 
       if (starting_after_objectQP) {
         query["$and"].push({
-          doctorId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) },
+          doctorId: { $gt: (starting_after_objectQP) },
         });
       }
     } else if (sortByQP === "medicalCenter") {
@@ -296,7 +296,7 @@ const allSchedule = async (req, res) => {
       if (starting_after_objectQP) {
         query["$and"].push({
           medicalCenterId: {
-            $gt: mongoose.Types.ObjectId(starting_after_objectQP),
+            $gt: (starting_after_objectQP),
           },
         });
       }
@@ -304,7 +304,7 @@ const allSchedule = async (req, res) => {
       sortByQP_ = { scheduleId: 1 };
       if (starting_after_objectQP) {
         query["$and"].push({
-          scheduleId: { $gt: mongoose.Types.ObjectId(starting_after_objectQP) },
+          scheduleId: { $gt: (starting_after_objectQP) },
         });
       }
     }
@@ -505,7 +505,7 @@ const deleteSchedule = async (req, res) => {
   try {
     if (req.params.scheduleId) {
       console.log(req.params.scheduleId);
-      req.params.scheduleId = mongoose.Types.ObjectId(req.params.scheduleId);
+      req.params.scheduleId = (req.params.scheduleId);
       console.log(req.params.scheduleId);
     }
     const document = await schedule.findOneAndDelete(req.params).lean();

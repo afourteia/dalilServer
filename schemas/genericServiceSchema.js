@@ -5,16 +5,16 @@ const mongoose = require(`mongoose`);
 // genericService schema or structure
 const genericServiceSchema = mongoose.Schema({
 
-  genericServiceId: {type: mongoose.ObjectId, unique: true},
+  genericServiceId: {type: String, unique: true},
   name: {type: String, required: [true, `please provide name`], unique: true},
   
   created: {
-    createdBy: { type: mongoose.ObjectId},
+    createdBy: { type: String},
     dateCreated: { type: Date},
     required: true
   },
   updated: {
-    updatedBy: { type: mongoose.ObjectId},
+    updatedBy: { type: String},
     dateUpdated: { type: Date},
   }
 }, { collection: 'genericServices' });

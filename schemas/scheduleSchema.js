@@ -4,15 +4,15 @@ const mongoose = require(`mongoose`);
 // schedule schema or structure
 const scheduleSchema = mongoose.Schema({
   scheduleId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid  scheduleId`],
   },
   medicalCenterId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid medicalCenter id`],
   },
   doctorId: {
-    type: mongoose.ObjectId,
+    type: String,
     required: [true, `please provide valid doctor id`],
   },
   timeslot: {
