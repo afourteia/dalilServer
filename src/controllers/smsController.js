@@ -20,9 +20,12 @@ const CreateSms = async (req, res) => {
 
 const UpdateSms = async (req, res) => {
   try {
-    const document = await SmsServices.updateSms(req.params.id, {
-      ...req.body,
-    });
+    const document = await SmsServices.updateSms(
+      { _id: req.params.id },
+      {
+        ...req.body,
+      }
+    );
     if (!document) {
       return res.status(404).json({ message: `sms not found` });
     }

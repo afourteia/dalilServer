@@ -41,6 +41,7 @@ const createAppointment = async (req, res) => {
       doctor: doctorObject,
       medicalCenter: medicalCenterObject,
       schedule: scheduleObject,
+      user: userObject,
       // userId: req.params.userId,
       appointmentStatus: `pending`,
       dateCreated: Date(),
