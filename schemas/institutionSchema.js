@@ -58,7 +58,7 @@ const institutionSchema = mongoose.Schema({
   // institutionId: {
   //   type: String,
   // },
-  institutionId: {type: mongoose.ObjectId, unique: true},
+  institutionId: {type: String, unique: true},
   name: {type: String, required: [true, `please provide name`], unique: true},
   cityHQ: {type: String, required: [true, `please provide cityHQ`]},
   employeeCount:  {

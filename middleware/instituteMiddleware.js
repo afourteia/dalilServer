@@ -1,5 +1,5 @@
 const Institute = require("../schemas/institutionSchema");
-
+const mongoose = require(`mongoose`);
 const createInstitute = async (req, res) => {
   try {
     const institute = await Institute.findOne({ name: req.body.name });
@@ -8,6 +8,7 @@ const createInstitute = async (req, res) => {
     }
     const document = await Institute.create({
       ...req.body,
+      institutionId: new mongoose.Types.ObjectId().toString(),
       createdBy: res.locals.userId,
       updatedBy: res.locals.userId,
     });

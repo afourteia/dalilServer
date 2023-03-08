@@ -111,7 +111,7 @@ const beneficiarySchema = mongoose.Schema({
   },
   institutionId: {
     type: String,
-    required: [true, `please provide valid insurance policy id`],
+    required: [true, `please provide valid institution id`],
   },
   // residentCity: {
   //   type: String,
