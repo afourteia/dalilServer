@@ -136,7 +136,7 @@ router
 router
   .route(`/v1/beneficiaries/:beneficiaryId`)
   .get(authentication, cookieVerification, singleBeneficiary)
-  .patch(authentication, cookieVerification, updateBeneficiary);
+  .patch(authentication, cookieVerification, updateBeneficiary)
   .post(authentication, cookieVerification, updateBeneficiary);
 
 // routes for single beneficiary's expense reports
