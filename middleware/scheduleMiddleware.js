@@ -416,8 +416,8 @@ const allSchedule = async (req, res) => {
 
 
     documents.forEach((document) => {
-      // if (document._id.equals(lastDocument[0]._id))
-      //   hasMore = false;
+      if (document._id.equals(lastDocument[0]._id))
+        hasMore = false;
       
       if(typeof document.doctorObject !== 'undefined') document.doctorObject = document.doctorObject[0];
       if(typeof document.medicalCenterObject !== 'undefined') document.medicalCenterObject = document.medicalCenterObject[0];

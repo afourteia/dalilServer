@@ -137,6 +137,7 @@ router
   .route(`/v1/beneficiaries/:beneficiaryId`)
   .get(authentication, cookieVerification, singleBeneficiary)
   .patch(authentication, cookieVerification, updateBeneficiary);
+  .post(authentication, cookieVerification, updateBeneficiary);
 
 // routes for single beneficiary's expense reports
 router
@@ -176,6 +177,7 @@ router
   .route(`/v1/schedules/:scheduleId`)
   .get(authentication, specificSchedule)
   .patch(authentication, updateSchedule)
+  .post(authentication, updateSchedule)
   .delete(authentication, deleteSchedule);
 
 // routes for doctors
@@ -189,6 +191,7 @@ router
   .route(`/v1/doctors/:doctorId`)
   .get(authentication, singleDoctor)
   .patch(authentication, updateDoctor)
+  .post(authentication, updateDoctor)
   .delete(authentication, deleteDoctor);
 
 // routes for doctor
@@ -222,6 +225,7 @@ router
   .route(`/v1/medicalcenters/:medicalCenterId`)
   .get(authentication, singlemedicalCenter)
   .patch(authentication, updatemedicalCenter)
+  .post(authentication, updatemedicalCenter)
   .delete(authentication, deletemedicalCenter);
 
 // routes for medicalSpecialty
@@ -252,8 +256,9 @@ router
   .get(authentication, getInstitutions);
 
 router
-  .route(`/v1/institutions/:id`)
+  .route(`/v1/institutions/:institutionId`)
   .patch(authentication, updateInstitution)
+  .post(authentication, updateInstitution)
   .delete(authentication, deleteInstitution);
 
 // exporting router

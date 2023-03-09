@@ -12,12 +12,16 @@ const userSchema = mongoose.Schema({
     required: [true, `please provide valid username`],
     unique: true,
   },
+  firstName: String,
+  middleName: String,
+  lastName: String,
   phoneNumber: {
     type: String,
     required: [true, `please provide valid phoneNumber`],
   },
   phoneAuthenticated: Boolean,
   whatsAppNumber: String,
+  email: String,
   beneficiaryId: {
     type: String,
     index: { unique: true, sparse: true }
