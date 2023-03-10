@@ -8,49 +8,18 @@ const mongoose = require("mongoose");
 // api for creating Beneficiary
 const createBeneficiary = async (req, res) => {
   try {
-    const auth = req.headers.authorization;
-    const payload = jwt.decode(auth.split(` `)[1]);
-    const beneficiaries = await beneficiaries.find().sort({ _id: -1 }).limit(1);
-    console.log(beneficiaries, payload);
-    if (beneficiaries.length === 0) {
-      const actualUser = await user.find({ userId: payload.userId });
-      const {
-        beneficiary: { beneficiaryId: beneficiary },
-        userId,
-        sd,
-      } = actualUser[0];
-      const newBody = {
-        ...req.body,
-        account: { hasAccount: true, userId: userId },
-        beneficiaryId: beneficiary + `-1`,
-        sd: sd,
-      };
-      const document = await beneficiaries.create(newBody);
-      delete document._doc.sd;
+    const newBody = {
+      ...req.body,
+      beneficiaryId: new mongoose.Types.ObjectId().toString(),
+    };
+    const document = await beneficiaries.create(newBody);
 
-      // server response
-      res.status(200).json(document._doc);
-    } else {
-      const lastbeneficiary = beneficiaries[0].beneficiaryId;
-      const idNumber = Number(lastbeneficiary.split(`-`)[1]);
-      const actualUser = await user.find({ userId: payload.userId });
-      const {
-        beneficiary: { beneficiaryId: beneficiary },
-        userId,
-        sd,
-      } = actualUser[0];
-      const newBody = {
-        ...req.body,
-        account: { hasAccount: true, userId: userId },
-        beneficiaryId: beneficiary + `-${idNumber + 1}`,
-        sd: sd,
-      };
-      const document = await beneficiaries.create(newBody);
-      delete document._doc.sd;
-
-      // server response
-      res.status(200).json(document._doc);
-    }
+    const responseBody = {
+      codeStatus: "201",
+      message: "document created",
+      data: document,
+    };
+    res.status(201).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -147,9 +116,11 @@ const getBeneficiaries = async (req, res) => {
 const singleBeneficiary = async (req, res) => {
   try {
     const document = await beneficiaries.findOne(req.params).lean();
-    
+
     if (!document) {
-      return res.status(404).json({ statusCode: "404", message: `beneficiary not found` });
+      return res
+        .status(404)
+        .json({ statusCode: "404", message: `beneficiary not found` });
     }
 
     // if (res.locals.user.userId !== document.account.userId) {
@@ -157,14 +128,14 @@ const singleBeneficiary = async (req, res) => {
     // }
 
     document.birthdate = document.birthdate.toISOString().split("T")[0];
-    
+
     const responseBody = {
       codeStatus: "200",
       message: "good",
-      data: document
+      data: document,
     };
 
-    res.status(200).json({... responseBody});
+    res.status(200).json({ ...responseBody });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -176,7 +147,9 @@ const updateBeneficiary = async (req, res) => {
   try {
     const doc = await beneficiaries.findOne(req.params).lean();
     if (!doc) {
-      return res.status(404).json({ message: `beneficiary to update not found` });
+      return res
+        .status(404)
+        .json({ message: `beneficiary to update not found` });
     }
     // if (res.locals.user.userId !== doc.account.userId) {
     //   return res.status(401).json({ message: `Not Authorized` });

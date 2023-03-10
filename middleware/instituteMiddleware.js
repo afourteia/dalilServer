@@ -26,8 +26,9 @@ const getInstitutions = async (req, res) => {
       return res.status(404).json({ error: "No institution found" });
     }
     res.status(200).json({
-      institutes,
       objectCount: institutes.length,
+      institutes,
+      
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
