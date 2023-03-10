@@ -4,7 +4,7 @@ const createInstitute = async (req, res) => {
   try {
     const institute = await Institute.findOne({ name: req.body.name });
     if (institute) {
-      return res.status(400).json({ error: "Institue already exist" });
+      return res.status(400).json({ error: "institution already exist" });
     }
     const document = await Institute.create({
       ...req.body,
@@ -22,10 +22,8 @@ const createInstitute = async (req, res) => {
 const getInstitutions = async (req, res) => {
   try {
     const institutes = await Institute.find()
-      .populate("employees")
-      .populate("beneficiaries");
     if (institutes.length < 1) {
-      return res.status(404).json({ error: "No Institue found" });
+      return res.status(404).json({ error: "No institution found" });
     }
     res.status(200).json({
       institutes,
@@ -43,10 +41,8 @@ const updateInstitution = async (req, res) => {
       { ...req.body },
       { new: true }
     )
-      .populate("employees")
-      .populate("beneficiaries");
     if (!institute) {
-      return res.status(404).json({ error: "No Institue found" });
+      return res.status(404).json({ error: "No institution found" });
     }
     res.status(200).json({
       institute,
@@ -61,7 +57,7 @@ const deleteInstitution = async (req, res) => {
   try {
     const institute = await Institute.findOneAndDelete({ _id: req.params.id });
     if (!institute) {
-      return res.status(404).json({ error: "No Institue found" });
+      return res.status(404).json({ error: "No institution found" });
     }
     res.status(200).json({
       institute,

@@ -112,7 +112,7 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
   try {
 
-    const object = await user.findOne(req.params).lean();
+    const document = await user.findOne(req.params).lean();
 
     if (!document) {
       return res.status(404).json({ statusCode: "404", message: `user not found` });
