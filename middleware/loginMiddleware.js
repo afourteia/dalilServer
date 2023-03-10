@@ -55,7 +55,17 @@ const login = async (req, res) => {
             as: `beneficiary`,
           },
         },
-        { $unwind: "$beneficiary" },
+        {
+          $project: {
+            userId: 1,
+            username: 1,
+            firstName: 1,
+            middleName: 1,
+            lastName: 1,            
+            beneficiary: { $first: "$beneficiary" },
+          },
+        },
+        // { $unwind: "$beneficiary" },
         {
           $project: {
             __v: 0,
@@ -65,6 +75,7 @@ const login = async (req, res) => {
             "beneficiary._id": 0,
             "beneficiary.__v": 0,
             "beneficiary.sd": 0,
+            "beneficiary.familyMembers.medicalFiles": 0,
           },
         },
       ])
