@@ -11,14 +11,12 @@ const createSchedule = async (req, res) => {
 
     if (req.body.doctorId) {
       console.log(req.body.doctorId);
-      req.body.doctorId = (req.body.doctorId);
+      req.body.doctorId = req.body.doctorId;
       console.log(req.body.doctorId);
     }
     if (req.body.medicalCenterId) {
       console.log(req.body.medicalCenterId);
-      req.body.medicalCenterId = (
-        req.body.medicalCenterId
-      );
+      req.body.medicalCenterId = req.body.medicalCenterId;
       console.log(req.body.medicalCenterId);
     }
 
@@ -48,20 +46,18 @@ const updateSchedule = async (req, res) => {
   try {
     if (req.body.doctorId) {
       console.log(req.body.doctorId);
-      req.body.doctorId = (req.body.doctorId);
+      req.body.doctorId = req.body.doctorId;
       console.log(req.body.doctorId);
     }
     if (req.body.medicalCenterId) {
       console.log(req.body.medicalCenterId);
-      req.body.medicalCenterId = (
-        req.body.medicalCenterId
-      );
+      req.body.medicalCenterId = req.body.medicalCenterId;
       console.log(req.body.medicalCenterId);
     }
 
     if (req.params.scheduleId) {
       console.log(req.params.scheduleId);
-      req.params.scheduleId = (req.params.scheduleId);
+      req.params.scheduleId = req.params.scheduleId;
       console.log(req.params.scheduleId);
     }
 
@@ -243,14 +239,14 @@ const allSchedule = async (req, res) => {
     if (doctorIdQP) {
       // console.log(doctorIdQP);
       query["$and"].push({
-        doctorId: { $eq: (doctorIdQP) },
+        doctorId: { $eq: doctorIdQP },
       });
     }
 
     if (medicalCenterIdQP) {
       // console.log(medicalCenterIdQP);
       query["$and"].push({
-        medicalCenterId: { $eq: (medicalCenterIdQP) },
+        medicalCenterId: { $eq: medicalCenterIdQP },
       });
     }
 
@@ -287,7 +283,7 @@ const allSchedule = async (req, res) => {
 
       if (starting_after_objectQP) {
         query["$and"].push({
-          doctorId: { $gt: (starting_after_objectQP) },
+          doctorId: { $gt: starting_after_objectQP },
         });
       }
     } else if (sortByQP === "medicalCenter") {
@@ -296,7 +292,7 @@ const allSchedule = async (req, res) => {
       if (starting_after_objectQP) {
         query["$and"].push({
           medicalCenterId: {
-            $gt: (starting_after_objectQP),
+            $gt: starting_after_objectQP,
           },
         });
       }
@@ -304,7 +300,7 @@ const allSchedule = async (req, res) => {
       sortByQP_ = { scheduleId: 1 };
       if (starting_after_objectQP) {
         query["$and"].push({
-          scheduleId: { $gt: (starting_after_objectQP) },
+          scheduleId: { $gt: starting_after_objectQP },
         });
       }
     }
@@ -329,6 +325,12 @@ const allSchedule = async (req, res) => {
           as: `doctorObject`,
         },
       },
+      {
+        $set: {
+          doctorObject: { $first: "$doctorObject" },
+          medicalCenterObject: { $first: "$medicalCenterObject" },
+        },
+      },
     ];
     if (query["$and"].length > 0)
       aggregationPipeline.push({ $match: { $and: query["$and"] } });
@@ -337,7 +339,7 @@ const allSchedule = async (req, res) => {
       aggregationPipeline.push({
         $group: {
           _id: "$doctorId",
-          doctorObject: { $first: "$doctorObject" },
+          doctorObject: { $push: "$doctorObject" },
           scheduleCount: { $sum: 1 },
           scheduleList: { $push: "$$ROOT" },
         },
@@ -347,7 +349,7 @@ const allSchedule = async (req, res) => {
       aggregationPipeline.push({
         $group: {
           _id: "$medicalCenterId",
-          medicalCenterObject: { $first: "$medicalCenterObject" },
+          medicalCenterObject: { $push: "$medicalCenterObject" },
           scheduleCount: { $sum: 1 },
           scheduleList: { $push: "$$ROOT" },
         },
@@ -361,7 +363,7 @@ const allSchedule = async (req, res) => {
     // console.log(aggregationPipeline[2])
 
     documents = await schedule.aggregate(aggregationPipeline);
-    
+
     // console.log(documents[0])
     for (const key in sortByQP_) {
       sortByQP_[key] = sortByQP_[key] * -1;
@@ -414,13 +416,14 @@ const allSchedule = async (req, res) => {
 
     lastDocument = await schedule.aggregate(aggregationPipelineLast);
 
-
     documents.forEach((document) => {
       // if (document._id.equals(lastDocument[0]._id))
       //   hasMore = false;
-      
-      if(typeof document.doctorObject !== 'undefined') document.doctorObject = document.doctorObject[0];
-      if(typeof document.medicalCenterObject !== 'undefined') document.medicalCenterObject = document.medicalCenterObject[0];
+
+      if (typeof document.doctorObject !== "undefined")
+        document.doctorObject = document.doctorObject[0];
+      if (typeof document.medicalCenterObject !== "undefined")
+        document.medicalCenterObject = document.medicalCenterObject[0];
     });
 
     if (starting_after_objectQP) {
@@ -468,11 +471,11 @@ const allSchedule = async (req, res) => {
         },
       });
     }
-    aggregationPipelineCount.push({ $count:  "objectCount" });
+    aggregationPipelineCount.push({ $count: "objectCount" });
     objectCount = await schedule.aggregate(aggregationPipelineCount);
-    
-    console.log("objectCount")
-    console.log(objectCount)
+
+    console.log("objectCount");
+    console.log(objectCount);
     // console.log(objectCount[0].objectCount)
     if (objectCount[0] !== undefined) {
       count = objectCount[0].objectCount;
@@ -505,7 +508,7 @@ const deleteSchedule = async (req, res) => {
   try {
     if (req.params.scheduleId) {
       console.log(req.params.scheduleId);
-      req.params.scheduleId = (req.params.scheduleId);
+      req.params.scheduleId = req.params.scheduleId;
       console.log(req.params.scheduleId);
     }
     const document = await schedule.findOneAndDelete(req.params).lean();
