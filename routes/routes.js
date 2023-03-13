@@ -108,6 +108,11 @@ const {
 } = require(`../middleware/instituteMiddleware`);
 // importing authentication/authorization middleware
 const { authentication, cookieVerification, isAdmin } = require(`../auth`);
+
+
+const { appointmentStatusEnum,timeslotEnum, accountStatusEnum,relationshipToBeneficiaryEnum, genderEnum } = require(`../middleware/miscMiddleware`);
+
+
 // const uploader = require("../uploader");
 // All routes
 // routes for user
@@ -260,6 +265,26 @@ router
   .patch(authentication, updateInstitution)
   .post(authentication, updateInstitution)
   .delete(authentication, deleteInstitution);
+
+router
+.route(`/v1/appointmentStatusEnum`)
+.get(appointmentStatusEnum);
+
+router
+.route(`/v1/timeslotEnum`)
+.get(timeslotEnum);
+
+router
+.route(`/v1/accountStatusEnum`)
+.get(accountStatusEnum);
+
+router
+.route(`/v1/relationshipToBeneficiaryEnum`)
+.get(relationshipToBeneficiaryEnum);
+
+router
+.route(`/v1/genderEnum`)
+.get(genderEnum);
 
 // exporting router
 module.exports = router;
